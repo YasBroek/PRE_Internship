@@ -37,6 +37,7 @@ begin
 end
 
 # ╔═╡ be0429e6-1ba3-43a8-8bdf-39acc196ca0b
+# not sure how to represent final state
 struct Final_State
 	grid::Array{Int}
 	G::Vector
