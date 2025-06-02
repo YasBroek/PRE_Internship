@@ -4,54 +4,71 @@
 using Markdown
 using InteractiveUtils
 
+# ╔═╡ 6113c002-1e04-4500-9f99-1a21ae7f6515
+using GLMakie
+
 # ╔═╡ da57d160-3d49-11f0-30e9-e581010f39de
 begin
-	struct Initial_State
+
+	"""
+    struct MAPF_Instance: Multi-Agent Path Finding (MAPF) problem instance.
+
+	# Fields
+		- `grid::Array{Int}`: Grid of the environment (1 for free cells 0 otherwise).
+		- `starts::Vector`: Starting positions of agents 
+		- `goals::Vector`: Goal positions of agents
+		- `optimal_values::Vector`: Optimal path costs for each agent.
+	"""
+	struct MAPF_Instance
 		grid::Array{Int}
-		S::Vector
-		G::Vector
+		starts::Vector
+		goals::Vector
+		optimal_values::Vector
 	end
 
-end
-
-# ╔═╡ e8d4074f-bb61-4f01-9cfe-234c97eaa7ed
-begin
-	using CairoMakie
-	function visualize_instance(instance::Initial_State)
-    	fig = Figure()
-    	ax = Axis(fig[1, 1], aspect = DataAspect())
-    
-    	heatmap!(ax, instance.grid, colormap = [:black, :white], colorrange = (0, 1))
-    
-    	scatter!([s[2] for s in instance.S], [s[1] for s in instance.S], 
-             color = :green, marker = :star6, markersize = 25)
-    	scatter!([g[2] for g in instance.G], [g[1] for g in instance.G], 
-             color = :red, marker = :xcross, markersize = 25)
-    
-    	ax.yreversed = true
-    
-    	save("mapf_visualization.png", fig)
-    
-    	return fig
-	end
 end
 
 # ╔═╡ be0429e6-1ba3-43a8-8bdf-39acc196ca0b
-struct Final_State
-	grid::Array{Int}
-	G::Vector
+"""
+struct MAPF_Solution: Solution found by the algorithm
+# Fields
+	- 'paths::Vector': lists all the positions occupied throught the simulation at each time step for each agent
+"""
+struct MAPF_Solution
 	paths::Vector
 end
 
 # ╔═╡ 6cbb0417-7459-4575-b7ab-381412754e50
-file_instance = readlines(open("../input/Berlin_1_256.map"))
+"Open map and scenarions"
+file_instance = readlines(open("../input/Berlin_1_256/Berlin_1_256.map"))
+
+# ╔═╡ 19b915c2-cbb0-407b-b314-7facc1389bcc
+instance_data = readlines(open("../input/Berlin_1_256/Berlin_1_256-even-1.scen"))
 
 # ╔═╡ 70cc0e8e-597c-45c1-84bd-9db69435cf0b
-function convert_to_my_struct(file_instance,num_agents)
+"""
+    convert_to_my_struct(file_instance, instance_data)
+
+Converts input data into a MAPF_Instance struct
+
+# Arguments
+- 'file_instance': contains data from map file
+- 'instance_data': contains data from scenaio file
+
+# Returns
+- 'MAPF_Instance' struct
+
+"""
+function convert_to_my_struct(file_instance, instance_data)
+	
+	# Parse the height and width of the grid from the file
 	height = parse(Int, split(file_instance[2])[2])
 	width = parse(Int, split(file_instance[3])[2])
-	instance = Initial_State(zeros(Int, height, width), [(0,0) for i in 1:num_agents], [(0,0) for i in 1:num_agents])
-	
+
+	# Initialize the MAPF_Instance with a grid and vectors for start/goal/optimal values
+	instance = MAPF_Instance(zeros(Int, height, width), Vector{Tuple{Int,Int}}(undef,length(instance_data)-1), Vector{Tuple{Int,Int}}(undef,length(instance_data)-1), Vector{Float64}(undef,length(instance_data)-1))
+
+	# Fill in the grid based on map characters: '.' = free space (1), otherwise wall (0)
 	for i in 1:height
 		row = file_instance[i + 4]
         for j in 1:width
@@ -63,6 +80,7 @@ function convert_to_my_struct(file_instance,num_agents)
         end
 	end
 
+	# Collect all positions in the grid that are navigable (not used later)
 	possible_positions = []
 
 	for i in 1:height
@@ -73,28 +91,131 @@ function convert_to_my_struct(file_instance,num_agents)
 			end
 		end
 	end
-	
-	for agent in 1:num_agents
-		instance.S[agent] = rand(possible_positions)
-		instance.G[agent] = rand(possible_positions)
+
+	# Parse start, goal and optimal value for each agent from Scenario Instance
+	for i in 2:length(instance_data)
+		row = instance_data[i]
+		instance.starts[i-1] = (parse(Int, split(instance_data[i])[5])+1, parse(Int, split(instance_data[i])[6])+1)
+		instance.goals[i-1] = (parse(Int, split(instance_data[i])[7])+1, parse(Int, split(instance_data[i])[8])+1)
+		instance.optimal_values[i-1] = parse(Float64, split(instance_data[i])[9])+1
 	end
 
 	return instance
 end
 
 # ╔═╡ e46a4ad6-1617-4327-8ed0-f8fe5ce4875a
-instance = convert_to_my_struct(file_instance,2)
+instance = convert_to_my_struct(file_instance, instance_data)
 
-# ╔═╡ 6c426f42-f9c0-4531-93a4-559264563c09
-visualize_instance(instance)
+# ╔═╡ 3f28514f-ca0e-480e-ad7e-091e178ea6ab
+begin
+	#initialize list containing paths for each agent
+	paths = [[s] for s in instance.starts]  
+end
+
+# ╔═╡ 7176303c-2e0e-4590-a74b-99d5f40ddbe1
+print(paths)
+
+# ╔═╡ 191bfc80-31c8-4b74-8a8d-4aec95808c49
+function possible_directions(pos, grid)
+	dir = ["wait"]
+	
+	if pos[1] > 1
+		if grid[pos[1]-1,pos[2]] == 1
+			push!(dir, "up")
+		end
+	end
+	if pos[1] < size(grid)[1]
+		if grid[pos[1]+1,pos[2]] == 1
+			push!(dir, "down")
+		end
+	end
+	if pos[2] > 1
+		if grid[pos[1],pos[2]-1] == 1
+			push!(dir, "left")
+		end
+	end
+	if pos[2] < size(grid)[2]
+		if grid[pos[1],pos[2]+1] == 1
+			push!(dir, "right")
+		end
+	end
+	
+	return dir
+end
+
+# ╔═╡ 33771731-9f68-48b3-bc9f-444948aabb0d
+function position(s, time_step, path, grid)
+	if time_step == 0
+		return s
+	else
+		directions = possible_directions(path[end], grid)
+		dir = rand(directions)
+		new_pos = path[end]
+        
+        if dir == "up"
+            new_pos = (path[end][1] - 1, path[end][2])
+        elseif dir == "down"
+            new_pos = (path[end][1] + 1, path[end][2])
+        elseif dir == "left"
+            new_pos = (path[end][1], path[end][2] - 1)
+        elseif dir == "right"
+            new_pos = (path[end][1], path[end][2] + 1)
+        end
+        
+        if new_pos != path[end]
+            push!(path, new_pos)
+        end
+        return new_pos
+	end
+end
+
+# ╔═╡ e8d4074f-bb61-4f01-9cfe-234c97eaa7ed
+begin
+    time_step = Observable(0.0)
+    fig = Figure()
+    ax = Axis(fig[1, 1], aspect = DataAspect())
+    
+    heatmap!(ax, instance.grid, colormap = [:black, :white], colorrange = (0, 1))
+	colors = Makie.categorical_colors(:tab20, 20)
+
+	# Number of start and goal points
+    n = length(instance.starts) # 950
+    
+    # Generate colors and markers
+    num_colors = 20
+
+	markers = [:+,:hexagon,:circle,:pentagon,:diamond,:star4,:vline,:cross,:xcross,:rect,:ltriangle,:dtriangle,:utriangle,:star5,:star8,:star6,:rtriangle,:octagon,:hline,:x] 
+    num_markers = length(markers)
+    
+    color_indices = [(i % num_colors) + 1 for i in 1:n] 
+    marker_indices = [(div(i - 1, num_colors) % num_markers) + 1 for i in 1:n] 
+    point_colors = [colors[color_indices[i]] for i in 1:n]
+    point_markers = [markers[marker_indices[i]] for i in 1:n]
+    
+    scatter!(
+        @lift([position(instance.starts[i], $time_step, paths[i], instance.grid)[1] for i in 1:length(instance.starts)]),
+        @lift([position(instance.starts[i], $time_step, paths[i], instance.grid)[2] for i in 1:length(instance.starts)]),
+        color = point_colors, marker = point_markers, markersize = 10
+    )
+    scatter!([g[2] for g in instance.goals], [g[1] for g in instance.goals], color = point_colors, marker = point_markers, markersize = 10)
+    
+    ax.yreversed = true
+
+    framerate = 30
+    timestamps = range(0, 20, step=1)
+    
+    record(fig, "time_animation.mp4", timestamps; framerate = framerate) do t
+        time_step[] = t
+    end
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 
 [compat]
-CairoMakie = "~0.13.7"
+GLMakie = "~0.11.8"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -103,7 +224,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "3a4f150494172fe6e11601cb542e2818a5e04781"
+project_hash = "30962ecc7d071655a5d18457efdf11e075fd5f8a"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -205,18 +326,6 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "e329286945d0cfc04456972ea732551869af1cfc"
 uuid = "4e9b3aee-d8a1-5a3d-ad8b-7d824db253f0"
 version = "1.0.1+0"
-
-[[deps.Cairo]]
-deps = ["Cairo_jll", "Colors", "Glib_jll", "Graphics", "Libdl", "Pango_jll"]
-git-tree-sha1 = "71aa551c5c33f1a4415867fe06b7844faadb0ae9"
-uuid = "159f3aea-2a34-519c-b102-8c37f9878175"
-version = "1.1.1"
-
-[[deps.CairoMakie]]
-deps = ["CRC32c", "Cairo", "Cairo_jll", "Colors", "FileIO", "FreeType", "GeometryBasics", "LinearAlgebra", "Makie", "PrecompileTools"]
-git-tree-sha1 = "a5fd12cdad97f4e61b3446436c076f95f05c62a8"
-uuid = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-version = "0.13.7"
 
 [[deps.Cairo_jll]]
 deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
@@ -324,6 +433,12 @@ deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 version = "1.11.0"
 
+[[deps.Dbus_jll]]
+deps = ["Artifacts", "Expat_jll", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "473e9afc9cf30814eb67ffa5f2db7df82c3ad9fd"
+uuid = "ee1fde0b-3d02-5ea6-8484-8dfef6360eab"
+version = "1.16.2+0"
+
 [[deps.DelaunayTriangulation]]
 deps = ["AdaptivePredicates", "EnumX", "ExactPredicates", "Random"]
 git-tree-sha1 = "5620ff4ee0084a6ab7097a27ba0c19290200b037"
@@ -371,6 +486,12 @@ version = "2.2.4+0"
 git-tree-sha1 = "bddad79635af6aec424f53ed8aad5d7555dc6f00"
 uuid = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
 version = "1.0.5"
+
+[[deps.EpollShim_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "8a4be429317c42cfae6a7fc03c31bad1970c310d"
+uuid = "2702e6a9-849d-5ed8-8c21-79e8b8f9ee43"
+version = "0.0.20230411+1"
 
 [[deps.ExactPredicates]]
 deps = ["IntervalArithmetic", "Random", "StaticArrays"]
@@ -493,6 +614,24 @@ git-tree-sha1 = "7a214fdac5ed5f59a22c2d9a885a16da1c74bbc7"
 uuid = "559328eb-81f9-559d-9380-de523a88c83c"
 version = "1.0.17+0"
 
+[[deps.GLFW]]
+deps = ["GLFW_jll"]
+git-tree-sha1 = "13c52cdd876a31240da16dfb51363aed42740325"
+uuid = "f7f18e0c-5ee9-5ccd-a5bf-e8befd85ed98"
+version = "3.4.4"
+
+[[deps.GLFW_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Libglvnd_jll", "Xorg_libXcursor_jll", "Xorg_libXi_jll", "Xorg_libXinerama_jll", "Xorg_libXrandr_jll", "libdecor_jll", "xkbcommon_jll"]
+git-tree-sha1 = "fcb0584ff34e25155876418979d4c8971243bb89"
+uuid = "0656b61e-2033-5cc2-a64a-77c0f6c09b89"
+version = "3.4.0+2"
+
+[[deps.GLMakie]]
+deps = ["ColorTypes", "Colors", "FileIO", "FixedPointNumbers", "FreeTypeAbstraction", "GLFW", "GeometryBasics", "LinearAlgebra", "Makie", "Markdown", "MeshIO", "ModernGL", "Observables", "PrecompileTools", "Printf", "ShaderAbstractions", "StaticArrays"]
+git-tree-sha1 = "0650df73822ce8808dc473e3e1c7581bdb367083"
+uuid = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
+version = "0.11.8"
+
 [[deps.GeoFormatTypes]]
 git-tree-sha1 = "8e233d5167e63d708d41f87597433f59a0f213fe"
 uuid = "68eda718-8dee-11e9-39e7-89f7f65f511f"
@@ -527,12 +666,6 @@ deps = ["Artifacts", "Gettext_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Libic
 git-tree-sha1 = "fee60557e4f19d0fe5cd169211fdda80e494f4e8"
 uuid = "7746bdde-850d-59dc-9ae8-88ece973131d"
 version = "2.84.0+0"
-
-[[deps.Graphics]]
-deps = ["Colors", "LinearAlgebra", "NaNMath"]
-git-tree-sha1 = "a641238db938fff9b2f60d08ed9030387daf428c"
-uuid = "a2bd30eb-e257-5431-a919-1863eab51364"
-version = "1.1.3"
 
 [[deps.Graphite2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -901,6 +1034,12 @@ deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 version = "2.28.6+0"
 
+[[deps.MeshIO]]
+deps = ["ColorTypes", "FileIO", "GeometryBasics", "Printf"]
+git-tree-sha1 = "c009236e222df68e554c7ce5c720e4a33cc0c23f"
+uuid = "7269a6da-0436-5bbc-96c2-40638cbb6118"
+version = "0.5.3"
+
 [[deps.Missings]]
 deps = ["DataAPI"]
 git-tree-sha1 = "ec4f7fbeab05d7747bdf98eb74d130a2a2ed298d"
@@ -911,6 +1050,12 @@ version = "1.2.0"
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 version = "1.11.0"
 
+[[deps.ModernGL]]
+deps = ["Libdl"]
+git-tree-sha1 = "ac6cb1d8807a05cf1acc9680e09d2294f9d33956"
+uuid = "66fc600b-dfda-50eb-8b99-91cfa97b1301"
+version = "1.1.8"
+
 [[deps.MosaicViews]]
 deps = ["MappedArrays", "OffsetArrays", "PaddedViews", "StackViews"]
 git-tree-sha1 = "7b86a5d4d70a9f5cdf2dacb3cbe6d251d1a61dbe"
@@ -920,12 +1065,6 @@ version = "0.3.4"
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 version = "2023.12.12"
-
-[[deps.NaNMath]]
-deps = ["OpenLibm_jll"]
-git-tree-sha1 = "9b8215b1ee9e78a293f99797cd31375471b2bcae"
-uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
-version = "1.1.3"
 
 [[deps.Netpbm]]
 deps = ["FileIO", "ImageCore", "ImageMetadata"]
@@ -1436,6 +1575,18 @@ weakdeps = ["ConstructionBase", "InverseFunctions"]
     ConstructionBaseUnitfulExt = "ConstructionBase"
     InverseFunctionsUnitfulExt = "InverseFunctions"
 
+[[deps.Wayland_jll]]
+deps = ["Artifacts", "EpollShim_jll", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "XML2_jll"]
+git-tree-sha1 = "49be0be57db8f863a902d59c0083d73281ecae8e"
+uuid = "a2964d1f-97da-50d4-b82a-358c7fce9d89"
+version = "1.23.1+0"
+
+[[deps.Wayland_protocols_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "5db3e9d307d32baba7067b13fc7b5aa6edd4a19a"
+uuid = "2381bf8a-dfd0-557d-9999-79630e7b1b91"
+version = "1.36.0+0"
+
 [[deps.WebP]]
 deps = ["CEnum", "ColorTypes", "FileIO", "FixedPointNumbers", "ImageCore", "libwebp_jll"]
 git-tree-sha1 = "aa1ca3c47f119fbdae8770c29820e5e6119b83f2"
@@ -1472,6 +1623,12 @@ git-tree-sha1 = "aa1261ebbac3ccc8d16558ae6799524c450ed16b"
 uuid = "0c0b7dd1-d40b-584c-a123-a41640f87eec"
 version = "1.0.13+0"
 
+[[deps.Xorg_libXcursor_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libXfixes_jll", "Xorg_libXrender_jll"]
+git-tree-sha1 = "6c74ca84bbabc18c4547014765d194ff0b4dc9da"
+uuid = "935fb764-8cf2-53bf-bb30-45bb1f8bf724"
+version = "1.2.4+0"
+
 [[deps.Xorg_libXdmcp_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
 git-tree-sha1 = "52858d64353db33a56e13c341d7bf44cd0d7b309"
@@ -1484,6 +1641,30 @@ git-tree-sha1 = "a4c0ee07ad36bf8bbce1c3bb52d21fb1e0b987fb"
 uuid = "1082639a-0dae-5f34-9b06-72781eeb8cb3"
 version = "1.3.7+0"
 
+[[deps.Xorg_libXfixes_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libX11_jll"]
+git-tree-sha1 = "9caba99d38404b285db8801d5c45ef4f4f425a6d"
+uuid = "d091e8ba-531a-589c-9de9-94069b037ed8"
+version = "6.0.1+0"
+
+[[deps.Xorg_libXi_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libXext_jll", "Xorg_libXfixes_jll"]
+git-tree-sha1 = "a376af5c7ae60d29825164db40787f15c80c7c54"
+uuid = "a51aa0fd-4e3c-5386-b890-e753decda492"
+version = "1.8.3+0"
+
+[[deps.Xorg_libXinerama_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libXext_jll"]
+git-tree-sha1 = "a5bc75478d323358a90dc36766f3c99ba7feb024"
+uuid = "d1454406-59df-5ea1-beac-c340f2130bc3"
+version = "1.1.6+0"
+
+[[deps.Xorg_libXrandr_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libXext_jll", "Xorg_libXrender_jll"]
+git-tree-sha1 = "aff463c82a773cb86061bce8d53a0d976854923e"
+uuid = "ec84b674-ba8e-5d96-8ba1-2a689ba10484"
+version = "1.5.5+0"
+
 [[deps.Xorg_libXrender_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libX11_jll"]
 git-tree-sha1 = "7ed9347888fac59a618302ee38216dd0379c480d"
@@ -1495,6 +1676,24 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libXau_jll", "Xorg_libXdmcp_j
 git-tree-sha1 = "bfcaf7ec088eaba362093393fe11aa141fa15422"
 uuid = "c7cfdc94-dc32-55de-ac96-5a1b8d977c5b"
 version = "1.17.1+0"
+
+[[deps.Xorg_libxkbfile_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libX11_jll"]
+git-tree-sha1 = "e3150c7400c41e207012b41659591f083f3ef795"
+uuid = "cc61e674-0454-545c-8b26-ed2c68acab7a"
+version = "1.1.3+0"
+
+[[deps.Xorg_xkbcomp_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libxkbfile_jll"]
+git-tree-sha1 = "801a858fc9fb90c11ffddee1801bb06a738bda9b"
+uuid = "35661453-b289-5fab-8a00-3d9160c6a3a4"
+version = "1.4.7+0"
+
+[[deps.Xorg_xkeyboard_config_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_xkbcomp_jll"]
+git-tree-sha1 = "00af7ebdc563c9217ecc67776d1bbf037dbcebf4"
+uuid = "33bec58e-1273-512f-9401-5d533626f822"
+version = "2.44.0+0"
 
 [[deps.Xorg_xtrans_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1535,6 +1734,12 @@ version = "0.15.2+0"
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
 version = "5.11.0+0"
+
+[[deps.libdecor_jll]]
+deps = ["Artifacts", "Dbus_jll", "JLLWrappers", "Libdl", "Libglvnd_jll", "Pango_jll", "Wayland_jll", "xkbcommon_jll"]
+git-tree-sha1 = "9bf7903af251d2050b467f76bdbe57ce541f7f4f"
+uuid = "1183f4f0-6f2a-5f1a-908b-139f9cdfea6f"
+version = "0.2.2+0"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1593,15 +1798,26 @@ deps = ["Artifacts", "JLLWrappers", "Libdl"]
 git-tree-sha1 = "dcc541bb19ed5b0ede95581fb2e41ecf179527d2"
 uuid = "dfaa095f-4041-5dcd-9319-2fabd8486b76"
 version = "3.6.0+0"
+
+[[deps.xkbcommon_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Wayland_jll", "Wayland_protocols_jll", "Xorg_libxcb_jll", "Xorg_xkeyboard_config_jll"]
+git-tree-sha1 = "c950ae0a3577aec97bfccf3381f66666bc416729"
+uuid = "d8fb68d0-12a3-5cfd-a85a-d49703b185fd"
+version = "1.8.1+0"
 """
 
 # ╔═╡ Cell order:
+# ╠═6113c002-1e04-4500-9f99-1a21ae7f6515
 # ╠═da57d160-3d49-11f0-30e9-e581010f39de
 # ╠═be0429e6-1ba3-43a8-8bdf-39acc196ca0b
 # ╠═6cbb0417-7459-4575-b7ab-381412754e50
+# ╠═19b915c2-cbb0-407b-b314-7facc1389bcc
 # ╠═70cc0e8e-597c-45c1-84bd-9db69435cf0b
 # ╠═e46a4ad6-1617-4327-8ed0-f8fe5ce4875a
+# ╠═3f28514f-ca0e-480e-ad7e-091e178ea6ab
+# ╠═33771731-9f68-48b3-bc9f-444948aabb0d
+# ╠═7176303c-2e0e-4590-a74b-99d5f40ddbe1
+# ╠═191bfc80-31c8-4b74-8a8d-4aec95808c49
 # ╠═e8d4074f-bb61-4f01-9cfe-234c97eaa7ed
-# ╠═6c426f42-f9c0-4531-93a4-559264563c09
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
