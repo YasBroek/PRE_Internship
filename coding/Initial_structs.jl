@@ -5,27 +5,30 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 6113c002-1e04-4500-9f99-1a21ae7f6515
-using GLMakie
+begin
+	using GLMakie
+	using Graphs
+	import Cairo, Fontconfig
+end
 
 # ╔═╡ da57d160-3d49-11f0-30e9-e581010f39de
-begin
+"""
+	struct MAPF_Instance: Multi-Agent Path Finding (MAPF) problem instance.
 
+# Fields
+ - 'graph::SimpleGraph': Graph of the environment
+ - 'starts::Vector': Starting positions of agents 
+ - 'goals::Vector': Goal positions of agents
+ - 'optimal_values::Vector': Optimal path costs for each agent.
 	"""
-    struct MAPF_Instance: Multi-Agent Path Finding (MAPF) problem instance.
-
-	# Fields
-		- `grid::Array{Int}`: Grid of the environment (1 for free cells 0 otherwise).
-		- `starts::Vector`: Starting positions of agents 
-		- `goals::Vector`: Goal positions of agents
-		- `optimal_values::Vector`: Optimal path costs for each agent.
-	"""
-	struct MAPF_Instance
-		grid::Array{Int}
-		starts::Vector
-		goals::Vector
-		optimal_values::Vector
-	end
-
+struct MAPF_Instance
+	height::Int
+	width::Int
+	graph::SimpleGraph
+	starts::Vector
+	goals::Vector
+	optimal_values::Vector
+	scenario_numbers::Vector{Int}
 end
 
 # ╔═╡ be0429e6-1ba3-43a8-8bdf-39acc196ca0b
@@ -38,12 +41,42 @@ struct MAPF_Solution
 	paths::Vector
 end
 
+# ╔═╡ 22e31170-98fc-40d0-a9c6-cf32b69e5d71
+begin
+	"""
+		coords_to_index(coord, width)
+	
+	Converts data format from coordinates (x, y) to index for graph format
+	"""
+	function coords_to_index(coord, width)
+		index = (coord[2]-1)*width + coord[1]
+		return index
+	end
+
+	"""
+		index_to_coords(index, width)
+	
+	Converts data format from index to coordinates
+	"""
+	function index_to_coords(index, width)
+		x = (index - 1) % width + 1
+        y = (index - 1) ÷ width + 1
+        return (x, y)
+    end
+end
+
 # ╔═╡ 6cbb0417-7459-4575-b7ab-381412754e50
-"Open map and scenarions"
-file_instance = readlines(open("../input/Berlin_1_256/Berlin_1_256.map"))
+"Open map"
+file_instance = readlines(open("../input/Berlin_1_256/instance/Berlin_1_256.map"))
 
 # ╔═╡ 19b915c2-cbb0-407b-b314-7facc1389bcc
-instance_data = readlines(open("../input/Berlin_1_256/Berlin_1_256-even-1.scen"))
+"Open scenarios"
+instance_data = readlines(open("../input/Berlin_1_256/instance/Berlin_1_256-even-1.scen"))
+
+# ╔═╡ 19152788-3a11-4da4-9e6e-a12086259fc8
+"Open solution"
+solutions = readlines(open("../input/Berlin_1_256/solution/Berlin_1_256.csv")) 
+# use later for benchmarking
 
 # ╔═╡ 70cc0e8e-597c-45c1-84bd-9db69435cf0b
 """
@@ -65,39 +98,51 @@ function convert_to_my_struct(file_instance, instance_data)
 	height = parse(Int, split(file_instance[2])[2])
 	width = parse(Int, split(file_instance[3])[2])
 
-	# Initialize the MAPF_Instance with a grid and vectors for start/goal/optimal values
-	instance = MAPF_Instance(zeros(Int, height, width), Vector{Tuple{Int,Int}}(undef,length(instance_data)-1), Vector{Tuple{Int,Int}}(undef,length(instance_data)-1), Vector{Float64}(undef,length(instance_data)-1))
+	# Initialize the MAPF_Instance with a graph and vectors for start/goal/optimal values
+	instance = MAPF_Instance(
+		height, 
+		width, 
+		SimpleGraph(height * width), 
+		Vector{Int}(undef,length(instance_data)-1), 
+		Vector{Int}(undef,length(instance_data)-1), 
+		Vector{Float64}(undef,length(instance_data)-1),
+		Vector{Int}(undef, length(instance_data) - 1)
+	)
 
-	# Fill in the grid based on map characters: '.' = free space (1), otherwise wall (0)
+	# Fill in the graph based on map characters: '.' = possible direction, otherwise obstacle
 	for i in 1:height
 		row = file_instance[i + 4]
         for j in 1:width
             if row[j] == '.'
-                instance.grid[i,j] = 1
-            else
-                instance.grid[i,j] = 0
+				for (di, dj) in ((0,1),(1,0))
+					ni = i + di
+					nj = j + dj
+					if 1 <= ni <= height && 1 <= nj <= width
+						if file_instance[ni+4][nj] == '.'
+							add_edge!(instance.graph, coords_to_index((i,j), width), coords_to_index((ni,nj),width))
+						end
+					end
+				end
             end
         end
-	end
-
-	# Collect all positions in the grid that are navigable (not used later)
-	possible_positions = []
-
-	for i in 1:height
-		row = file_instance[i + 4]
-        for j in 1:width
-			if instance.grid[i,j] == 1
-				push!(possible_positions,(i,j))
-			end
-		end
 	end
 
 	# Parse start, goal and optimal value for each agent from Scenario Instance
 	for i in 2:length(instance_data)
 		row = instance_data[i]
-		instance.starts[i-1] = (parse(Int, split(instance_data[i])[5])+1, parse(Int, split(instance_data[i])[6])+1)
-		instance.goals[i-1] = (parse(Int, split(instance_data[i])[7])+1, parse(Int, split(instance_data[i])[8])+1)
-		instance.optimal_values[i-1] = parse(Float64, split(instance_data[i])[9])+1
+		fields = split(row)
+
+		start_x = parse(Int, fields[5]) + 1
+		start_y = parse(Int, fields[6]) + 1  
+        goal_x = parse(Int, fields[7]) + 1  
+        goal_y = parse(Int, fields[8]) + 1
+		instance.scenario_numbers[i-1] = parse(Int, fields[1])
+		
+		instance.starts[i-1] = coords_to_index((start_x,start_y),width)
+			
+		instance.goals[i-1] = coords_to_index((goal_y,goal_x),width)
+			
+		instance.optimal_values[i-1] = parse(Float64, fields[9])
 	end
 
 	return instance
@@ -112,77 +157,60 @@ begin
 	paths = [[s] for s in instance.starts]  
 end
 
-# ╔═╡ 7176303c-2e0e-4590-a74b-99d5f40ddbe1
-print(paths)
-
-# ╔═╡ 191bfc80-31c8-4b74-8a8d-4aec95808c49
-function possible_directions(pos, grid)
-	dir = ["wait"]
-	
-	if pos[1] > 1
-		if grid[pos[1]-1,pos[2]] == 1
-			push!(dir, "up")
-		end
-	end
-	if pos[1] < size(grid)[1]
-		if grid[pos[1]+1,pos[2]] == 1
-			push!(dir, "down")
-		end
-	end
-	if pos[2] > 1
-		if grid[pos[1],pos[2]-1] == 1
-			push!(dir, "left")
-		end
-	end
-	if pos[2] < size(grid)[2]
-		if grid[pos[1],pos[2]+1] == 1
-			push!(dir, "right")
-		end
-	end
-	
-	return dir
-end
-
 # ╔═╡ 33771731-9f68-48b3-bc9f-444948aabb0d
-function position(s, time_step, path, grid)
+"""
+	path_evolution(s, time_step, path, graph)
+
+Generates and registers path for agent s
+
+# Arguments
+ - 's': contains index of s in graph
+ - 'time_step': time_step at the moment when the function is called
+ - 'path': vertices where agent s has already passed
+ - 'graph': graph where agent is situated
+
+# Returns
+ - 'new_pos': new position for agent s
+"""
+function path_evolution(s, time_step, path, graph)
 	if time_step == 0
 		return s
 	else
-		directions = possible_directions(path[end], grid)
-		dir = rand(directions)
-		new_pos = path[end]
-        
-        if dir == "up"
-            new_pos = (path[end][1] - 1, path[end][2])
-        elseif dir == "down"
-            new_pos = (path[end][1] + 1, path[end][2])
-        elseif dir == "left"
-            new_pos = (path[end][1], path[end][2] - 1)
-        elseif dir == "right"
-            new_pos = (path[end][1], path[end][2] + 1)
-        end
-        
-        if new_pos != path[end]
-            push!(path, new_pos)
-        end
-        return new_pos
+		possible_directions = neighbors(graph,s)
+		if !isempty(possible_directions)
+			new_pos = rand(possible_directions)
+			push!(path, new_pos)
+		else
+			new_pos = s
+		end
+		return new_pos
 	end
 end
 
 # ╔═╡ e8d4074f-bb61-4f01-9cfe-234c97eaa7ed
 begin
+	grid = ones(Float64, instance.height, instance.width)
+    for i in 1:instance.height
+        row = file_instance[i + 4]
+        for j in 1:instance.width
+            if row[j] != '.'
+                grid[i, j] = 0.0  # Obstacle
+            end
+        end
+    end
+	
     time_step = Observable(0.0)
     fig = Figure()
     ax = Axis(fig[1, 1], aspect = DataAspect())
     
-    heatmap!(ax, instance.grid, colormap = [:black, :white], colorrange = (0, 1))
+    heatmap!(ax, grid, colormap = [:black, :white], colorrange = (0, 1))
 	colors = Makie.categorical_colors(:tab20, 20)
 
 	# Number of start and goal points
-    n = length(instance.starts) # 950
+    n = length(instance.starts) 
     
     # Generate colors and markers
-    num_colors = 20
+    num_colors = length(colors)
 
 	markers = [:+,:hexagon,:circle,:pentagon,:diamond,:star4,:vline,:cross,:xcross,:rect,:ltriangle,:dtriangle,:utriangle,:star5,:star8,:star6,:rtriangle,:octagon,:hline,:x] 
     num_markers = length(markers)
@@ -191,15 +219,40 @@ begin
     marker_indices = [(div(i - 1, num_colors) % num_markers) + 1 for i in 1:n] 
     point_colors = [colors[color_indices[i]] for i in 1:n]
     point_markers = [markers[marker_indices[i]] for i in 1:n]
+
+	agent_positions = @lift begin
+        positions = Vector{Tuple{Float64, Float64}}(undef, n)
+        for i in 1:n
+            pos = path_evolution(instance.starts[i], $time_step, paths[i], instance.graph)
+            x, y = index_to_coords(pos, instance.width)
+            positions[i] = (x, y)
+        end
+        positions
+    end
     
     scatter!(
-        @lift([position(instance.starts[i], $time_step, paths[i], instance.grid)[1] for i in 1:length(instance.starts)]),
-        @lift([position(instance.starts[i], $time_step, paths[i], instance.grid)[2] for i in 1:length(instance.starts)]),
-        color = point_colors, marker = point_markers, markersize = 10
+        ax,
+        @lift([pos[1] for pos in $agent_positions]),
+        @lift([pos[2] for pos in $agent_positions]),
+        color = point_colors,
+        marker = point_markers,
+        markersize = 10
     )
-    scatter!([g[2] for g in instance.goals], [g[1] for g in instance.goals], color = point_colors, marker = point_markers, markersize = 10)
+    goal_coords = [index_to_coords(g, instance.width) for g in instance.goals]
+    scatter!(
+        ax,
+        [g[1] for g in goal_coords],
+        [g[2] for g in goal_coords],
+        color = point_colors,
+        marker = point_markers,
+        markersize = 10,
+        strokewidth = 1,
+        strokecolor = :black 
+    )
     
     ax.yreversed = true
+
+	ax.limits = (0.5, instance.width + 0.5, 0.5, instance.height + 0.5)
 
     framerate = 30
     timestamps = range(0, 20, step=1)
@@ -209,13 +262,22 @@ begin
     end
 end
 
+# ╔═╡ 5eb5d26e-0256-4d06-80d8-e1e31db6b881
+print(a_star(instance.graph, instance.starts[1], instance.goals[1]))
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+Cairo = "159f3aea-2a34-519c-b102-8c37f9878175"
+Fontconfig = "186bb1d3-e1f7-5a2c-a377-96d770f13627"
 GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
+Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
 
 [compat]
+Cairo = "~1.1.1"
+Fontconfig = "~0.4.1"
 GLMakie = "~0.11.8"
+Graphs = "~1.12.1"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -224,7 +286,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "30962ecc7d071655a5d18457efdf11e075fd5f8a"
+project_hash = "210eae4cb817ec28484271062886068603acc0ba"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -274,6 +336,12 @@ version = "0.4.2"
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 version = "1.1.2"
 
+[[deps.ArnoldiMethod]]
+deps = ["LinearAlgebra", "Random", "StaticArrays"]
+git-tree-sha1 = "d57bd3762d308bded22c3b82d033bff85f6195c6"
+uuid = "ec485272-7323-5ecc-a04f-4719b315124d"
+version = "0.4.0"
+
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 version = "1.11.0"
@@ -299,6 +367,11 @@ version = "0.4.7"
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 version = "1.11.0"
+
+[[deps.BaseDirs]]
+git-tree-sha1 = "03fea4a4efe25d2069c2d5685155005fc251c0a1"
+uuid = "18cc8868-cbac-4acf-b575-c8ff214dc66f"
+version = "1.3.0"
 
 [[deps.Bzip2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -326,6 +399,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "e329286945d0cfc04456972ea732551869af1cfc"
 uuid = "4e9b3aee-d8a1-5a3d-ad8b-7d824db253f0"
 version = "1.0.1+0"
+
+[[deps.Cairo]]
+deps = ["Cairo_jll", "Colors", "Glib_jll", "Graphics", "Libdl", "Pango_jll"]
+git-tree-sha1 = "71aa551c5c33f1a4415867fe06b7844faadb0ae9"
+uuid = "159f3aea-2a34-519c-b102-8c37f9878175"
+version = "1.1.1"
 
 [[deps.Cairo_jll]]
 deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
@@ -357,19 +436,15 @@ version = "3.29.0"
 
 [[deps.ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
-git-tree-sha1 = "67e11ee83a43eb71ddc950302c53bf33f0690dfe"
+git-tree-sha1 = "b10d0b65641d57b8b4d5e234446582de5047050d"
 uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
-version = "0.12.1"
-weakdeps = ["StyledStrings"]
-
-    [deps.ColorTypes.extensions]
-    StyledStringsExt = "StyledStrings"
+version = "0.11.5"
 
 [[deps.ColorVectorSpace]]
 deps = ["ColorTypes", "FixedPointNumbers", "LinearAlgebra", "Requires", "Statistics", "TensorCore"]
-git-tree-sha1 = "8b3b6f87ce8f65a2b4f857528fd8d70086cd72b1"
+git-tree-sha1 = "a1f44953f2382ebb937d60dafbe2deea4bd23249"
 uuid = "c3611d14-8923-5661-9e6a-0046d554d3a4"
-version = "0.11.0"
+version = "0.10.0"
 weakdeps = ["SpecialFunctions"]
 
     [deps.ColorVectorSpace.extensions]
@@ -377,9 +452,9 @@ weakdeps = ["SpecialFunctions"]
 
 [[deps.Colors]]
 deps = ["ColorTypes", "FixedPointNumbers", "Reexport"]
-git-tree-sha1 = "37ea44092930b1811e666c3bc38065d7d87fcc74"
+git-tree-sha1 = "362a287c3aa50601b0bc359053d5c2468f0e7ce0"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
-version = "0.13.1"
+version = "0.12.11"
 
 [[deps.Compat]]
 deps = ["TOML", "UUIDs"]
@@ -579,6 +654,12 @@ git-tree-sha1 = "05882d6995ae5c12bb5f36dd2ed3f61c98cbb172"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 version = "0.8.5"
 
+[[deps.Fontconfig]]
+deps = ["Fontconfig_jll", "Libdl", "Printf"]
+git-tree-sha1 = "e560c896d8081472db0c3f6d4bd2aa540ec176b1"
+uuid = "186bb1d3-e1f7-5a2c-a377-96d770f13627"
+version = "0.4.1"
+
 [[deps.Fontconfig_jll]]
 deps = ["Artifacts", "Bzip2_jll", "Expat_jll", "FreeType2_jll", "JLLWrappers", "Libdl", "Libuuid_jll", "Zlib_jll"]
 git-tree-sha1 = "301b5d5d731a0654825f1f2e906990f7141a106b"
@@ -603,10 +684,10 @@ uuid = "d7e528f0-a631-5988-bf34-fe36492bcfd7"
 version = "2.13.4+0"
 
 [[deps.FreeTypeAbstraction]]
-deps = ["ColorVectorSpace", "Colors", "FreeType", "GeometryBasics"]
-git-tree-sha1 = "d52e255138ac21be31fa633200b65e4e71d26802"
+deps = ["BaseDirs", "ColorVectorSpace", "Colors", "FreeType", "GeometryBasics", "Mmap"]
+git-tree-sha1 = "eaca92bac73aa42f68c57d1b8df1b746eeb2bdaa"
 uuid = "663a7486-cb36-511b-a19d-713bb74d65c9"
-version = "0.10.6"
+version = "0.10.7"
 
 [[deps.FriBidi_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -667,11 +748,23 @@ git-tree-sha1 = "fee60557e4f19d0fe5cd169211fdda80e494f4e8"
 uuid = "7746bdde-850d-59dc-9ae8-88ece973131d"
 version = "2.84.0+0"
 
+[[deps.Graphics]]
+deps = ["Colors", "LinearAlgebra", "NaNMath"]
+git-tree-sha1 = "a641238db938fff9b2f60d08ed9030387daf428c"
+uuid = "a2bd30eb-e257-5431-a919-1863eab51364"
+version = "1.1.3"
+
 [[deps.Graphite2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
 git-tree-sha1 = "8a6dbda1fd736d60cc477d99f2e7a042acfa46e8"
 uuid = "3b182d85-2403-5c21-9c21-1e1f0cc25472"
 version = "1.3.15+0"
+
+[[deps.Graphs]]
+deps = ["ArnoldiMethod", "Compat", "DataStructures", "Distributed", "Inflate", "LinearAlgebra", "Random", "SharedArrays", "SimpleTraits", "SparseArrays", "Statistics"]
+git-tree-sha1 = "3169fd3440a02f35e549728b0890904cfd4ae58a"
+uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
+version = "1.12.1"
 
 [[deps.GridLayoutBase]]
 deps = ["GeometryBasics", "InteractiveUtils", "Observables"]
@@ -1066,6 +1159,12 @@ version = "0.3.4"
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 version = "2023.12.12"
 
+[[deps.NaNMath]]
+deps = ["OpenLibm_jll"]
+git-tree-sha1 = "9b8215b1ee9e78a293f99797cd31375471b2bcae"
+uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
+version = "1.1.3"
+
 [[deps.Netpbm]]
 deps = ["FileIO", "ImageCore", "ImageMetadata"]
 git-tree-sha1 = "d92b107dbb887293622df7697a2223f9f8176fcd"
@@ -1178,9 +1277,9 @@ version = "0.5.12"
 
 [[deps.Pango_jll]]
 deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "FriBidi_jll", "Glib_jll", "HarfBuzz_jll", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "3b31172c032a1def20c98dae3f2cdc9d10e3b561"
+git-tree-sha1 = "275a9a6d85dc86c24d03d1837a0010226a96f540"
 uuid = "36c8627f-9965-5494-a995-c6b170f724f3"
-version = "1.56.1+0"
+version = "1.56.3+0"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
@@ -1445,9 +1544,9 @@ weakdeps = ["SparseArrays"]
 
 [[deps.StatsAPI]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "1ff449ad350c9c4cbc756624d6f8a8c3ef56d3ed"
+git-tree-sha1 = "9d72a13a3f4dd3795a195ac5a44d7d6ff5f552ff"
 uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
-version = "1.7.0"
+version = "1.7.1"
 
 [[deps.StatsBase]]
 deps = ["AliasTables", "DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
@@ -1810,14 +1909,15 @@ version = "1.8.1+0"
 # ╠═6113c002-1e04-4500-9f99-1a21ae7f6515
 # ╠═da57d160-3d49-11f0-30e9-e581010f39de
 # ╠═be0429e6-1ba3-43a8-8bdf-39acc196ca0b
+# ╠═22e31170-98fc-40d0-a9c6-cf32b69e5d71
 # ╠═6cbb0417-7459-4575-b7ab-381412754e50
 # ╠═19b915c2-cbb0-407b-b314-7facc1389bcc
+# ╠═19152788-3a11-4da4-9e6e-a12086259fc8
 # ╠═70cc0e8e-597c-45c1-84bd-9db69435cf0b
 # ╠═e46a4ad6-1617-4327-8ed0-f8fe5ce4875a
 # ╠═3f28514f-ca0e-480e-ad7e-091e178ea6ab
 # ╠═33771731-9f68-48b3-bc9f-444948aabb0d
-# ╠═7176303c-2e0e-4590-a74b-99d5f40ddbe1
-# ╠═191bfc80-31c8-4b74-8a8d-4aec95808c49
 # ╠═e8d4074f-bb61-4f01-9cfe-234c97eaa7ed
+# ╠═5eb5d26e-0256-4d06-80d8-e1e31db6b881
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
