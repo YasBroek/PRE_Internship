@@ -8,6 +8,7 @@ using InteractiveUtils
 begin
 	using GLMakie
 	using Graphs
+	using SimpleWeightedGraphs
 	import Cairo, Fontconfig
 end
 
@@ -24,7 +25,7 @@ end
 struct MAPF_Instance
 	height::Int
 	width::Int
-	graph::SimpleGraph
+	graph::SimpleWeightedGraph
 	starts::Vector
 	goals::Vector
 	optimal_values::Vector
@@ -92,7 +93,12 @@ Converts input data into a MAPF_Instance struct
 - 'MAPF_Instance' struct
 
 """
-function convert_to_my_struct(file_instance, instance_data)
+function convert_to_my_struct(file_instance, instance_data, num_agents)
+
+	max_agents = length(instance_data) - 1
+    if num_agents > max_agents
+        error("Requested number of agents ($num_agents) exceeds available agents ($max_agents)")
+    end
 	
 	# Parse the height and width of the grid from the file
 	height = parse(Int, split(file_instance[2])[2])
@@ -102,11 +108,11 @@ function convert_to_my_struct(file_instance, instance_data)
 	instance = MAPF_Instance(
 		height, 
 		width, 
-		SimpleGraph(height * width), 
-		Vector{Int}(undef,length(instance_data)-1), 
-		Vector{Int}(undef,length(instance_data)-1), 
-		Vector{Float64}(undef,length(instance_data)-1),
-		Vector{Int}(undef, length(instance_data) - 1)
+		SimpleWeightedGraph(height * width), 
+		Vector{Int}(undef,num_agents), 
+		Vector{Int}(undef,num_agents), 
+		Vector{Float64}(undef,num_agents),
+		Vector{Int}(undef, num_agents)
 	)
 
 	# Fill in the graph based on map characters: '.' = possible direction, otherwise obstacle
@@ -128,33 +134,31 @@ function convert_to_my_struct(file_instance, instance_data)
 	end
 
 	# Parse start, goal and optimal value for each agent from Scenario Instance
-	for i in 2:length(instance_data)
-		row = instance_data[i]
+	for i in 1:num_agents
+		row = instance_data[i+1]
 		fields = split(row)
 
 		start_x = parse(Int, fields[5]) + 1
 		start_y = parse(Int, fields[6]) + 1  
         goal_x = parse(Int, fields[7]) + 1  
         goal_y = parse(Int, fields[8]) + 1
-		instance.scenario_numbers[i-1] = parse(Int, fields[1])
 		
-		instance.starts[i-1] = coords_to_index((start_x,start_y),width)
-			
-		instance.goals[i-1] = coords_to_index((goal_y,goal_x),width)
-			
-		instance.optimal_values[i-1] = parse(Float64, fields[9])
+		instance.scenario_numbers[i] = parse(Int, fields[1])
+		instance.starts[i] = coords_to_index((start_x,start_y),width)
+		instance.goals[i] = coords_to_index((goal_y,goal_x),width)
+		instance.optimal_values[i] = parse(Float64, fields[9])
 	end
 
 	return instance
 end
 
 # ╔═╡ e46a4ad6-1617-4327-8ed0-f8fe5ce4875a
-instance = convert_to_my_struct(file_instance, instance_data)
+instance = convert_to_my_struct(file_instance, instance_data, 50)
 
 # ╔═╡ 3f28514f-ca0e-480e-ad7e-091e178ea6ab
 begin
-	#initialize list containing paths for each agent
-	paths = [[s] for s in instance.starts]  
+	# list containing paths for each agent (each sublist corresponds to a list of edges agent s passes throught)
+	paths = [a_star(instance.graph, instance.starts[s], instance.goals[s]) for s in 1:length(instance.starts)]  
 end
 
 # ╔═╡ 33771731-9f68-48b3-bc9f-444948aabb0d
@@ -188,7 +192,7 @@ function path_evolution(s, time_step, path, graph)
 end
 
 # ╔═╡ e8d4074f-bb61-4f01-9cfe-234c97eaa7ed
-begin
+function visualization(instance,paths)
 	grid = ones(Float64, instance.height, instance.width)
     for i in 1:instance.height
         row = file_instance[i + 4]
@@ -199,7 +203,7 @@ begin
         end
     end
 	
-    time_step = Observable(0.0)
+    time_step = Observable(0)
     fig = Figure()
     ax = Axis(fig[1, 1], aspect = DataAspect())
     
@@ -207,7 +211,7 @@ begin
 	colors = Makie.categorical_colors(:tab20, 20)
 
 	# Number of start and goal points
-    n = length(instance.starts) 
+    n = length(instance.starts)
     
     # Generate colors and markers
     num_colors = length(colors)
@@ -223,7 +227,15 @@ begin
 	agent_positions = @lift begin
         positions = Vector{Tuple{Float64, Float64}}(undef, n)
         for i in 1:n
-            pos = path_evolution(instance.starts[i], $time_step, paths[i], instance.graph)
+			pos = instance.starts[i]
+			if $time_step != 0
+				path = paths[i]
+            	if !isnothing(path) && length(path) > $time_step && !isnothing(path[$time_step])
+                	pos = dst(path[$time_step])  
+				elseif length(path) <= $time_step
+					pos = instance.goals[i]
+            	end
+			end
             x, y = index_to_coords(pos, instance.width)
             positions[i] = (x, y)
         end
@@ -236,7 +248,7 @@ begin
         @lift([pos[2] for pos in $agent_positions]),
         color = point_colors,
         marker = point_markers,
-        markersize = 10
+        markersize = 20
     )
     goal_coords = [index_to_coords(g, instance.width) for g in instance.goals]
     scatter!(
@@ -245,7 +257,7 @@ begin
         [g[2] for g in goal_coords],
         color = point_colors,
         marker = point_markers,
-        markersize = 10,
+        markersize = 20,
         strokewidth = 1,
         strokecolor = :black 
     )
@@ -255,15 +267,43 @@ begin
 	ax.limits = (0.5, instance.width + 0.5, 0.5, instance.height + 0.5)
 
     framerate = 30
-    timestamps = range(0, 20, step=1)
+    timestamps = range(0, maximum(length.(paths)), step=1)
     
     record(fig, "time_animation.mp4", timestamps; framerate = framerate) do t
         time_step[] = t
     end
 end
 
+# ╔═╡ 1575415c-b1ff-4a50-9c9a-2887ed0baf6e
+visualization(instance, paths)
+
 # ╔═╡ 5eb5d26e-0256-4d06-80d8-e1e31db6b881
-print(a_star(instance.graph, instance.starts[1], instance.goals[1]))
+for i in 1:length(instance.starts)
+	print(a_star(instance.graph, instance.starts[i], instance.goals[i]))
+end
+
+# ╔═╡ 99f8f0d2-83b2-436d-88a7-fb1bd735a505
+"""
+	conflict_verification(s1, s2)
+
+checks conflict locations between two agents s1 and s2
+
+# Arguments
+ - 's1', 's2': Agents being considered
+
+# Returns
+ - 'conflicts': List with graph vertices where there are conflicts between designed paths for s1 and s2
+"""
+function conflict_verification(s1, s2)
+	conflicts = []
+	if s1 != s2
+		for i in 1:minimum(length.([s1,s2]))
+			if dst(s1[i]) == dst(s2[i])
+				push!(conflicts, dst(s1[i])) 
+			end
+		end
+	end
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -272,12 +312,14 @@ Cairo = "159f3aea-2a34-519c-b102-8c37f9878175"
 Fontconfig = "186bb1d3-e1f7-5a2c-a377-96d770f13627"
 GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+SimpleWeightedGraphs = "47aef6b3-ad0c-573a-a1e2-d07658019622"
 
 [compat]
 Cairo = "~1.1.1"
 Fontconfig = "~0.4.1"
 GLMakie = "~0.11.8"
 Graphs = "~1.12.1"
+SimpleWeightedGraphs = "~1.5.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -286,7 +328,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "210eae4cb817ec28484271062886068603acc0ba"
+project_hash = "6f38a0d4bfdb591ae64d02765ce1e15688a9d3f4"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1473,6 +1515,12 @@ git-tree-sha1 = "5d7e3f4e11935503d3ecaf7186eac40602e7d231"
 uuid = "699a6c99-e7fa-54fc-8d76-47d257e15c1d"
 version = "0.9.4"
 
+[[deps.SimpleWeightedGraphs]]
+deps = ["Graphs", "LinearAlgebra", "Markdown", "SparseArrays"]
+git-tree-sha1 = "3e5f165e58b18204aed03158664c4982d691f454"
+uuid = "47aef6b3-ad0c-573a-a1e2-d07658019622"
+version = "1.5.0"
+
 [[deps.Sixel]]
 deps = ["Dates", "FileIO", "ImageCore", "IndirectArrays", "OffsetArrays", "REPL", "libsixel_jll"]
 git-tree-sha1 = "2da10356e31327c7096832eb9cd86307a50b1eb6"
@@ -1916,8 +1964,10 @@ version = "1.8.1+0"
 # ╠═70cc0e8e-597c-45c1-84bd-9db69435cf0b
 # ╠═e46a4ad6-1617-4327-8ed0-f8fe5ce4875a
 # ╠═3f28514f-ca0e-480e-ad7e-091e178ea6ab
-# ╠═33771731-9f68-48b3-bc9f-444948aabb0d
+# ╟─33771731-9f68-48b3-bc9f-444948aabb0d
 # ╠═e8d4074f-bb61-4f01-9cfe-234c97eaa7ed
+# ╠═1575415c-b1ff-4a50-9c9a-2887ed0baf6e
 # ╠═5eb5d26e-0256-4d06-80d8-e1e31db6b881
+# ╠═99f8f0d2-83b2-436d-88a7-fb1bd735a505
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
