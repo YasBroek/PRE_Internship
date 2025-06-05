@@ -1,0 +1,12 @@
+name = "MAPF_code"
+uuid = "511f466d-0648-49a4-bbc0-f2c3218a5342"
+authors = ["YasBroek <yasmin.van-den-broek@ensta-paris.fr>"]
+version = "0.1.0"
+
+[deps]
+Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+
+[compat]
+Graphs = "1.12.1"
+Makie = "0.22.10"
