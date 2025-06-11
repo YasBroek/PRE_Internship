@@ -28,18 +28,24 @@ As for the constraints, we have to make sure of the flow conservation for the pa
 
 ## Training Procedure
 
+For training, we use some of the instances provided by the benchmarking. We initially make weight predictions using GNN, then perturb these predictions in m different ways, with copies of Normal distributions multiplied by a temperature constant, using the result to make a Monte Carlo prediction. Finally, we calculate loss using the Fetchel-Young loss function:
+
+L(w) = E_{Z ~ N(0, I)} [ <y_Z, θ + εZ> ] + ε * Ω(y*) - <θ, y*>
+
 - Input: x (Instance), y_optimum
-- Initialize epsilon, M (number of perturbations), Z (noise distribution), n (learning rate)
+- Initialize ε, M (number of perturbations), Z (noise distribution)
 - Function phi_w:
-    - theta = GNN(x)
+    - θ = GNN(x)
     - ym = []
     - for m in 1:M:
         - Zm ~ Z
-        - perturbed_theta <- theta + epsilon*Zm
-        - ym[m] <- parallelized_planning(x, perturbed_theta)
+        - perturbed_θ <- θ + ε*Zm
+        - ym[m] <- parallelized_planning(x, perturbed_θ)
     - end
     - y_estimate <- sum(ym)/M
-    - F_epsilon <- (1/M) * sum([<y_m, θ + ε * Zm> for y_m in ym])
-    - loss <- F_epsilon + epsilon * Omega(y_optimum) - <theta, y_optimum>
-    - return loss, y_estimate
+    - F_ε <- (1/M) * sum([<y_m, θ + ε * Zm> for y_m in ym])
+    - loss <- F_ε + ε * Ω(y_optimum) - <θ, y_optimum>
+    - return loss, θ
 - end
+
+Run it a number of times for each instance to minimize loss
