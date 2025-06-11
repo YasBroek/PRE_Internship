@@ -28,18 +28,18 @@ As for the constraints, we have to make sure of the flow conservation for the pa
 
 ## Training Procedure
 
-Input: x (Instance), y_optimum
-Initialize epsilon, M (number of perturbations), Z (noise distribution), n (learning rate)
-Function phi_w:
-    theta = GNN(x)
-    ym = []
-    for m in 1:M:
-        Zm ~ Z
-        perturbed_theta <- theta + epsilon*Zm
-        ym[m] <- parallelized_planning(x, perturbed_theta)
-    end
-    y_estimate <- sum(ym)/M
-    F_epsilon <- (1/M) * sum([<y_m, θ + ε * Zm> for y_m in ym])
-    loss <- F_epsilon + epsilon * Omega(y_optimum) - <theta, y_optimum>
-    return loss, y_estimate
-end
+- Input: x (Instance), y_optimum
+- Initialize epsilon, M (number of perturbations), Z (noise distribution), n (learning rate)
+- Function phi_w:
+    - theta = GNN(x)
+    - ym = []
+    - for m in 1:M:
+        - Zm ~ Z
+        - perturbed_theta <- theta + epsilon*Zm
+        - ym[m] <- parallelized_planning(x, perturbed_theta)
+    - end
+    - y_estimate <- sum(ym)/M
+    - F_epsilon <- (1/M) * sum([<y_m, θ + ε * Zm> for y_m in ym])
+    - loss <- F_epsilon + epsilon * Omega(y_optimum) - <theta, y_optimum>
+    - return loss, y_estimate
+- end
