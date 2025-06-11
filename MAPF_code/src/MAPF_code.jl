@@ -2,9 +2,11 @@ module MAPF_code
 
 using GLMakie
 using Graphs
-using SimpleWeightedGraphs
 import Cairo, Fontconfig
-using ProfileView
+using Profile
+using GraphNeuralNetworks
+using Flux
+using Distributions
 
 include("structs.jl")
 include("import_data.jl")

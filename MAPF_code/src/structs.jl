@@ -10,7 +10,7 @@
 struct MAPF_Instance
 	height::Int
 	width::Int
-	graph::SimpleWeightedGraph
+	graph::SimpleGraph
 	starts::Vector
 	goals::Vector
 	optimal_values::Vector

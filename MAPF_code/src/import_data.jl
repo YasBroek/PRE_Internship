@@ -1,11 +1,11 @@
 "Open map"
-file_instance = readlines(open("input/Berlin_1_256/instance/Berlin_1_256.map"))
+file_instance = readlines(open("../input/Berlin_1_256/instance/Berlin_1_256.map"))
 
 "Open scenarios"
-instance_data = readlines(open("input/Berlin_1_256/instance/Berlin_1_256-even-1.scen"))
+instance_data = readlines(open("../input/Berlin_1_256/instance/Berlin_1_256-even-1.scen"))
 
 "Open solution"
-solutions = readlines(open("input/Berlin_1_256/solution/Berlin_1_256.csv")) 
+solutions = readlines(open("../input/Berlin_1_256/solution/Berlin_1_256.csv")) 
 
 """
     convert_to_my_struct(file_instance, instance_data)
@@ -35,7 +35,7 @@ function convert_to_my_struct(file_instance, instance_data, num_agents)
 	instance = MAPF_Instance(
 		height, 
 		width, 
-		SimpleWeightedGraph(height * width), 
+		SimpleGraph(height * width), 
 		Vector{Int}(undef,num_agents), 
 		Vector{Int}(undef,num_agents), 
 		Vector{Float64}(undef,num_agents),

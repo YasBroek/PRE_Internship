@@ -1,6 +1,4 @@
-# ProfileView.@profview convert_to_my_struct(file_instance, instance_data, 3)
-
-instance = convert_to_my_struct(file_instance, instance_data, 3)
+instance = convert_to_my_struct(file_instance, instance_data, 5)
 
 """
     paths
