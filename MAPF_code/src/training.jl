@@ -21,7 +21,8 @@
 M = 10
 epochs = 5
 ω = # GNN model
-α = 0.1
+# linear regression
+    α = 0.1
 
 for epoch in 1:epochs
     θ = ω(instance)
@@ -31,7 +32,9 @@ for epoch in 1:epochs
         perturbed_θ = θ + ϵ * Z_m
         y_m[m] = prioritized_planning(x, perturbed_θ)
     end
-    y_estimate = sum(y_m)/M
+    y_estimate = sum(y_m) / M
     fenchel_loss_gradient = instance.y_optimum - y_estimate
-    ω = ω - α * fenchel_loss_gradient * (dy_estimate/dθ) * (dθ/dω)
+    ω = ω - α * fenchel_loss_gradient * (dθ / dω)
 end
+
+# use independent shortest paths as feature

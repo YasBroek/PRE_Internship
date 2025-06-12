@@ -2,7 +2,8 @@ module MAPF_code
 
 using GLMakie
 using Graphs
-import Cairo, Fontconfig
+using Cairo: Cairo
+using Fontconfig: Fontconfig
 using Profile
 using GraphNeuralNetworks
 using Flux

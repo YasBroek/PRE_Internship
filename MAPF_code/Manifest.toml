@@ -2,7 +2,7 @@
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "7853a52d78dec30b1e99fcad2d81f91b0fa66dab"
+project_hash = "6c545eccb9954934de2f820325f3441c0ed218d1"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -263,6 +263,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl"]
 git-tree-sha1 = "f3743181e30d87c23d9c8ebd493b77f43d8f1890"
 uuid = "78a364fa-1a3c-552a-b4bb-8fa0f9c1fcca"
 version = "0.10.4+0"
+
+[[deps.CodeTracking]]
+deps = ["InteractiveUtils", "UUIDs"]
+git-tree-sha1 = "062c5e1a5bf6ada13db96a4ae4749a4c2234f521"
+uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
+version = "1.3.9"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -1160,6 +1166,12 @@ git-tree-sha1 = "eac1206917768cb54957c65a615460d87b455fc1"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
 version = "3.1.1+0"
 
+[[deps.JuliaInterpreter]]
+deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
+git-tree-sha1 = "6ac9e4acc417a5b534ace12690bc6973c25b862f"
+uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
+version = "0.10.3"
+
 [[deps.JuliaVariables]]
 deps = ["MLStyle", "NameResolution"]
 git-tree-sha1 = "49fb3cb53362ddadb4415e9b73926d6b40709e70"
@@ -1360,6 +1372,12 @@ deps = ["Dates", "Logging"]
 git-tree-sha1 = "f02b56007b064fbfddb4c9cd60161b6dd0f40df3"
 uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
 version = "1.1.0"
+
+[[deps.LoweredCodeUtils]]
+deps = ["JuliaInterpreter"]
+git-tree-sha1 = "4ef1c538614e3ec30cb6383b9eb0326a5c3a9763"
+uuid = "6f1432cf-f94c-5a45-995e-cdbf5db27b0b"
+version = "3.3.0"
 
 [[deps.MAT]]
 deps = ["BufferedStreams", "CodecZlib", "HDF5", "SparseArrays"]
@@ -1980,6 +1998,16 @@ deps = ["UUIDs"]
 git-tree-sha1 = "62389eeff14780bfe55195b7204c0d8738436d64"
 uuid = "ae029012-a4dd-5104-9daa-d747884805df"
 version = "1.3.1"
+
+[[deps.Revise]]
+deps = ["CodeTracking", "FileWatching", "JuliaInterpreter", "LibGit2", "LoweredCodeUtils", "OrderedCollections", "REPL", "Requires", "UUIDs", "Unicode"]
+git-tree-sha1 = "f6f7d30fb0d61c64d0cfe56cf085a7c9e7d5bc80"
+uuid = "295af30f-e4ad-537b-8983-00126c2a3abe"
+version = "3.8.0"
+weakdeps = ["Distributed"]
+
+    [deps.Revise.extensions]
+    DistributedExt = "Distributed"
 
 [[deps.Rmath]]
 deps = ["Random", "Rmath_jll"]
