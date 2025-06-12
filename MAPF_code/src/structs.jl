@@ -15,6 +15,7 @@ struct MAPF_Instance
 	goals::Vector
 	optimal_values::Vector
 	scenario_numbers::Vector{Int}
+	y_optimum::Float64
 end
 
 """

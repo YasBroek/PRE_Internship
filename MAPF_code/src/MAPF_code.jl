@@ -7,6 +7,8 @@ using Profile
 using GraphNeuralNetworks
 using Flux
 using Distributions
+using Random
+using LinearAlgebra
 
 include("structs.jl")
 include("import_data.jl")
