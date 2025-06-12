@@ -32,20 +32,19 @@ For training, we use some of the instances provided by the benchmarking. We init
 
 L(w) = E_{Z ~ N(0, I)} [ <y_Z, θ + εZ> ] + ε * Ω(y*) - <θ, y*>
 
-- Input: x (Instance), y_optimum
+- Input: z (Instance), y_optimum
 - Initialize ε, M (number of perturbations), Z (noise distribution)
-- Function phi_w:
-    - θ = GNN(x)
-    - ym = []
-    - for m in 1:M:
-        - Zm ~ Z
-        - perturbed_θ <- θ + ε*Zm
-        - ym[m] <- parallelized_planning(x, perturbed_θ)
-    - end
-    - y_estimate <- sum(ym)/M
-    - F_ε <- (1/M) * sum([<y_m, θ + ε * Zm> for y_m in ym])
-    - loss <- F_ε + ε * Ω(y_optimum) - <θ, y_optimum>
-    - return loss, θ
-- end
-
-Run it a number of times for each instance to minimize loss
+- for each epoch do
+    - for each instance (x, θ, y_optimum) do
+        - θ = GNN_ω(x)
+        - ym = []
+        - for m in 1:M:
+            - Zm ~ Z
+            - perturbed_θ <- θ + ε*Zm
+            - ym[m] <- parallelized_planning(x, perturbed_θ)
+        - end for
+        - y_estimate <- sum(ym)/M
+        - loss_gradient<- -(y_estimate - y_optimum)     # Fenchel Young loss gradient
+        - ω = ω - α * loss_gradient * (dy_estimate/dθ) * (dθ/dω)
+    - end for
+- end for
