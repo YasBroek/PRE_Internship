@@ -10,10 +10,12 @@ using Flux
 using Distributions
 using Random
 using LinearAlgebra
+using SimpleWeightedGraphs
 
 include("structs.jl")
 include("import_data.jl")
 include("visualization.jl")
 include("find_path.jl")
+include("training.jl")
 
 end # module MAPF_code
