@@ -11,6 +11,7 @@ using Distributions
 using Random
 using LinearAlgebra
 using SimpleWeightedGraphs
+using InferOpt
 
 include("structs.jl")
 include("import_data.jl")

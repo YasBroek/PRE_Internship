@@ -34,8 +34,10 @@ function conflict_verification(s1, s2, paths)
 end
 
 function prioritized_planning(instance::MAPF_Instance)
-    paths = Vector{Vector{Edge}}(undef, length(instance.starts))
-    for agent in size(instance.starts)
+    paths = Vector{Vector{SimpleWeightedEdge{Int64,Float64}}}(
+        undef, length(instance.starts)
+    )
+    for agent in 1:length(instance.starts)
         if agent == 1
             paths[agent] = a_star(
                 instance.graph, instance.starts[agent], instance.goals[agent]
@@ -44,10 +46,10 @@ function prioritized_planning(instance::MAPF_Instance)
             paths[agent] = a_star(
                 instance.graph, instance.starts[agent], instance.goals[agent]
             )
-            instance_graph_copy = instance.graph
+            instance_graph_copy = deepcopy(instance.graph)
             for s1 in 1:(agent - 1)
                 conflicts = conflict_verification(s1, agent, paths)
-                while conflicts
+                while !isempty(conflicts)
                     for edge in conflicts
                         rem_edge!(instance_graph_copy, edge)
                         conflicts = [x for x in conflicts if x != edge]

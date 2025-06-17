@@ -27,8 +27,8 @@ function extract_features(instance::MAPF_Instance)
                 c += 1
             end
         end
-        features[edge, 1] = c # conflict-based feature
-        features[edge, 2] = degree(instance.graph, dst(edge_list[edge])) # degree-based feature
+        features[edge, 1] = c  # conflict-based feature
+        features[edge, 2] = degree(instance.graph, dst(edge_list[edge]))  # degree-based feature
     end
     return features
 end
@@ -47,8 +47,7 @@ function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T}) where {
     edge_list = collect(edges(instance.graph))
 
     for (i, edge) in enumerate(edge_list)
-        rem_edge!(instance.graph, src(edge), dst(edge))
-        add_edge!(instance.graph, src(edge), dst(edge), perturbed_θ[i])
+        instance.graph.weights[src(edge), dst(edge)] = perturbed_θ[i]
     end
     return instance
 end
@@ -85,6 +84,41 @@ function training_LR(
     local y_estimate, fenchel_loss_gradient
     for epoch in 1:num_epochs
         θ = linear_regression(features, regression_weights)
+        y_m = Vector{Float64}(undef, M)
+        for m in 1:M
+            Z_m = randn(size(θ))
+            perturbed_θ = θ + ϵ * Z_m
+            adapted_instance = adapt_weights(adapted_instance, perturbed_θ)
+            y_m[m] = path_cost(solution_algorithm(adapted_instance))
+        end
+        y_estimate = sum(y_m) / M
+        fenchel_loss_gradient = instance.y_optimum - y_estimate
+        regression_weights =
+            regression_weights -
+            α * fenchel_loss_gradient * [mean(features[:, 1]), mean(features[:, 2])]
+        println(
+            "Epoch $epoch, y_estimate: $y_estimate, loss: $fenchel_loss_gradient, regression_weights: $regression_weights",
+        )
+    end
+    return y_estimate,
+    fenchel_loss_gradient,
+    path_cost(prioritized_planning(adapted_instance))
+end
+
+function training_general(
+    instance::MAPF_Instance,
+    solution_algorithm::Function,
+    ϵ::Float64,
+    M::Int,
+    α::Float64,
+    num_epochs::Int,
+)
+    features = extract_features(instance)
+    regression_weights = randn(2)
+    adapted_instance = deepcopy(instance)
+    local y_estimate, fenchel_loss_gradient
+    for epoch in 1:num_epochs
+        θ = linear_regression(features, regression_weights) #   to be changed
         y_m = Vector{Float64}(undef, M)
         for m in 1:M
             Z_m = randn(size(θ))
