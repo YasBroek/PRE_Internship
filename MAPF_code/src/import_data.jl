@@ -43,7 +43,7 @@ function convert_to_my_struct(file_instance, instance_data, num_agents, instance
     instance = MAPF_Instance(
         height,
         width,
-        SimpleWeightedDiGraph(height * width),
+        SimpleWeightedGraph(height * width),
         Vector{Int}(undef, num_agents),
         Vector{Int}(undef, num_agents),
         Vector{Float64}(undef, num_agents),

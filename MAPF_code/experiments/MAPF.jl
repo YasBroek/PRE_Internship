@@ -9,7 +9,7 @@ file_instance = readlines(open("input/Berlin_1_256/instance/Berlin_1_256.map"))
 instance_data = readlines(open("input/Berlin_1_256/instance/Berlin_1_256-even-1.scen"))
 instance_type_id = 1
 instance_scen_type = "even"
-num_agents = 50
+num_agents = 5
 
 "Open solution"
 solutions = readlines(open("input/Berlin_1_256/solution/Berlin_1_256.csv"))
@@ -35,4 +35,4 @@ MAPF_code.visualization(
     file_instance, instance, MAPF_code.independent_shortest_paths(instance)
 )
 
-@info MAPF_code.extract_features(instance)
+MAPF_code.training_LR(instance, MAPF_code.independent_shortest_paths, 0.1, 10, 0.01, 3)

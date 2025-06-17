@@ -13,17 +13,17 @@ function extract_features(instance::MAPF_Instance)
     edge_list = collect(edges(instance.graph))
     paths = independent_shortest_paths(instance)
     conflicts = []
-    c = 0
     for s1 in 1:length(instance.starts)
-        for s2 in 1:length(instance.starts)
-            for vertice in conflict_verification(s1, s2, paths)
-                push!(conflicts, vertice)
+        for s2 in (s1 + 1):length(instance.starts)
+            for edge in conflict_verification(s1, s2, paths)
+                push!(conflicts, edge)
             end
         end
     end
     for edge in 1:ne(instance.graph)
-        for vertice in conflicts
-            if dst(edge_list[edge]) == vertice
+        c = 0
+        for item in conflicts
+            if edge_list[edge] == item
                 c += 1
             end
         end
@@ -34,7 +34,23 @@ function extract_features(instance::MAPF_Instance)
 end
 
 function linear_regression(edge_features::Array{Int}, regression_weights::Vector{Float64})
-    return edge_features * regression_weights'
+    return edge_features * regression_weights
+end
+
+function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T}) where {T<:Real}
+    num_edges = ne(instance.graph)
+    length(perturbed_θ) == num_edges || throw(
+        ArgumentError(
+            "perturbed_θ must have length $num_edges, got $(length(perturbed_θ))"
+        ),
+    )
+    edge_list = collect(edges(instance.graph))
+
+    for (i, edge) in enumerate(edge_list)
+        rem_edge!(instance.graph, src(edge), dst(edge))
+        add_edge!(instance.graph, src(edge), dst(edge), perturbed_θ[i])
+    end
+    return instance
 end
 
 """
@@ -64,17 +80,23 @@ function training_LR(
     num_epochs::Int,
 )
     features = extract_features(instance)
-    regression_weights = randn(1, 2)
-    for _ in 1:num_epochs
+    regression_weights = randn(2)
+    adapted_instance = deepcopy(instance)
+    local y_estimate, fenchel_loss_gradient
+    for epoch in 1:num_epochs
         θ = linear_regression(features, regression_weights)
         y_m = Vector{Float64}(undef, M)
         for m in 1:M
             Z_m = randn(size(θ))
             perturbed_θ = θ + ϵ * Z_m
-            y_m[m] = solution_algorithm(x, perturbed_θ) # make it depend on weights
+            adapted_instance = adapt_weights(adapted_instance, perturbed_θ)
+            y_m[m] = path_cost(solution_algorithm(adapted_instance))
         end
         y_estimate = sum(y_m) / M
         fenchel_loss_gradient = instance.y_optimum - y_estimate
-        regression_weights = regression_weights - α * fenchel_loss_gradient * features
+        regression_weights =
+            regression_weights - α * fenchel_loss_gradient * vec(mean(features; dims=1)) # Ask Guillaume
+        println("Epoch $epoch, y_estimate: $y_estimate, loss: $fenchel_loss_gradient")
     end
+    return y_estimate, fenchel_loss_gradient
 end

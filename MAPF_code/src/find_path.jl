@@ -62,3 +62,11 @@ function prioritized_planning(instance::MAPF_Instance)
     end
     return paths
 end
+
+function path_cost(paths)
+    total_cost = 0
+    for path in paths
+        total_cost = total_cost + length(path)
+    end
+    return total_cost
+end
