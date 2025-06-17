@@ -33,10 +33,29 @@ function extract_features(instance::MAPF_Instance)
     return features
 end
 
+"""
+    function linear_regression(edge_features::Array{Int}, regression_weights::Vector{Float64})
+Used to apply linear regression to a feature Matrix
+
+# Arguments
+ - edge_features: Matrix of edges x features
+ - regression_weights: Calculated weights for each feature
+"""
 function linear_regression(edge_features::Array{Int}, regression_weights::Vector{Float64})
     return edge_features * regression_weights
 end
 
+"""
+    function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T})
+Attributes new calculated weights to graph edges
+
+# Arguments
+ - instance: constains graph which will be adapted
+ - perturbed_θ: vector containing incoming weights for edges
+
+# Returns
+ - adapted instance with new weights
+"""
 function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T}) where {T<:Real}
     num_edges = ne(instance.graph)
     length(perturbed_θ) == num_edges || throw(
@@ -53,22 +72,16 @@ function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T}) where {
 end
 
 """
-- Input: z (Instance), y_optimum
-- Initialize ε, M (number of perturbations), Z (noise distribution)
-- for each epoch do
-    - for each instance (x, θ, y_optimum) do
-        - θ = GNN_ω(x)
-        - ym = []
-        - for m in 1:M:
-            - Zm ~ Z
-            - perturbed_θ <- θ + ε*Zm
-            - ym[m] <- parallelized_planning(x, perturbed_θ)
-        - end for
-        - y_estimate <- sum(ym)/M
-        - loss_gradient<- -(y_estimate - y_optimum)     # Fenchel Young loss gradient
-        - ω = ω - α * loss_gradient * (dy_estimate/dθ) * (dθ/dω)
-    - end for
-- end for
+    Function training_LR(instance::MAPF_Instance, solution_algorithm::Function, ϵ::Float64, M::Int, α::Float64, num_epochs::Int)
+training function for machine learning
+
+# Arguments
+ - instance used for training
+ - solution_algorithm: function that will be used for finding a solution at each iteration
+ - ϵ: perturbation argument
+ - M: number of iterations for Monte Carlo sampling
+ - α: learning rate 
+ - num_epochs: number of epochs for training
 """
 function training_LR(
     instance::MAPF_Instance,
@@ -79,7 +92,7 @@ function training_LR(
     num_epochs::Int,
 )
     features = extract_features(instance)
-    regression_weights = randn(2)
+    regression_weights = randn(2) # weights for features
     adapted_instance = deepcopy(instance)
     local y_estimate, fenchel_loss_gradient
     for epoch in 1:num_epochs
