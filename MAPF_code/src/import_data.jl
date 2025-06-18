@@ -9,8 +9,8 @@ function coords_to_index(coord, width)
 end
 
 function index_to_coords(index, width)
-    x = (index - 1) % width + 1
-    y = (index - 1) ÷ width + 1
+    x = (index % width == 0 ? width : index % width)
+    y = (index % width == 0 ? index / width : div(index, width) + 1)
     return (x, y)
 end
 
@@ -56,7 +56,7 @@ function convert_to_my_struct(file_instance, instance_data, num_agents, instance
         row = file_instance[i + 4]
         for j in 1:width
             if row[j] == '.'
-                for (di, dj) in ((0, 1), (1, 0))
+                for (di, dj) in ((0, 1), (1, 0), (0, 0))
                     ni = i + di
                     nj = j + dj
                     if 1 <= ni <= height && 1 <= nj <= width
@@ -65,6 +65,7 @@ function convert_to_my_struct(file_instance, instance_data, num_agents, instance
                                 instance.graph,
                                 coords_to_index((i, j), width),
                                 coords_to_index((ni, nj), width),
+                                1,
                             )
                         end
                     end
@@ -78,14 +79,14 @@ function convert_to_my_struct(file_instance, instance_data, num_agents, instance
         row = instance_data[i + 1]
         fields = split(row)
 
-        start_x = parse(Int, fields[5]) + 1
-        start_y = parse(Int, fields[6]) + 1
-        goal_x = parse(Int, fields[7]) + 1
-        goal_y = parse(Int, fields[8]) + 1
+        start_x = parse(Int, fields[5])
+        start_y = parse(Int, fields[6])
+        goal_x = parse(Int, fields[7])
+        goal_y = parse(Int, fields[8])
 
         instance.scenario_numbers[i] = parse(Int, fields[1])
-        instance.starts[i] = coords_to_index((start_x, start_y), width)
-        instance.goals[i] = coords_to_index((goal_y, goal_x), width)
+        instance.starts[i] = (coords_to_index((start_x, start_y), width))
+        instance.goals[i] = coords_to_index((goal_x, goal_y), width)
         instance.optimal_values[i] = parse(Float64, fields[9])
     end
 

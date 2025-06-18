@@ -91,8 +91,11 @@ function training_LR(
     α::Float64,
     num_epochs::Int,
 )
+    y_independent_shortest_paths = path_to_binary(
+        instance, independent_shortest_paths(instance)
+    )
     features = extract_features(instance)
-    regression_weights = randn(2) # weights for features
+    regression_weights = randn(2)
     adapted_instance = deepcopy(instance)
     local y_estimate, fenchel_loss_gradient
     for epoch in 1:num_epochs
@@ -102,13 +105,11 @@ function training_LR(
             Z_m = randn(size(θ))
             perturbed_θ = θ + ϵ * Z_m
             adapted_instance = adapt_weights(adapted_instance, perturbed_θ)
-            y_m[m] = path_cost(solution_algorithm(adapted_instance))
+            y_m[m] = path_to_binary(instance, independent_shortest_paths(adapted_instance))
         end
         y_estimate = sum(y_m) / M
-        fenchel_loss_gradient = instance.y_optimum - y_estimate
-        regression_weights =
-            regression_weights -
-            α * fenchel_loss_gradient * [mean(features[:, 1]), mean(features[:, 2])]
+        fenchel_loss_gradient = y_independent_shortest_paths - y_estimate
+        regression_weights = regression_weights - α * fenchel_loss_gradient * features
         println(
             "Epoch $epoch, y_estimate: $y_estimate, loss: $fenchel_loss_gradient, regression_weights: $regression_weights",
         )

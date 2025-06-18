@@ -95,7 +95,7 @@ function visualization(file_instance, instance, paths)
 
     ax.limits = (0.5, instance.width + 0.5, 0.5, instance.height + 0.5)
 
-    framerate = 30
+    framerate = 5
     timestamps = range(0, maximum(length.(paths)); step=1)
 
     record(fig, "time_animation.mp4", timestamps; framerate=framerate) do t
