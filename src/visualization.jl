@@ -4,17 +4,32 @@ function visualization(file_instance, instance, paths)
         row = file_instance[i + 4]
         for j in 1:(instance.width)
             if row[j] != '.'
-                grid[i, j] = 0.0  # Obstacle
+                grid[j, i] = 0.0  # Obstacle
             end
         end
     end
 
     time_step = Observable(0)
-    fig = Figure()
+    fig = Figure(; resolution=(800, 800))  # Increase resolution for a bigger display
+
     ax = Axis(fig[1, 1]; aspect=DataAspect())
 
     heatmap!(ax, grid; colormap=[:black, :white], colorrange=(0, 1))
     colors = Makie.categorical_colors(:tab20, 20)
+
+    # Draw vertical grid lines
+    for x in 1:(instance.width - 1)
+        lines!(
+            ax, [x + 0.5, x + 0.5], [0.5, instance.height + 0.5]; color=:gray70, linewidth=1
+        )
+    end
+
+    # Draw horizontal grid lines
+    for y in 1:(instance.height - 1)
+        lines!(
+            ax, [0.5, instance.width + 0.5], [y + 0.5, y + 0.5]; color=:gray70, linewidth=1
+        )
+    end
 
     # Number of start and goal points
     n = length(instance.starts)

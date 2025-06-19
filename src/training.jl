@@ -14,7 +14,7 @@ function extract_features(instance::MAPF_Instance)
     paths = independent_shortest_paths(instance)
     conflicts = []
     for s1 in 1:length(instance.starts)
-        for s2 in (s1 + 1):length(instance.starts)
+        for s2 in (s1+1):length(instance.starts)
             for edge in conflict_verification(s1, s2, paths)
                 push!(conflicts, edge)
             end
@@ -84,67 +84,46 @@ training function for machine learning
  - num_epochs: number of epochs for training
 """
 function training_LR(
-    instance::MAPF_Instance,
-    solution_algorithm::Function,
-    ϵ::Float64,
-    M::Int,
-    α::Float64,
-    num_epochs::Int,
+    instance::MAPF_Instance, ϵ::Float64, M::Int, α::Float64, num_epochs::Int
 )
-    y_independent_shortest_paths = path_to_binary(
+    y_independent_shortest_paths = path_to_binary_vector(
         instance, independent_shortest_paths(instance)
     )
     features = extract_features(instance)
     regression_weights = randn(2)
     adapted_instance = deepcopy(instance)
     local y_estimate, fenchel_loss_gradient
+    epoch_list = [x for x in 1:num_epochs]
+    loss_list = Vector{Float64}(undef, num_epochs)
     for epoch in 1:num_epochs
+        y_estimate = zeros(ne(instance.graph))
         θ = linear_regression(features, regression_weights)
-        y_m = Vector{Float64}(undef, M)
+        y_m = Vector{Vector{Int}}(undef, M)
         for m in 1:M
             Z_m = randn(size(θ))
             perturbed_θ = θ + ϵ * Z_m
             adapted_instance = adapt_weights(adapted_instance, perturbed_θ)
-            y_m[m] = path_to_binary(instance, independent_shortest_paths(adapted_instance))
+            y_m[m] = path_to_binary_vector(instance, independent_shortest_paths(adapted_instance))
+            y_estimate += path_to_binary_vector(instance, independent_shortest_paths(adapted_instance))
         end
-        y_estimate = sum(y_m) / M
+        y_estimate = y_estimate ./ M
         fenchel_loss_gradient = y_independent_shortest_paths - y_estimate
-        regression_weights = regression_weights - α * fenchel_loss_gradient * features
+        println(size(fenchel_loss_gradient), size(features), size(regression_weights))
+        regression_weights = regression_weights - α * (features' * fenchel_loss_gradient)
         println(
-            "Epoch $epoch, y_estimate: $y_estimate, loss: $fenchel_loss_gradient, regression_weights: $regression_weights",
+            "Epoch $epoch, loss: $fenchel_loss_gradient, regression_weights: $regression_weights",
         )
     end
-    return y_estimate,
+    display(lineplot(
+        epoch_list,
+        loss_list;
+        title="Loss over time",
+        name="my line",
+        xlabel="epoch",
+        ylabel="loss",
+    ))
+
+    return prioritized_planning(adapted_instance),
     fenchel_loss_gradient,
     path_cost(prioritized_planning(adapted_instance))
-end
-
-function training_general(
-    instance::MAPF_Instance,
-    solution_algorithm::Function,
-    ϵ::Float64,
-    M::Int,
-    α::Float64,
-    num_epochs::Int,
-)
-    features = extract_features(instance)
-    regression_weights = randn(2)
-    adapted_instance = deepcopy(instance)
-    local y_estimate, fenchel_loss_gradient
-    for epoch in 1:num_epochs
-        θ = linear_regression(features, regression_weights) #   to be changed
-        y_m = Vector{Float64}(undef, M)
-        for m in 1:M
-            Z_m = randn(size(θ))
-            perturbed_θ = θ + ϵ * Z_m
-            adapted_instance = adapt_weights(adapted_instance, perturbed_θ)
-            y_m[m] = path_cost(solution_algorithm(adapted_instance))
-        end
-        y_estimate = sum(y_m) / M
-        fenchel_loss_gradient = instance.y_optimum - y_estimate
-        regression_weights =
-            regression_weights - α * fenchel_loss_gradient * vec(mean(features; dims=1)) # Ask Guillaume
-        println("Epoch $epoch, y_estimate: $y_estimate, loss: $fenchel_loss_gradient")
-    end
-    return y_estimate, fenchel_loss_gradient
 end

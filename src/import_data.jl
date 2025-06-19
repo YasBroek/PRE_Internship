@@ -63,9 +63,8 @@ function convert_to_my_struct(file_instance, instance_data, num_agents, instance
                         if file_instance[ni + 4][nj] == '.'
                             add_edge!(
                                 instance.graph,
-                                coords_to_index((i, j), width),
-                                coords_to_index((ni, nj), width),
-                                1,
+                                coords_to_index((j, i), width),
+                                coords_to_index((nj, ni), width),
                             )
                         end
                     end
@@ -79,13 +78,13 @@ function convert_to_my_struct(file_instance, instance_data, num_agents, instance
         row = instance_data[i + 1]
         fields = split(row)
 
-        start_x = parse(Int, fields[5])
-        start_y = parse(Int, fields[6])
-        goal_x = parse(Int, fields[7])
-        goal_y = parse(Int, fields[8])
+        start_x = parse(Int, fields[5]) + 1
+        start_y = parse(Int, fields[6]) + 1
+        goal_x = parse(Int, fields[7]) + 1
+        goal_y = parse(Int, fields[8]) + 1
 
         instance.scenario_numbers[i] = parse(Int, fields[1])
-        instance.starts[i] = (coords_to_index((start_x, start_y), width))
+        instance.starts[i] = coords_to_index((start_x, start_y), width)
         instance.goals[i] = coords_to_index((goal_x, goal_y), width)
         instance.optimal_values[i] = parse(Float64, fields[9])
     end

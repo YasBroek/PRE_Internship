@@ -12,6 +12,7 @@ using Random
 using LinearAlgebra
 using SimpleWeightedGraphs
 using InferOpt
+using UnicodePlots
 
 include("structs.jl")
 include("import_data.jl")
