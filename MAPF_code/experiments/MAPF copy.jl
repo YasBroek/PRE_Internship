@@ -20,7 +20,11 @@ instance = MAPF_code.convert_to_my_struct(
     file_instance, instance_data, num_agents, instance_solution
 )
 
-path_prioritized = MAPF_code.prioritized_planning(instance)
+@profview for _ in 1:5
+    @info MAPF_code.timed_graph(instance.graph, 3)
+end
+
+path_prioritized = MAPF_code.prioritized_planning_v2(instance)
 
 MAPF_code.visualization(file_instance, instance, path_prioritized)
 
@@ -82,3 +86,11 @@ for agent in 1:length(instance.starts)
         end
     end
 end
+
+g = SimpleWeightedGraph(3)
+
+add_edge!(g, 1, 2, 0.5);
+
+add_edge!(g, 2, 3, 0.8);
+
+add_edge!(g, 1, 3, 2.0);

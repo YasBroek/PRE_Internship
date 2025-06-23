@@ -14,6 +14,7 @@ using SimpleWeightedGraphs
 using InferOpt
 using UnicodePlots
 using DataStructures
+using MetaGraphsNext
 
 include("structs.jl")
 include("import_data.jl")

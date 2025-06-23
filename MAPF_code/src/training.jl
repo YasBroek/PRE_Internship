@@ -90,7 +90,7 @@ function training_LR(instance_list, ϵ::Float64, M::Int, α::Float64, num_epochs
     local y_estimate, fenchel_loss_gradient
     for epoch in 1:num_epochs
         for instance in instance_list
-            y_independent_shortest_paths = path_to_binary_vector(
+            y_independent_shortest_paths = path_to_binary_matrix(
                 instance, independent_shortest_paths(instance)
             )
             features = extract_features(instance)

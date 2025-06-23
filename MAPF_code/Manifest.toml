@@ -2,7 +2,7 @@
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "4f4a3b1406ad956eb2c08c5895c552f4f20a1b5a"
+project_hash = "cb0ab1280ce121fd178b694b06d83be9440058a7"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1572,6 +1572,12 @@ deps = ["ColorTypes", "FileIO", "GeometryBasics", "Printf"]
 git-tree-sha1 = "c009236e222df68e554c7ce5c720e4a33cc0c23f"
 uuid = "7269a6da-0436-5bbc-96c2-40638cbb6118"
 version = "0.5.3"
+
+[[deps.MetaGraphsNext]]
+deps = ["Graphs", "JLD2", "SimpleTraits"]
+git-tree-sha1 = "1e3b196ecbbf221d4d3696ea9de4288bea4c39f9"
+uuid = "fa8bd995-216d-47f1-8a91-f3b68fbeb377"
+version = "0.7.3"
 
 [[deps.MethodAnalysis]]
 deps = ["AbstractTrees"]

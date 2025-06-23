@@ -33,52 +33,71 @@ function conflict_verification(s1, s2, paths)
     return conflicts
 end
 
-function timed_graph(instance::MAPF_Instance, num_time_steps::Int)
-    n = nv(instance.graph)
-    new_graph = SimpleWeightedGraph(n * num_time_steps)
-
-    for t in 1:(num_time_steps - 1)
-        for v in 1:n
-            v_curr = (t - 1) * n + v
-            # Permite ficar no mesmo lugar (wait)
-            add_edge!(new_graph, v_curr, v_curr + n)
-
-            for u in outneighbors(instance.graph, v)
-                u_next = (t) * n + u
-                add_edge!(new_graph, v_curr, u_next)
-            end
+function timed_graph(g::SimpleWeightedGraph, max_len::Int)
+    timed_graph = MetaGraph(SimpleWeightedGraph{Int,Float64}(); label_type=Tuple{Int,Int})
+    v_list = [(v, t) for v in vertices(g), t in 1:max_len]
+    for vt in v_list
+        add_vertex!(timed_graph, vt)
+    end
+    for e in collect(edges(g))
+        for t in 1:(max_len - 1)
+            add_edge!(timed_graph, (src(e), t), (dst(e), t + 1))
         end
     end
-    return new_graph
-end
+    for v in vertices(g)
+        for t in 1:(max_len - 1)
+            add_edge!(timed_graph, (v, t), (v, t + 1))
+        end
+    end
 
-node_id(v, t) = (t - 1) * n + v
+    return timed_graph
+end
 
 function prioritized_planning_v2(instance::MAPF_Instance)
     paths = Vector{Vector{SimpleWeightedEdge{Int64,Float64}}}(
         undef, length(instance.starts)
     )
-    mutable_graph = timed_graph(instance, 100)
-    for agent in 1:length(instance.starts)
-        if agent == 1
-            paths[agent] = a_star(
-                instance.graph, instance.starts[agent], instance.goals[agent]
-            )
-            if isempty(paths[agent])
-                error("No path found for agent $agent")
-            end
-            for i in 1:length(paths[agent])
-                rem_edge!(
-                    mutable_graph, src(paths[agent][i]) * i, dst(paths[agents][i]) * (i + 1)
+    paths[1] = a_star(instance.graph, instance.starts[1], instance.goals[1])
+    max_len = length(paths[1])
+    mutable_graph = timed_graph(instance.graph, max_len)
+    for (t, e) in enumerate(paths[1])
+        rem_vertex!(mutable_graph, (t, dst(e)))
+    end
+    independent_paths = independent_shortest_paths(instance)
+    for agent in 2:length(instance.starts)
+        path_found = false
+        new_path = []
+        t = independent_paths[agent]
+        while !path_found
+            if t <= max_len
+                new_path = a_star(
+                    mutable_graph, (instance.starts[agent], 1), (instance.goals[agent], t)
                 )
-                for n in neighbors(instance.graph, dst(paths[agent][i]))
-                    rem_edge!(mutable_graph, n * i, dst(paths[agent][i]) * (i + 1))
+            else
+                println("estendendo o bagulho")
+                mutable_graph = timed_graph(instance.graph, t)
+                for s in 1:(agent - 1)
+                    for i in 1:(t - max_len)
+                        push!(
+                            paths[s],
+                            SimpleWeightedEdge(instance.goals[s], instance.goals[s]),
+                        )
+                        rem_vertex!(mutable_graph, (instance.goals[s], i))
+                    end
                 end
+                new_path = a_star(
+                    mutable_graph, (instance.starts[agent], 1), (instance.goals[agent], t)
+                )
+                max_len = t
             end
-        else
-            paths[agent] = a_a_star(
-                mutable_graph, instance.starts[agent], instance.goals[agent]
-            )
+            if !isempty(new_path)
+                for e in new_path
+                    push!(paths[agent], src(e)[1], dst(e)[1])
+                end
+                path_found = true
+            end
+            t += 1
+            println("t: ", t)
         end
     end
 end
