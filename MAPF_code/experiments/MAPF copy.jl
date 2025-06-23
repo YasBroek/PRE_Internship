@@ -40,6 +40,7 @@ MAPF_code.training_LR(instance, 0.5, 10, 0.001, 500)
 @info instance.goals[10]
 
 cc = 0
+lista = []
 for agent in 1:length(instance.starts)
     for s1 in 1:length(instance.starts)
         if s1 != agent
@@ -51,6 +52,10 @@ for agent in 1:length(instance.starts)
                         (src(path_prioritized[agent][i]) == dst(path_prioritized[s1][i]))
                     )
                     cc += 1
+                    push!(
+                        lista,
+                        (agent, s1, path_prioritized[agent][i], path_prioritized[s1][i]),
+                    )
                 end
             end
         end
@@ -58,3 +63,22 @@ for agent in 1:length(instance.starts)
 end
 
 cc
+@info lista
+
+for agent in 1:length(instance.starts)
+    for s1 in 1:length(instance.starts)
+        if s1 != agent
+            for i in 1:min(length(path_prioritized[s1]), length(path_prioritized[agent]))
+                e1 = path_prioritized[agent][i]
+                e2 = path_prioritized[s1][i]
+                if dst(e1) == dst(e2) ||
+                    e1 == e2 ||
+                    (dst(e1) == src(e2) && src(e1) == dst(e2))
+                    println("Conflito t=$i entre Agente $agent e $s1:")
+                    println("    $agent: ", src(e1), " -> ", dst(e1))
+                    println("    $s1: ", src(e2), " -> ", dst(e2))
+                end
+            end
+        end
+    end
+end

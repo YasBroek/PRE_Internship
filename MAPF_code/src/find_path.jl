@@ -132,7 +132,7 @@ function prioritized_planning(instance::MAPF_Instance)
                         conflict = true
                         conflict_agent = s1
                         rem_edge!(instance_copy.graph, src(new_path[i]), dst(new_path[i]))
-                        println("primeiro for ", agent, conflict)
+                        println("Got conflict here: ", agent)
                         break
                     end
                 end
@@ -152,7 +152,7 @@ function prioritized_planning(instance::MAPF_Instance)
                                 paths[agent][i] = SimpleWeightedEdge(pos, pos)
                             end
 
-                            println("empty 1", agent)
+                            println("empty: ", agent)
                             conflict = false
                         else
                             list = deepcopy(paths[conflict_agent])
@@ -190,14 +190,14 @@ function prioritized_planning(instance::MAPF_Instance)
                                 )
                                 conflict_found = true
                                 conflict_agent = s1
-                                println("eita")
+                                println("Caught another conflict")
                                 rem_edge!(
                                     instance_copy.graph, src(new_path[i]), dst(new_path[i])
                                 )
                             end
                         end
                         if !conflict_found
-                            println("ufa")
+                            println("Solved")
                             paths[agent][i] = new_path[i]
                             conflict = false
                         end
