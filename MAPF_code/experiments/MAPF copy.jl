@@ -13,17 +13,17 @@ instance_data = readlines(
 )
 instance_type_id = 1
 instance_scen_type = "even"
-num_agents = 50
+num_agents = 3
 
 instance_solution = 12
 instance = MAPF_code.convert_to_my_struct(
     file_instance, instance_data, num_agents, instance_solution
 )
-
+collect(vertices(MAPF_code.timed_graph(instance.graph, 3)))
 @profview for _ in 1:5
     @info MAPF_code.timed_graph(instance.graph, 3)
 end
-
+num_agents
 path_prioritized = MAPF_code.prioritized_planning_v2(instance)
 
 MAPF_code.visualization(file_instance, instance, path_prioritized)

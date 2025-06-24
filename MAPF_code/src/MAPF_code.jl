@@ -15,6 +15,7 @@ using InferOpt
 using UnicodePlots
 using DataStructures
 using MetaGraphsNext
+using Base.Threads
 
 include("structs.jl")
 include("import_data.jl")
