@@ -98,7 +98,7 @@ function training_LR(instance_list, ϵ::Float64, M::Int, α::Float64, num_epochs
             y_estimate = zeros(length(instance.starts, ne(instance.graph)))
 
             θ = linear_regression(features, regression_weights)
-            y_m = Vector{Matrix{Int,Int}}(undef, M)
+            y_m = Vector{Matrix{Int}}(undef, M)
             for m in 1:M
                 Z_m = randn(size(θ))
                 perturbed_θ = θ + ϵ * Z_m
