@@ -65,6 +65,22 @@ function convert_to_my_struct(file_instance, instance_data, num_agents, instance
                                 instance.graph,
                                 coords_to_index((j, i), width),
                                 coords_to_index((nj, ni), width),
+                                1.0,
+                            )
+                        end
+                    end
+                end
+                for (di, dj) in ((1, 1), (-1, 1))
+                    ni = i + di
+                    nj = j + dj
+                    if 1 <= ni <= height && 1 <= nj <= width
+                        if file_instance[ni + 4][j] == "." &&
+                            file_instance[i + 4][nj] == "."
+                            add_edge!(
+                                instance.graph,
+                                coords_to_index((j, i), width),
+                                coords_to_index((nj, ni), width),
+                                sqrt(2),
                             )
                         end
                     end

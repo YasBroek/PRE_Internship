@@ -31,3 +31,9 @@ struct TimeState
     vertex::Int
     time_step::Int
 end
+
+mutable struct TimeExpandedGraph
+    s_g::SimpleWeightedGraph
+    t::Int
+    rem::Vector{Int}
+end

@@ -1,6 +1,7 @@
 using Revise
 using MAPF_code
 using Graphs
+using SimpleWeightedGraphs
 
 "Open map"
 file_instance = readlines(

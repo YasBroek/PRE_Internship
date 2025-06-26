@@ -22,6 +22,7 @@ ProfileView = "c46f51b8-102a-5cf2-8d2c-8597cb0e0da7"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 SimpleWeightedGraphs = "47aef6b3-ad0c-573a-a1e2-d07658019622"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"
 
 [compat]
@@ -43,4 +44,5 @@ ProfileView = "1.10.1"
 Random = "1.11.0"
 Revise = "3.8.0"
 SimpleWeightedGraphs = "1.5.0"
+SparseArrays = "1.11.0"
 UnicodePlots = "3.8.0"

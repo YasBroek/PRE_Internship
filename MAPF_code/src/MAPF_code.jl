@@ -16,8 +16,10 @@ using UnicodePlots
 using DataStructures
 using MetaGraphsNext
 using Base.Threads
+using SparseArrays
 
 include("structs.jl")
+include("TEG_methods.jl")
 include("import_data.jl")
 include("visualization.jl")
 include("find_path.jl")

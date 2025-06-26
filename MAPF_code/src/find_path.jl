@@ -51,9 +51,9 @@ function timed_graph(g::SimpleWeightedGraph, max_len::Int)
     return timed_graph
 end
 
-function unite_goal(g::SimpleWeightedGraph, goal::Int, max_len::Int)
-    n = nv(g) ÷ max_len
-    for t in 1:(max_len - 1)
+function unite_goal(instance::MAPF_Instance, teg::TimeExpandedGraph)
+    n = nv(instance.graph)
+    for t in 1:(teg.t - 1)
         src_idx = (t - 1) * n + goal
         dst_idx = t * n + goal
         if 1 <= src_idx <= nv(g) && 1 <= dst_idx <= nv(g)
@@ -71,29 +71,48 @@ function prioritized_planning_v2(instance::MAPF_Instance)
     )
     paths[1] = a_star(instance.graph, instance.starts[1], instance.goals[1])
     independent_paths = independent_shortest_paths(instance)
-    max_len = maximum(length(path) for path in independent_paths)
+    max_len = maximum(length(path) for path in independent_paths) * 3
 
-    while length(paths[1]) < max_len
-        push!(paths[1], SimpleWeightedEdge(dst(paths[1][end]), dst(paths[1][end]), 1.0))
+    n = Graphs.nv(instance.graph)
+
+    rem_list = [dst(e) + n * t for (t, e) in enumerate(paths[1])]
+    for pos in (length(paths[1]) + 1):max_len
+        push!(rem_list, (pos - 1) * n + instance.goals[1])
     end
+
     println("Creating mutable_graph")
-    mutable_graph = timed_graph(instance.graph, max_len)
-    n = nv(instance.graph)
-    for (t, e) in enumerate(paths[1])
-        for v in neighbors(mutable_graph, (t - 1) * nv(instance.graph) + dst(e))
-            rem_edge!(mutable_graph, v, (t - 1) * nv(instance.graph) + dst(e))
-        end
-        rem_edge!(mutable_graph, dst(e) + t * n, src(e) + (t - 1) * n)
-    end
+    mutable_graph = TimeExpandedGraph(instance.graph, max_len, rem_list)
+
     for agent in 2:length(instance.starts)
         paths[agent] = Vector{SimpleWeightedEdge{Int64,Float64}}()
         println(agent)
-        temporary_graph = unite_goal(mutable_graph, instance.goals[agent], max_len)
+        t_initial = length(paths[agent])
         new_path = a_star(
-            temporary_graph,
+            mutable_graph,
             instance.starts[agent],
-            (max_len - 1) * n + instance.goals[agent],
+            instance.goals[agent] + (t_initial - 1) * n,
         )
+        while isempty(new_path)
+            t_initial += 1
+            if t_initial <= max_len
+                new_path = a_star(
+                    mutable_graph,
+                    instance.starts[agent],
+                    instance.goals[agent] + (t_initial - 1) * n,
+                )
+            else
+                mutable_graph.t += 1
+                for s1 in 1:(agent - 1)
+                    push!(mutable_graph.rem, instance.goals[s1])
+                end
+                new_path = a_star(
+                    mutable_graph,
+                    instance.starts[agent],
+                    instance.goals[agent] + (t_initial - 1) * n,
+                )
+            end
+        end
+
         for e in new_path
             src_local = ((src(e) - 1) % n) + 1
             dst_local = ((dst(e) - 1) % n) + 1
@@ -101,10 +120,10 @@ function prioritized_planning_v2(instance::MAPF_Instance)
             push!(paths[agent], SimpleWeightedEdge(src_local, dst_local))
         end
         for (t, e) in enumerate(paths[agent])
-            for v in neighbors(mutable_graph, (t - 1) * nv(instance.graph) + dst(e))
-                rem_edge!(mutable_graph, v, (t - 1) * nv(instance.graph) + dst(e))
-            end
-            rem_edge!(mutable_graph, dst(e) + t * n, src(e) + (t - 1) * n)
+            push!(mutable_graph.rem, dst(e) + n * t)
+        end
+        for pos in (length(paths[agent]) + 1):(mutable_graph.t)
+            push!(mutable_graph.rem, (pos - 1) * n + instance.goals[1])
         end
     end
     return paths
