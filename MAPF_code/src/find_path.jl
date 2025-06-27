@@ -6,6 +6,15 @@ function independent_shortest_paths(instance::MAPF_Instance)
     return paths
 end
 
+function euclidean_heuristic(t::Int, width::Int)
+    vertex_t = index_to_coords(t, width)
+
+    return v -> begin
+        vertex_v = index_to_coords(v, width)
+        return sqrt((vertex_v[1] - vertex_t[1])^2 + (vertex_v[2] - vertex_t[2])^2)
+    end
+end
+
 """
 	conflict_verification(s1, s2)
 
@@ -69,11 +78,18 @@ function prioritized_planning_v2(instance::MAPF_Instance)
     paths = Vector{Vector{SimpleWeightedEdge{Int64,Float64}}}(
         undef, length(instance.starts)
     )
-    paths[1] = a_star(instance.graph, instance.starts[1], instance.goals[1])
+    heuristic = euclidean_heuristic(instance.goals[1], instance.width)
+    paths[1] = a_star(
+        instance.graph,
+        instance.starts[1],
+        instance.goals[1],
+        weights(instance.graph),
+        heuristic,
+    )
     independent_paths = independent_shortest_paths(instance)
     max_len = maximum(length(path) for path in independent_paths) * 3
 
-    n = Graphs.nv(instance.graph)
+    n = nv(instance.graph)
 
     rem_list = [dst(e) + n * t for (t, e) in enumerate(paths[1])]
     for pos in (length(paths[1]) + 1):max_len
@@ -87,18 +103,25 @@ function prioritized_planning_v2(instance::MAPF_Instance)
         paths[agent] = Vector{SimpleWeightedEdge{Int64,Float64}}()
         println(agent)
         t_initial = length(paths[agent])
+        heuristic = euclidean_heuristic(instance.goals[agent], instance.width)
         new_path = a_star(
             mutable_graph,
             instance.starts[agent],
             instance.goals[agent] + (t_initial - 1) * n,
+            weights(mutable_graph),
+            heuristic,
         )
+        print("ola")
         while isempty(new_path)
             t_initial += 1
             if t_initial <= max_len
+                heuristic = euclidean_heuristic(instance.goals[agent], instance.width)
                 new_path = a_star(
                     mutable_graph,
                     instance.starts[agent],
                     instance.goals[agent] + (t_initial - 1) * n,
+                    weights(mutable_graph),
+                    heuristic,
                 )
             else
                 mutable_graph.t += 1

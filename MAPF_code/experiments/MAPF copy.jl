@@ -27,7 +27,6 @@ end
 num_agents
 
 path_prioritized = MAPF_code.prioritized_planning_v2(instance)
-
 MAPF_code.visualization(file_instance, instance, path_prioritized)
 
 @info MAPF_code.prioritized_planning(instance)
@@ -96,3 +95,5 @@ add_edge!(g, 1, 2, 0.5);
 add_edge!(g, 2, 3, 0.8);
 
 add_edge!(g, 1, 3, 2.0);
+
+maximum([length(path) for path in MAPF_code.independent_shortest_paths(inst)])

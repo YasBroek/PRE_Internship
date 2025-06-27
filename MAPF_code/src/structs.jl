@@ -32,7 +32,7 @@ struct TimeState
     time_step::Int
 end
 
-mutable struct TimeExpandedGraph
+mutable struct TimeExpandedGraph <: AbstractGraph{Int}
     s_g::SimpleWeightedGraph
     t::Int
     rem::Vector{Int}

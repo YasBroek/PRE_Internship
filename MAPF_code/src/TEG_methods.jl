@@ -1,20 +1,28 @@
-edgetype(::TimeExpandedGraph) = SimpleWeightedEdge{Int}
-has_edge(g::TimeExpandedGraph, e::SimpleWeightedEdge) = e in edges(g) ? true : false
-has_vertex(g::TimeExpandedGraph, v::Int) = v in vertices(g) ? true : false
-nv(g::TimeExpandedGraph) = Graphs.nv(g.s_g) * g.t - length(unique(g.rem))
-is_directed(g::TimeExpandedGraph) = true
-is_directed(::Type{<:TimeExpandedGraph}) = true
-neighbors(g::TimeExpandedGraph, v::Int) = outneighbors(g, v)
-weight(g::TimeExpandedGraph, u::Int, v::Int) = begin
+Graphs.edgetype(::TimeExpandedGraph) = SimpleWeightedEdge{Int}
+Graphs.has_edge(g::TimeExpandedGraph, e::SimpleWeightedEdge) = e in edges(g)
+Graphs.has_vertex(g::TimeExpandedGraph, v::Int) = v in vertices(g)
+Graphs.nv(g::TimeExpandedGraph) = Graphs.nv(g.s_g) * g.t
+Graphs.is_directed(g::TimeExpandedGraph) = true
+Graphs.is_directed(::Type{<:TimeExpandedGraph}) = true
+Graphs.neighbors(g::TimeExpandedGraph, v::Int) = outneighbors(g, v)
+
+function Graphs.weights(g::TimeExpandedGraph)
+    n = nv(g)
+    W = spzeros(Float64, n, n)
+
     for e in edges(g)
-        if src(e) == u && dst(e) == v
-            return weight(e)
-        end
+        u, v = src(e), dst(e)
+
+        orig_u = (u % nv(g.s_g) == 0 ? nv(g.s_g) : u % nv(g.s_g))
+        orig_v = (v % nv(g.s_g) == 0 ? nv(g.s_g) : v % nv(g.s_g))
+
+        W[u, v] = Graphs.weights(g.s_g)[orig_u, orig_v]
     end
-    return Inf
+
+    return W
 end
 
-function edges(g::TimeExpandedGraph)
+function Graphs.edges(g::TimeExpandedGraph)
     edge_list = []
     for v in Graphs.vertices(g.s_g)
         for n in Graphs.neighbors(g.s_g, v)
@@ -35,17 +43,19 @@ function edges(g::TimeExpandedGraph)
     return edge_list
 end
 
-function vertices(g::TimeExpandedGraph)
+function Graphs.vertices(g::TimeExpandedGraph)
     vertex_list = [
         Graphs.nv(g.s_g) * (i - 1) + v for v in 1:Graphs.nv(g.s_g) for i in 1:(g.t)
     ]
+    """
     for item in g.rem
         filter!(x -> x != item, vertex_list)
     end
+    """
     return vertex_list
 end
 
-function inneighbors(g::TimeExpandedGraph, v::Int)
+function Graphs.inneighbors(g::TimeExpandedGraph, v::Int)
     if v in g.rem
         inneighbors = []
     elseif (v//Graphs.nv(g.s_g)) > 1
@@ -60,7 +70,7 @@ function inneighbors(g::TimeExpandedGraph, v::Int)
     return inneighbors
 end
 
-function outneighbors(g::TimeExpandedGraph, v::Int)
+function Graphs.outneighbors(g::TimeExpandedGraph, v::Int)
     nv_sg = Graphs.nv(g.s_g)
     time = (v - 1) ÷ nv_sg
     outneighbors = [
@@ -72,6 +82,6 @@ function outneighbors(g::TimeExpandedGraph, v::Int)
     return outneighbors
 end
 
-function ne(g::TimeExpandedGraph)
+function Graphs.ne(g::TimeExpandedGraph)
     return length(edges(g))
 end
