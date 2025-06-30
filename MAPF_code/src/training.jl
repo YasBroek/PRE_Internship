@@ -9,7 +9,7 @@ Extracts features from an instance for each edge
  - Matrix of edges x features
 """
 function extract_features(instance::MAPF_Instance)
-    features = Array{Int}(undef, ne(instance.graph), 2)
+    features = zeros(Float64, ne(instance.graph), 2)
     edge_list = collect(edges(instance.graph))
     paths = independent_shortest_paths(instance)
     conflicts = []
@@ -41,7 +41,9 @@ Used to apply linear regression to a feature Matrix
  - edge_features: Matrix of edges x features
  - regression_weights: Calculated weights for each feature
 """
-function linear_regression(edge_features::Array{Int}, regression_weights::Vector{Float64})
+function linear_regression(
+    edge_features::Array{Float64}, regression_weights::Vector{Float64}
+)
     return edge_features * regression_weights
 end
 
@@ -84,44 +86,40 @@ training function for machine learning
  - num_epochs: number of epochs for training
 """
 function training_LR(instance_list, ϵ::Float64, M::Int, α::Float64, num_epochs::Int)
-    regression_weights = randn(2) # I'm thinking this should be turning into a matrix: maybe just repeat same weights for each agent? or think about order taken in prioritized planning (though it might make more sense when I use PP as algorithm)
+    regression_weights = randn(2)
     epoch_list = [x for x in 1:(num_epochs * length(instance_list))]
     loss_list = []
     local y_estimate, fenchel_loss_gradient
     for epoch in 1:num_epochs
         for instance in instance_list
-            y_independent_shortest_paths = path_to_binary_matrix(
+            y_independent_shortest_paths = path_to_binary_vector(
                 instance, independent_shortest_paths(instance)
             )
             features = extract_features(instance)
             weighted_instance = deepcopy(instance)
-            y_estimate = zeros(length(instance.starts, ne(instance.graph)))
+            y_estimate = zeros(ne(instance.graph))
 
             θ = linear_regression(features, regression_weights)
-            y_m = Vector{Matrix{Int}}(undef, M)
+            y_m = Vector{Vector{Int}}(undef, M)
             for m in 1:M
                 Z_m = randn(size(θ))
                 perturbed_θ = θ + ϵ * Z_m
+                weighted_instance = deepcopy(instance)
                 weighted_instance = adapt_weights(weighted_instance, perturbed_θ)
-                y_m[m] = path_to_binary_matrix(
-                    instance, independent_shortest_paths(adapted_instance)
+                y_m[m] = path_to_binary_vector(
+                    weighted_instance, independent_shortest_paths(weighted_instance)
                 )
-                y_estimate += path_to_binary_matrix(
-                    instance, independent_shortest_paths(adapted_instance)
+                y_estimate += path_to_binary_vector(
+                    weighted_instance, independent_shortest_paths(weighted_instance)
                 )
             end
             y_estimate = y_estimate ./ M
             fenchel_loss_gradient = y_independent_shortest_paths - y_estimate
-            println(size(fenchel_loss_gradient), size(features), size(regression_weights))
-            regression_weights =
-                regression_weights - α * (features' * fenchel_loss_gradient)
-            println(
-                "Epoch $epoch, instance $instance, loss: $fenchel_loss_gradient, regression_weights: $regression_weights",
-            )
-            push!(loss_list, sum(abs(fenchel_loss_gradient)))
+            regression_weights = regression_weights - α * features' * fenchel_loss_gradient
+            push!(loss_list, sum(abs.(fenchel_loss_gradient)))
         end
     end
-    display(
+    return display(
         lineplot(
             epoch_list,
             loss_list;
@@ -131,8 +129,4 @@ function training_LR(instance_list, ϵ::Float64, M::Int, α::Float64, num_epochs
             ylabel="loss",
         ),
     )
-
-    return prioritized_planning(adapted_instance),
-    fenchel_loss_gradient,
-    path_cost(prioritized_planning(adapted_instance))
 end

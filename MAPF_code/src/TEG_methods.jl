@@ -9,36 +9,49 @@ Graphs.neighbors(g::TimeExpandedGraph, v::Int) = outneighbors(g, v)
 function Graphs.weights(g::TimeExpandedGraph)
     n = nv(g)
     W = spzeros(Float64, n, n)
+    W_sg = Graphs.weights(g.s_g)
 
     for e in edges(g)
         u, v = src(e), dst(e)
 
-        orig_u = (u % nv(g.s_g) == 0 ? nv(g.s_g) : u % nv(g.s_g))
-        orig_v = (v % nv(g.s_g) == 0 ? nv(g.s_g) : v % nv(g.s_g))
+        orig_u = (u - 1) % nv(g.s_g) + 1
+        orig_v = (v - 1) % nv(g.s_g) + 1
 
-        W[u, v] = Graphs.weights(g.s_g)[orig_u, orig_v]
+        W[u, v] = W_sg[orig_u, orig_v]
     end
 
     return W
 end
 
 function Graphs.edges(g::TimeExpandedGraph)
-    edge_list = []
+    edge_list = SimpleWeightedEdge{Int,Float64}[]
+    nv_sg = nv(g.s_g)
+
     for v in Graphs.vertices(g.s_g)
         for n in Graphs.neighbors(g.s_g, v)
             for i in 1:(g.t - 1)
-                if !((Graphs.nv(g.s_g) * i + n) in g.rem)
-                    push!(
-                        edge_list,
-                        SimpleWeightedEdge(
-                            Graphs.nv(g.s_g) * (i - 1) + v,
-                            Graphs.nv(g.s_g) * i + n,
-                            Graphs.weights(g.s_g)[v, n],
-                        ),
-                    )
+                src_vertex = nv_sg * (i - 1) + v
+                dst_vertex = nv_sg * i + n
+
+                if dst_vertex in g.rem_v
+                    continue
                 end
+
+                edge = SimpleWeightedEdge(src_vertex, dst_vertex, weights(g.s_g)[v, n])
+
+                if edge in g.rem_e
+                    continue
+                end
+
+                push!(edge_list, edge)
             end
         end
+    end
+    for i in 1:(g.t - 1)
+        push!(
+            edge_list,
+            SimpleWeightedEdge(g.goal + (i - 1) * nv(g.s_g), g.goal + i * nv(g.s_g), 0.0),
+        )
     end
     return edge_list
 end
@@ -56,7 +69,7 @@ function Graphs.vertices(g::TimeExpandedGraph)
 end
 
 function Graphs.inneighbors(g::TimeExpandedGraph, v::Int)
-    if v in g.rem
+    if v in g.rem_v
         inneighbors = []
     elseif (v//Graphs.nv(g.s_g)) > 1
         inneighbors = [
@@ -67,18 +80,41 @@ function Graphs.inneighbors(g::TimeExpandedGraph, v::Int)
     else
         inneighbors = []
     end
+    for edge in g.rem_e
+        if dst(edge) == v
+            filter(x -> x != src(edge), inneighbors)
+        end
+    end
     return inneighbors
 end
 
 function Graphs.outneighbors(g::TimeExpandedGraph, v::Int)
     nv_sg = Graphs.nv(g.s_g)
     time = (v - 1) ÷ nv_sg
-    outneighbors = [
-        n + (time + 1) * nv_sg for
-        n in neighbors(g.s_g, v % nv_sg == 0 ? nv_sg : v % nv_sg) if (time + 1) < g.t &&
-        !(n + (time + 1) * nv_sg in g.rem) &&
-        n + (time + 1) * nv_sg != v
-    ]
+    orig_v = v % nv_sg == 0 ? nv_sg : v % nv_sg
+
+    outneighbors = Int[]
+
+    for n in neighbors(g.s_g, orig_v)
+        if (time + 1) < g.t
+            dst_vertex = n + (time + 1) * nv_sg
+            if dst_vertex in g.rem_v || dst_vertex == v
+                continue
+            end
+
+            edge = SimpleWeightedEdge(v, dst_vertex, weights(g.s_g)[orig_v, n])
+            if edge in g.rem_e
+                continue
+            end
+
+            push!(outneighbors, dst_vertex)
+        end
+    end
+    for edge in g.rem_e
+        if src(edge) == v
+            filter(x -> x != dst(edge), outneighbors)
+        end
+    end
     return outneighbors
 end
 

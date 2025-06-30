@@ -15,6 +15,18 @@ function euclidean_heuristic(t::Int, width::Int)
     end
 end
 
+function euclidean_heuristic_time_expanded(goal::Int, width::Int, n_original::Int)
+    goal_coords = index_to_coords(goal, width)
+
+    return v -> begin
+        original_v = ((v - 1) % n_original) + 1
+        vertex_coords = index_to_coords(original_v, width)
+        return sqrt(
+            (vertex_coords[1] - goal_coords[1])^2 + (vertex_coords[2] - goal_coords[2])^2,
+        )
+    end
+end
+
 """
 	conflict_verification(s1, s2)
 
@@ -87,203 +99,114 @@ function prioritized_planning_v2(instance::MAPF_Instance)
         heuristic,
     )
     independent_paths = independent_shortest_paths(instance)
-    max_len = maximum(length(path) for path in independent_paths) * 3
+    max_len = maximum(length(path) for path in independent_paths) * 2
 
     n = nv(instance.graph)
 
-    rem_list = [dst(e) + n * t for (t, e) in enumerate(paths[1])]
+    # NOVO: Reservas de vértices e arestas
+    vertex_reservations = Dict{Tuple{Int,Int},Bool}()  # (v, t)
+    edge_reservations = Dict{Tuple{Int,Int,Int},Bool}()  # (u, v, t)
+
+    for (t, e) in enumerate(paths[1])
+        u = src(e)
+        v = dst(e)
+
+        vertex_reservations[(v, t)] = true
+        edge_reservations[(u, v, t)] = true
+        edge_reservations[(v, u, t)] = true  # evitar troca
+    end
     for pos in (length(paths[1]) + 1):max_len
-        push!(rem_list, (pos - 1) * n + instance.goals[1])
+        vertex_reservations[(instance.goals[1], pos)] = true
     end
 
     println("Creating mutable_graph")
-    mutable_graph = TimeExpandedGraph(instance.graph, max_len, rem_list)
+
+    # Montar rem_v e rem_e com base nas reservas
+    rem_vertices = [v + n * t for ((v, t), _) in vertex_reservations]
+    rem_edges = SimpleWeightedEdge{Int,Float64}[]
+
+    for ((u, v, t), _) in edge_reservations
+        src_time_expanded = u + n * (t - 1)
+        dst_time_expanded = v + n * t
+        edge = SimpleWeightedEdge(
+            src_time_expanded, dst_time_expanded, weights(instance.graph)[u, v]
+        )
+        push!(rem_edges, edge)
+    end
+
+    mutable_graph = TimeExpandedGraph(instance.graph, max_len, rem_vertices, rem_edges)
 
     for agent in 2:length(instance.starts)
         paths[agent] = Vector{SimpleWeightedEdge{Int64,Float64}}()
         println(agent)
-        t_initial = length(paths[agent])
-        heuristic = euclidean_heuristic(instance.goals[agent], instance.width)
+
+        heuristic = euclidean_heuristic_time_expanded(
+            instance.goals[agent], instance.width, n
+        )
+        mutable_graph.goal = instance.goals[agent]
+
         new_path = a_star(
             mutable_graph,
             instance.starts[agent],
-            instance.goals[agent] + (t_initial - 1) * n,
+            instance.goals[agent] + (mutable_graph.t - 1) * n,
             weights(mutable_graph),
             heuristic,
+            SimpleWeightedEdge{Int,Float64},
         )
-        print("ola")
+
         while isempty(new_path)
-            t_initial += 1
-            if t_initial <= max_len
-                heuristic = euclidean_heuristic(instance.goals[agent], instance.width)
-                new_path = a_star(
-                    mutable_graph,
-                    instance.starts[agent],
-                    instance.goals[agent] + (t_initial - 1) * n,
-                    weights(mutable_graph),
-                    heuristic,
-                )
-            else
-                mutable_graph.t += 1
-                for s1 in 1:(agent - 1)
-                    push!(mutable_graph.rem, instance.goals[s1])
-                end
-                new_path = a_star(
-                    mutable_graph,
-                    instance.starts[agent],
-                    instance.goals[agent] + (t_initial - 1) * n,
-                )
-            end
+            mutable_graph.t += 1
+
+            new_path = a_star(
+                mutable_graph,
+                instance.starts[agent],
+                instance.goals[agent] + (mutable_graph.t - 1) * n,
+                weights(mutable_graph),
+                heuristic,
+                SimpleWeightedEdge{Int,Float64},
+            )
         end
 
-        for e in new_path
-            src_local = ((src(e) - 1) % n) + 1
-            dst_local = ((dst(e) - 1) % n) + 1
+        W = weights(mutable_graph)
+        n_sg = nv(instance.graph)
+        new_edges = Vector{SimpleWeightedEdge{Int}}(undef, length(new_path))
 
-            push!(paths[agent], SimpleWeightedEdge(src_local, dst_local))
+        for (i, e) in enumerate(new_path)
+            u = src(e)
+            v = dst(e)
+            src_local = ((u - 1) % n_sg) + 1
+            dst_local = ((v - 1) % n_sg) + 1
+
+            new_edges[i] = SimpleWeightedEdge(src_local, dst_local, W[u, v])
         end
+
+        paths[agent] = new_edges
+
+        # ATUALIZA RESERVAS com o novo caminho
         for (t, e) in enumerate(paths[agent])
-            push!(mutable_graph.rem, dst(e) + n * t)
+            u = src(e)
+            v = dst(e)
+            vertex_reservations[(v, t)] = true
+            edge_reservations[(u, v, t)] = true
+            edge_reservations[(v, u, t)] = true
         end
         for pos in (length(paths[agent]) + 1):(mutable_graph.t)
-            push!(mutable_graph.rem, (pos - 1) * n + instance.goals[1])
+            vertex_reservations[(instance.goals[agent], pos)] = true
+        end
+
+        # Atualizar rem_v e rem_e para o próximo agente
+        mutable_graph.rem_v = [v + n * t for ((v, t), _) in vertex_reservations]
+        mutable_graph.rem_e = SimpleWeightedEdge{Int,Float64}[]
+        for ((u, v, t), _) in edge_reservations
+            src_time_expanded = u + n * (t - 1)
+            dst_time_expanded = v + n * t
+            edge = SimpleWeightedEdge(
+                src_time_expanded, dst_time_expanded, weights(instance.graph)[u, v]
+            )
+            push!(mutable_graph.rem_e, edge)
         end
     end
-    return paths
-end
 
-function prioritized_planning(instance::MAPF_Instance)
-    paths = Vector{Vector{SimpleWeightedEdge{Int64,Float64}}}(
-        undef, length(instance.starts)
-    )
-    for agent in 1:length(instance.starts)
-        if agent == 1
-            paths[agent] = a_star(
-                instance.graph, instance.starts[agent], instance.goals[agent]
-            )
-            if isempty(paths[agent])
-                error("No path found for agent $agent")
-            end
-        else
-            paths[agent] = a_star(
-                instance.graph, instance.starts[agent], instance.goals[agent]
-            )
-            if isempty(paths[agent])
-                error("No path found for agent $agent")
-            end
-
-            pos = instance.starts[agent]
-            i = 1
-            conflict_agent = 0
-            while pos != instance.goals[agent]
-                instance_copy = deepcopy(instance)
-                conflict = false
-                if i == 1
-                    new_path = a_star(instance.graph, pos, instance.goals[agent])
-                else
-                    new_path = vcat(
-                        paths[agent][1:(i - 1)],
-                        a_star(instance.graph, pos, instance.goals[agent]),
-                    )
-                end
-
-                for s1 in 1:(agent - 1)
-                    if i <= length(paths[s1]) &&
-                        i <= length(new_path) &&
-                        (
-                            dst(new_path[i]) == dst(paths[s1][i]) ||
-                            new_path[i] == paths[s1][i] ||
-                            (
-                                dst(new_path[i]) == src(paths[s1][i]) &&
-                                (src(new_path[i]) == dst(paths[s1][i]))
-                            )
-                        )
-                        conflict = true
-                        conflict_agent = s1
-                        rem_edge!(instance_copy.graph, src(new_path[i]), dst(new_path[i]))
-                        println("Got conflict here: ", agent)
-                        break
-                    end
-                end
-
-                while conflict
-                    new_path = vcat(
-                        paths[agent][1:(i - 1)],
-                        a_star(instance_copy.graph, pos, instance_copy.goals[agent]),
-                    )
-                    if isempty(new_path)
-                        if dst(paths[conflict_agent][i + 1]) != pos &&
-                            dst(paths[conflict_agent][i + 1]) !=
-                           dst(paths[conflict_agent][i])
-                            if length(paths[agent]) < i
-                                push!(paths[agent], SimpleWeightedEdge(pos, pos))
-                            else
-                                paths[agent][i] = SimpleWeightedEdge(pos, pos)
-                            end
-
-                            println("empty: ", agent)
-                            conflict = false
-                        else
-                            list = deepcopy(paths[conflict_agent])
-                            neighbor = rand([
-                                x for x in
-                                neighbors(instance.graph, dst(paths[conflict_agent][i])) if
-                                x != pos &&
-                                x != src(paths[conflict_agent][i]) &&
-                                x != dst(paths[conflict_agent][i])
-                            ])
-                            paths[conflict_agent] = vcat(
-                                list[1:i],
-                                [
-                                    SimpleWeightedEdge(dst(list[i]), neighbor),
-                                    SimpleWeightedEdge(neighbor, dst(list[i])),
-                                ],
-                                list[(i + 1):length(list)],
-                            )
-                            paths[agent][i] = SimpleWeightedEdge(pos, dst(list[i]))
-                            println("empty 2 ", agent)
-                            conflict = false
-                        end
-                    else
-                        conflict_found = false
-                        for s1 in 1:(agent - 1)
-                            if i <= length(paths[s1]) &&
-                                i <= length(new_path) &&
-                                (
-                                    dst(new_path[i]) == dst(paths[s1][i]) ||
-                                    new_path[i] == paths[s1][i] ||
-                                    (
-                                        dst(new_path[i]) == src(paths[s1][i]) &&
-                                        (src(new_path[i]) == dst(paths[s1][i]))
-                                    )
-                                )
-                                conflict_found = true
-                                conflict_agent = s1
-                                println("Caught another conflict")
-                                rem_edge!(
-                                    instance_copy.graph, src(new_path[i]), dst(new_path[i])
-                                )
-                            end
-                        end
-                        if !conflict_found
-                            println("Solved")
-                            paths[agent][i] = new_path[i]
-                            conflict = false
-                        end
-                    end
-                end
-                pos = dst(paths[agent][i])
-                i += 1
-            end
-        end
-        max_len = maximum(length.(paths[1:agent]))
-        for i in 1:length(paths[1:agent])
-            while length(paths[i]) < max_len
-                push!(paths[i], SimpleWeightedEdge(dst(paths[i][end]), dst(paths[i][end])))
-            end
-        end
-        println(agent)
-    end
     return paths
 end
 

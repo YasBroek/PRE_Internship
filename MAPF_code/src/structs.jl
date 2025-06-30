@@ -35,5 +35,16 @@ end
 mutable struct TimeExpandedGraph <: AbstractGraph{Int}
     s_g::SimpleWeightedGraph
     t::Int
-    rem::Vector{Int}
+    rem_v::Vector{Int}
+    rem_e::Vector{SimpleWeightedEdge{Int,Float64}}
+    goal::Int
+end
+
+function TimeExpandedGraph(
+    s_g::SimpleWeightedGraph{Int64,Float64},
+    t::Int,
+    rem_v::Vector{Int},
+    rem_e::Vector{SimpleWeightedEdge{Int,Float64}},
+)
+    return TimeExpandedGraph(s_g, t, rem_v, rem_e, 0)
 end

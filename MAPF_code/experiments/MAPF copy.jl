@@ -4,17 +4,15 @@ using Graphs
 using SimpleWeightedGraphs
 
 "Open map"
-file_instance = readlines(
-    open("MAPF_code/input/maze-128-128-10/instance/maze-128-128-10.map")
-)
+file_instance = readlines(open("MAPF_code/input/room-32-32-4/instance/room-32-32-4.map"))
 
 "Open scenarios"
 instance_data = readlines(
-    open("MAPF_code/input/maze-128-128-10/instance/maze-128-128-10-even-1.scen")
+    open("MAPF_code/input/room-32-32-4/instance/room-32-32-4-even-1.scen")
 )
 instance_type_id = 1
 instance_scen_type = "even"
-num_agents = 7
+num_agents = 10
 
 instance_solution = 12
 instance = MAPF_code.convert_to_my_struct(
@@ -22,78 +20,55 @@ instance = MAPF_code.convert_to_my_struct(
 )
 collect(vertices(MAPF_code.timed_graph(instance.graph, 3)))
 @profview for _ in 1:5
-    @info MAPF_code.timed_graph(instance.graph, 3)
+    @info MAPF_code.prioritized_planning_v2(instance)
 end
 num_agents
 
 path_prioritized = MAPF_code.prioritized_planning_v2(instance)
 MAPF_code.visualization(file_instance, instance, path_prioritized)
 
-@info MAPF_code.prioritized_planning(instance)
-
-@info MAPF_code.independent_shortest_paths(instance)
-
-using Graphs
-println("Has path: ", has_path(instance.graph, instance.starts[2], instance.goals[2]))
-
-@info neighbors(instance.graph, instance.starts[7])
-
-MAPF_code.training_LR(instance, 0.5, 10, 0.001, 500)
-
-@info MAPF_code.path_to_binary(instance, MAPF_code.independent_shortest_paths(instance))
-
-@info instance.goals[10]
-
-cc = 0
-lista = []
-for agent in 1:length(instance.starts)
-    for s1 in 1:length(instance.starts)
-        if s1 != agent
-            for i in 1:min(length(path_prioritized[s1]), length(path_prioritized[agent]))
-                if dst(path_prioritized[agent][i]) == dst(path_prioritized[s1][i]) ||
-                    path_prioritized[agent][i] == path_prioritized[s1][i] ||
-                    (
-                        dst(path_prioritized[agent][i]) == src(path_prioritized[s1][i]) &&
-                        (src(path_prioritized[agent][i]) == dst(path_prioritized[s1][i]))
-                    )
-                    cc += 1
-                    push!(
-                        lista,
-                        (agent, s1, path_prioritized[agent][i], path_prioritized[s1][i]),
-                    )
+edge_conflict = []
+for s1 in 1:length(instance.starts)
+    for s2 in (s1 + 1):length(instance.starts)
+        if s1 != s2
+            for i in 1:min(length(path_prioritized[s1]), length(path_prioritized[s2]))
+                if src(path_prioritized[s1][i]) == dst(path_prioritized[s2][i]) ||
+                    src(path_prioritized[s2][i]) == dst(path_prioritized[s1][i])
+                    push!(edge_conflict, path_prioritized[s1][i])
                 end
             end
         end
     end
 end
 
-cc
-@info lista
+edge_conflict
 
-for agent in 1:length(instance.starts)
-    for s1 in 1:length(instance.starts)
-        if s1 != agent
-            for i in 1:min(length(path_prioritized[s1]), length(path_prioritized[agent]))
-                e1 = path_prioritized[agent][i]
-                e2 = path_prioritized[s1][i]
-                if dst(e1) == dst(e2) ||
-                    e1 == e2 ||
-                    (dst(e1) == src(e2) && src(e1) == dst(e2))
-                    println("Conflito t=$i entre Agente $agent e $s1:")
-                    println("    $agent: ", src(e1), " -> ", dst(e1))
-                    println("    $s1: ", src(e2), " -> ", dst(e2))
-                end
-            end
-        end
-    end
-end
+independent_paths = MAPF_code.independent_shortest_paths(instance)
+max_len = maximum(length(path) for path in independent_paths) * 3
 
-g = SimpleWeightedGraph(3)
+n = nv(instance.graph)
 
-add_edge!(g, 1, 2, 0.5);
+paths = Vector{Vector{SimpleWeightedEdge{Int64,Float64}}}(undef, length(instance.starts))
+heuristic = MAPF_code.euclidean_heuristic(instance.goals[1], instance.width)
+paths[1] = a_star(
+    instance.graph,
+    instance.starts[1],
+    instance.goals[1],
+    weights(instance.graph),
+    heuristic,
+)
 
-add_edge!(g, 2, 3, 0.8);
+rem_list = [dst(e) + n * t for (t, e) in enumerate(paths[1])]
 
-add_edge!(g, 1, 3, 2.0);
+mutable_graph = MAPF_code.TimeExpandedGraph(instance.graph, max_len, rem_list)
 
-maximum([length(path) for path in MAPF_code.independent_shortest_paths(inst)])
+collect(vertices(mutable_graph))
+
+vlist = collect(vertices(mutable_graph))
+@show minimum(vlist)
+@show maximum(vlist)
+@show length(vlist)
+@show sort(vlist)[1:10]
+@show sort(vlist)[(end - 9):end]
+
+MAPF_code.training_LR([instance], 0.5, 10, 1e-5, 5000)
