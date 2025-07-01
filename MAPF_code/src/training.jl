@@ -68,7 +68,9 @@ function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T}) where {
     edge_list = collect(edges(instance.graph))
 
     for (i, edge) in enumerate(edge_list)
-        instance.graph.weights[src(edge), dst(edge)] = perturbed_θ[i]
+        u, v = src(edge), dst(edge)
+        instance.graph.weights[u, v] = perturbed_θ[i]
+        instance.graph.weights[v, u] = perturbed_θ[i]
     end
     return instance
 end
@@ -87,17 +89,18 @@ training function for machine learning
 """
 function training_LR(instance_list, ϵ::Float64, M::Int, α::Float64, num_epochs::Int)
     regression_weights = randn(2)
-    epoch_list = [x for x in 1:(num_epochs * length(instance_list))]
+    epoch_list = [x for x in 1:num_epochs]
     loss_list = []
     local y_estimate, fenchel_loss_gradient
     for epoch in 1:num_epochs
+        avg = 0
         for instance in instance_list
             y_independent_shortest_paths = path_to_binary_vector(
                 instance, independent_shortest_paths(instance)
             )
             features = extract_features(instance)
             weighted_instance = deepcopy(instance)
-            y_estimate = zeros(ne(instance.graph))
+            y_estimate = spzeros(ne(instance.graph))
 
             θ = linear_regression(features, regression_weights)
             y_m = Vector{Vector{Int}}(undef, M)
@@ -116,10 +119,13 @@ function training_LR(instance_list, ϵ::Float64, M::Int, α::Float64, num_epochs
             y_estimate = y_estimate ./ M
             fenchel_loss_gradient = y_independent_shortest_paths - y_estimate
             regression_weights = regression_weights - α * features' * fenchel_loss_gradient
-            push!(loss_list, sum(abs.(fenchel_loss_gradient)))
+            println("epoch: $epoch")
+            avg += sum(abs.(fenchel_loss_gradient))
         end
+        avg = avg / length(instance_list)
+        push!(loss_list, avg)
     end
-    return display(
+    display(
         lineplot(
             epoch_list,
             loss_list;
@@ -129,4 +135,34 @@ function training_LR(instance_list, ϵ::Float64, M::Int, α::Float64, num_epochs
             ylabel="loss",
         ),
     )
+    return regression_weights
+end
+
+function calculate_path(instance, regression_weights)
+    features = extract_features(instance)
+    weighted_instance = deepcopy(instance)
+    θ = linear_regression(features, regression_weights)
+
+    @assert all(isfinite, θ) "Pesos com NaN ou Inf detectados!"
+    @assert all(θ .>= 0) "Pesos negativos detectados!"  # se seu algoritmo não aceita pesos negativos
+
+    weighted_instance = adapt_weights(weighted_instance, θ)
+
+    paths_vertices = cooperative_astar(
+        MAPF(weighted_instance.graph, instance.starts, instance.goals),
+        collect(1:length(instance.starts)),
+    )
+    paths = [
+        [
+            SimpleWeightedEdge(
+                paths_vertices.paths[k][i],
+                paths_vertices.paths[k][i + 1],
+                weights(instance.graph)[
+                    paths_vertices.paths[k][i], paths_vertices.paths[k][i + 1]
+                ],
+            ) for i in 1:(length(paths_vertices.paths[k]) - 1)
+        ] for k in 1:length(paths_vertices.paths)
+    ]
+
+    return paths
 end

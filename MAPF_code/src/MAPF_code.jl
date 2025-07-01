@@ -17,6 +17,7 @@ using DataStructures
 using MetaGraphsNext
 using Base.Threads
 using SparseArrays
+using MultiAgentPathFinding
 
 include("structs.jl")
 include("TEG_methods.jl")

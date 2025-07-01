@@ -1,7 +1,13 @@
 function independent_shortest_paths(instance::MAPF_Instance)
     paths = [
-        a_star(instance.graph, instance.starts[s], instance.goals[s]) for
-        s in 1:length(instance.starts)
+        a_star(
+            instance.graph,
+            instance.starts[s],
+            instance.goals[s],
+            weights(instance.graph),
+            euclidean_heuristic(instance.goals[s], instance.width),
+            SimpleWeightedEdge{Int,Float64},
+        ) for s in 1:length(instance.starts)
     ]
     return paths
 end
@@ -156,6 +162,7 @@ function prioritized_planning_v2(instance::MAPF_Instance)
 
         while isempty(new_path)
             mutable_graph.t += 1
+            print(mutable_graph.t)
 
             new_path = a_star(
                 mutable_graph,
@@ -210,10 +217,15 @@ function prioritized_planning_v2(instance::MAPF_Instance)
     return paths
 end
 
-function path_cost(paths)
+function path_cost(instance, paths)
     total_cost = 0
-    for path in paths
-        total_cost = total_cost + length(path)
+    for path in 1:length(paths)
+        for edge in paths[path]
+            if dst(edge) != instance.goals[path]
+                total_cost += 1
+            end
+        end
+        total_cost += 1
     end
     return total_cost
 end
@@ -235,12 +247,14 @@ end
 
 function path_to_binary_vector(instance::MAPF_Instance, paths)
     edge_list = collect(edges(instance.graph))
-    binary_variables = Vector{Int}(undef, ne(instance.graph))
-    for edge in 1:ne(instance.graph)
-        binary_variables[edge] = 0
-        for agent in 1:length(instance.starts)
-            if edge_list[edge] in paths[agent]
-                binary_variables[edge] += 1
+    edge_to_index = Dict((src(e), dst(e)) => i for (i, e) in enumerate(edge_list))
+    binary_variables = spzeros(length(edge_list))
+    for agent_path in paths
+        for e in agent_path
+            key = (min(src(e), dst(e)), max(src(e), dst(e)))
+            i = get(edge_to_index, key, nothing)
+            if i !== nothing
+                binary_variables[i] += 1
             end
         end
     end

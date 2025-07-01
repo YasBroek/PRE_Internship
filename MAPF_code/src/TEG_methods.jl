@@ -8,19 +8,25 @@ Graphs.neighbors(g::TimeExpandedGraph, v::Int) = outneighbors(g, v)
 
 function Graphs.weights(g::TimeExpandedGraph)
     n = nv(g)
-    W = spzeros(Float64, n, n)
+    s_n = nv(g.s_g)
     W_sg = Graphs.weights(g.s_g)
+
+    I = Int[]
+    J = Int[]
+    V = Float64[]
 
     for e in edges(g)
         u, v = src(e), dst(e)
 
-        orig_u = (u - 1) % nv(g.s_g) + 1
-        orig_v = (v - 1) % nv(g.s_g) + 1
+        orig_u = (u - 1) % s_n + 1
+        orig_v = (v - 1) % s_n + 1
 
-        W[u, v] = W_sg[orig_u, orig_v]
+        push!(I, u)
+        push!(J, v)
+        push!(V, W_sg[orig_u, orig_v])
     end
 
-    return W
+    return sparse(I, J, V, n, n)
 end
 
 function Graphs.edges(g::TimeExpandedGraph)

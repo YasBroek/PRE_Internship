@@ -2,7 +2,7 @@
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "483f0636362a8f03eee7e173468bc30e199a779c"
+project_hash = "b43b8673ccc1c74dabce946668304d809496c8b7"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1628,6 +1628,14 @@ deps = ["Serialization"]
 git-tree-sha1 = "f5db02ae992c260e4826fe78c942954b48e1d9c2"
 uuid = "99f44e22-a591-53d1-9472-aa23ef4bd671"
 version = "1.2.1"
+
+[[deps.MultiAgentPathFinding]]
+deps = ["Colors", "DataDeps", "DataStructures", "DocStringExtensions", "Graphs", "LinearAlgebra", "Random", "SimpleWeightedGraphs", "SparseArrays", "StableRNGs"]
+git-tree-sha1 = "19d094780f5dadf65428fea95c39e914a8494e81"
+repo-rev = "main"
+repo-url = "https://github.com/gdalle/MultiAgentPathFinding.jl"
+uuid = "1f5aa91a-953b-4f4c-bed6-d21f3af349fa"
+version = "0.5.0"
 
 [[deps.NNlib]]
 deps = ["Adapt", "Atomix", "ChainRulesCore", "GPUArraysCore", "KernelAbstractions", "LinearAlgebra", "Random", "ScopedValues", "Statistics"]
