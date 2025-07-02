@@ -1,38 +1,33 @@
 using Revise
 using MAPF_code
 using Glob
+using MultiAgentPathFinding
+using UnicodePlots
 
 instance_list = []
 base_path = "MAPF_code/input/testing/"
 
-tipos_instancias = filter(isdir, glob("*", base_path))
+instance_types = filter(isdir, glob("*", base_path))
 
-for pasta_instancia in tipos_instancias
-    println("Processando: $pasta_instancia")
+for instance_folder in instance_types
+    type_name = split(instance_folder, '/')[end]
 
-    tipo_nome = split(pasta_instancia, '/')[end]
-
-    # Caminho do arquivo .map
-    caminho_map = joinpath(pasta_instancia, "$tipo_nome.map")
-    if isfile(caminho_map)
-        file_instance = readlines(caminho_map)
-        println("Leu mapa com $(length(file_instance)) linhas.")
+    map_path = joinpath(instance_folder, "$type_name.map")
+    if isfile(map_path)
+        file_instance = readlines(map_path)
     else
-        println("Arquivo .map não encontrado: $caminho_map")
+        println("File not found")
         continue
     end
 
-    # Lê todos os arquivos .scen da pasta
-    arquivos_scen = glob("*.scen", pasta_instancia)
+    scen_files = glob("*.scen", instance_folder)
 
-    for caminho_scen in arquivos_scen
-        # Extrai tipo (ex: even, odd, etc.) do nome do arquivo
-        nome_scen = split(caminho_scen, '/')[end]
-        partes = (x -> split(x, '-'))(splitext(nome_scen)[1])
-        instance_scen_type = partes[end - 1]  # geralmente "even", "odd", etc.
+    for scen_path in scen_files
+        scen_name = split(scen_path, '/')[end]
+        parts = (x -> split(x, '-'))(splitext(scen_name)[1])
+        instance_scen_type = parts[end - 1]
 
-        instance_data = readlines(caminho_scen)
-        println("Leu cenário: $nome_scen com $(length(instance_data)) linhas.")
+        instance_data = readlines(scen_path)
 
         instance_solution = 12
         instance = MAPF_code.convert_to_my_struct(
@@ -51,32 +46,75 @@ instancia = "MAPF_code/input/maze-128-128-10/instance/"
 mapa = "MAPF_code/input/maze-128-128-10/instance/maze-128-128-10.map"
 file_instance = readlines(mapa)
 
-# Lê todos os arquivos .scen da pasta
 arquivos_scen = glob("*.scen", instancia)
 
 for caminho_scen in arquivos_scen
-    # Extrai tipo (ex: even, odd, etc.) do nome do arquivo
     nome_scen = split(caminho_scen, '/')[end]
     partes = (x -> split(x, '-'))(splitext(nome_scen)[1])
-    instance_scen_type = partes[end - 1]  # geralmente "even", "odd", etc.
+    instance_scen_type = partes[end - 1]
+    instance_type_id = partes[end]
 
     instance_data = readlines(caminho_scen)
-    println("Leu cenário: $nome_scen com $(length(instance_data)) linhas.")
 
-    instance_solution = 12
-    instance = MAPF_code.convert_to_my_struct(
-        file_instance, instance_data, rand(1:50), instance_solution
-    )
-    push!(instance_list, instance)
+    for qte_agents in 1:50
+        solutions = readlines(
+            open("MAPF_code/input/maze-128-128-10/solution/maze-128-128-10.csv")
+        )
+
+        solutions_header = split(solutions[1], ",")
+        solution_costs = Dict{Tuple{String,Int,Int},Float64}()
+        for line in solutions[2:end]
+            values = split(line, ",")
+            scen_type = strip(values[1], '"')
+            type_id = parse(Int, strip(values[2], '"'))
+            agents = parse(Int, strip(values[3], '"'))
+            solution_cost = parse(Float64, strip(values[6], '"'))
+
+            key = (scen_type, type_id, agents)
+            solution_costs[key] = solution_cost
+        end
+
+        instance_solution = solution_costs[(
+            instance_scen_type, parse(Int, instance_type_id), qte_agents
+        )]
+
+        instance = MAPF_code.convert_to_my_struct(
+            file_instance, instance_data, qte_agents, instance_solution
+        )
+        push!(instance_list, instance)
+    end
 end
 
-@profview for _ in 1:5
-    MAPF_code.training_LR(instance_list1, 0.1, 10, 1e-5, 5)
+training_samples = [rand(instance_list) for _ in 1:10]
+
+training_results = MAPF_code.training_LR(training_samples, 0.1, 10, 0.001, 30)
+
+list = list = [Float64[] for _ in 1:10]
+
+for instance in instance_list
+    if 31 <= length(instance.starts) <= 40
+        cost_path_found = MultiAgentPathFinding.sum_of_costs(
+            MAPF_code.calculate_path_v(instance, training_results),
+            MAPF(instance.graph, instance.starts, instance.goals),
+        )
+        diff = (cost_path_found - instance.y_optimum) / instance.y_optimum
+        push!(list[length(instance.starts) - 30], diff)
+    end
 end
 
-instance_list1 = [rand(instance_list) for _ in 1:10]
+boxplot(
+    [string(n) for n in 31:40],
+    list;
+    title="Distance to best found solution",
+    ylabel="num_agents",
+)
 
-training_results = MAPF_code.training_LR(instance_list1, 0.1, 10, 0.001, 30)
+boxplot(
+    ["one", "two"],
+    [[1, 2, 3, 4, 5], [2, 3, 4, 5, 6, 7, 8, 9]];
+    title="Grouped Boxplot",
+    xlabel="x",
+)
 
 "Open map"
 file_instance = readlines(
@@ -99,3 +137,8 @@ instance = MAPF_code.convert_to_my_struct(
 path_optimal = MAPF_code.calculate_path(instance, training_results)
 
 MAPF_code.path_cost(instance, path_optimal) # aqui deu 4660
+
+MultiAgentPathFinding.sum_of_costs(
+    MAPF_code.calculate_path_v(instance, training_results),
+    MAPF(instance.graph, instance.starts, instance.goals),
+)

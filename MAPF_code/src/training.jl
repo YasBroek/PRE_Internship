@@ -9,26 +9,19 @@ Extracts features from an instance for each edge
  - Matrix of edges x features
 """
 function extract_features(instance::MAPF_Instance)
-    features = zeros(Float64, ne(instance.graph), 2)
     edge_list = collect(edges(instance.graph))
+    features = zeros(Float64, ne(instance.graph), 2)
     paths = independent_shortest_paths(instance)
-    conflicts = []
-    for s1 in 1:length(instance.starts)
-        for s2 in (s1 + 1):length(instance.starts)
-            for edge in conflict_verification(s1, s2, paths)
-                push!(conflicts, edge)
-            end
-        end
-    end
+    conflicts = conflict_identifier(instance, paths)
     for edge in 1:ne(instance.graph)
-        c = 0
-        for item in conflicts
-            if edge_list[edge] == item
-                c += 1
-            end
-        end
-        features[edge, 1] = c  # conflict-based feature
+        features[edge, 1] = conflict_counter(conflicts, edge_list[edge])  # conflict-based feature
         features[edge, 2] = degree(instance.graph, dst(edge_list[edge]))  # degree-based feature
+        features[edge, 3] = closeness_centrality(instance.graph, edge_list[edge]) # closeness to all other vertices
+        features[edge, 4] = step_counter(paths, edge_list[edge]) # number of paths going through edge
+        features[edge, 5] = distance_to_closest_obstacle(instance, edge_list[edge])
+        features[edge, 6] = distance_to_all_agents(instance, edge_list[edge])
+        features[edge, 7] = distance_to_closest_agent(instance, edge_list[edge])
+        features[edge, 8] = number_of_agents_close(instance, edge_list[edge])
     end
     return features
 end
@@ -99,7 +92,6 @@ function training_LR(instance_list, ϵ::Float64, M::Int, α::Float64, num_epochs
                 instance, independent_shortest_paths(instance)
             )
             features = extract_features(instance)
-            weighted_instance = deepcopy(instance)
             y_estimate = spzeros(ne(instance.graph))
 
             θ = linear_regression(features, regression_weights)
@@ -143,9 +135,6 @@ function calculate_path(instance, regression_weights)
     weighted_instance = deepcopy(instance)
     θ = linear_regression(features, regression_weights)
 
-    @assert all(isfinite, θ) "Pesos com NaN ou Inf detectados!"
-    @assert all(θ .>= 0) "Pesos negativos detectados!"  # se seu algoritmo não aceita pesos negativos
-
     weighted_instance = adapt_weights(weighted_instance, θ)
 
     paths_vertices = cooperative_astar(
@@ -165,4 +154,18 @@ function calculate_path(instance, regression_weights)
     ]
 
     return paths
+end
+
+function calculate_path_v(instance, regression_weights)
+    features = extract_features(instance)
+    weighted_instance = deepcopy(instance)
+    θ = linear_regression(features, regression_weights)
+
+    weighted_instance = adapt_weights(weighted_instance, θ)
+
+    paths_vertices = cooperative_astar(
+        MAPF(weighted_instance.graph, instance.starts, instance.goals),
+        collect(1:length(instance.starts)),
+    )
+    return paths_vertices
 end

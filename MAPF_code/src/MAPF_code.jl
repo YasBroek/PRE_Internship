@@ -24,6 +24,7 @@ include("TEG_methods.jl")
 include("import_data.jl")
 include("visualization.jl")
 include("find_path.jl")
+include("auxiliar_functions.jl")
 include("training.jl")
 
 end # module MAPF_code
