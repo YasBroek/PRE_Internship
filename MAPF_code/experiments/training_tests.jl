@@ -3,6 +3,7 @@ using MAPF_code
 using Glob
 using MultiAgentPathFinding
 using UnicodePlots
+ENV["DATADEPS_ALWAYS_ACCEPT"] = true
 
 instance_list = []
 base_path = "MAPF_code/input/testing/"
@@ -42,46 +43,70 @@ MAPF_code.training_LR(instance_list1, 0.1, 10, 0.001, 50)
 instance_list1 = [rand(instance_list) for _ in 1:10]
 
 instance_list = []
+best_solutions_list = []
 instancia = "MAPF_code/input/maze-128-128-10/instance/"
 mapa = "MAPF_code/input/maze-128-128-10/instance/maze-128-128-10.map"
 file_instance = readlines(mapa)
 
 arquivos_scen = glob("*.scen", instancia)
 
+nome_scen = split(arquivos_scen[1], '/')[end]
+nome_sem_ext = splitext(nome_scen)[1]
+partes = split(nome_sem_ext, '-')
+instance_base_name = String(join(partes[1:(end - 2)], '-'))
+instance_scen_type = String(partes[end - 1])
+instance_type_id = parse(Int, String(partes[end]))
+
+instance_data = readlines(arquivos_scen[1])
+
+instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, 1)
+i = 0
+l = length(arquivos_scen)
+
 for caminho_scen in arquivos_scen
+    i += 1
+    println("$i / $l")
     nome_scen = split(caminho_scen, '/')[end]
-    partes = (x -> split(x, '-'))(splitext(nome_scen)[1])
-    instance_scen_type = partes[end - 1]
-    instance_type_id = partes[end]
+    nome_sem_ext = splitext(nome_scen)[1]
+    partes = split(nome_sem_ext, '-')
+    instance_base_name = String(join(partes[1:(end - 2)], '-'))
+    instance_scen_type = String(partes[end - 1])
+    instance_type_id = parse(Int, String(partes[end]))
 
     instance_data = readlines(caminho_scen)
+    println("a")
+    instance = MAPF_code.change_scenarios(instance_data, instance, 1)
+    println("b")
+    push!(instance_list, instance)
+    println("c")
+    push!(
+        best_solutions_list,
+        Solution(
+            BenchmarkScenario(;
+                instance=instance_base_name,
+                scen_type=instance_scen_type,
+                type_id=instance_type_id,
+                agents=1,
+            ),
+        ),
+    )
+    println("d")
 
-    for qte_agents in 1:50
-        solutions = readlines(
-            open("MAPF_code/input/maze-128-128-10/solution/maze-128-128-10.csv")
-        )
-
-        solutions_header = split(solutions[1], ",")
-        solution_costs = Dict{Tuple{String,Int,Int},Float64}()
-        for line in solutions[2:end]
-            values = split(line, ",")
-            scen_type = strip(values[1], '"')
-            type_id = parse(Int, strip(values[2], '"'))
-            agents = parse(Int, strip(values[3], '"'))
-            solution_cost = parse(Float64, strip(values[6], '"'))
-
-            key = (scen_type, type_id, agents)
-            solution_costs[key] = solution_cost
-        end
-
-        instance_solution = solution_costs[(
-            instance_scen_type, parse(Int, instance_type_id), qte_agents
-        )]
-
-        instance = MAPF_code.convert_to_my_struct(
-            file_instance, instance_data, qte_agents, instance_solution
-        )
+    for qte_agents in 2:50
+        instance = MAPF_code.increase_agent_quantity(instance_data, instance, qte_agents)
         push!(instance_list, instance)
+        push!(
+            best_solutions_list,
+            Solution(
+                BenchmarkScenario(;
+                    instance=instance_base_name,
+                    scen_type=instance_scen_type,
+                    type_id=instance_type_id,
+                    agents=qte_agents,
+                ),
+            ),
+        )
+        println("agents: $qte_agents")
     end
 end
 
@@ -142,3 +167,8 @@ MultiAgentPathFinding.sum_of_costs(
     MAPF_code.calculate_path_v(instance, training_results),
     MAPF(instance.graph, instance.starts, instance.goals),
 )
+
+small_scen = BenchmarkScenario(;
+    instance="empty-8-8", scen_type="even", type_id=1, agents=32
+)
+benchmark_solution_best = Solution(small_scen)

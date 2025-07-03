@@ -3,13 +3,18 @@ using MAPF_code
 using Graphs
 
 "Open map"
-file_instance = readlines(open("input/Berlin_1_256/instance/Berlin_1_256.map"))
+file_instance = readlines(open("MAPF_code/input/Berlin_1_256/instance/Berlin_1_256.map"))
 
 "Open scenarios"
-instance_data = readlines(open("input/Berlin_1_256/instance/Berlin_1_256-even-1.scen"))
+instance_data = readlines(
+    open("MAPF_code/input/Berlin_1_256/instance/Berlin_1_256-even-1.scen")
+)
 instance_type_id = 1
 instance_scen_type = "even"
 num_agents = 1
+
+instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, 4)
+new_instance = MAPF_code.modify_agent_quantity(instance_data, instance, 4)
 
 "Open solution"
 solutions = readlines(open("input/Berlin_1_256/solution/Berlin_1_256.csv"))

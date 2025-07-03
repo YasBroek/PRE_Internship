@@ -7,7 +7,7 @@
  - 'goals::Vector': Goal positions of agents
  - 'optimal_values::Vector': Optimal path costs for each agent.
 	"""
-struct MAPF_Instance
+mutable struct MAPF_Instance
     height::Int
     width::Int
     graph::SimpleWeightedGraph
@@ -15,7 +15,6 @@ struct MAPF_Instance
     goals::Vector
     optimal_values::Vector
     scenario_numbers::Vector{Int}
-    y_optimum::Float64
 end
 
 """

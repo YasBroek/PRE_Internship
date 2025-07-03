@@ -1,11 +1,13 @@
 function conflict_counter(conflicts, edge)
-    c = 0
+    count = 0
     for item in conflicts
-        if edge == item
-            c += 1
+        if src(edge) == src(item) && dst(edge) == dst(item)
+            count += 1
+        elseif src(edge) == dst(item) && dst(edge) == src(item)
+            count += 1
         end
     end
-    return c
+    return count
 end
 
 function conflict_identifier(instance::MAPF_Instance, paths)
@@ -32,43 +34,62 @@ function step_counter(paths, edge)
     return step_counter
 end
 
-function closeness_centrality(instance::MAPF_Instance, edge)
+function harmonic_centrality(instance::MAPF_Instance, edge)
     ds = dijkstra_shortest_paths(instance.graph, dst(edge))
-    return mean(ds)
+
+    harmonic_sum = sum(d == Inf ? 0.0 : 1.0 / d for d in ds.dists if d > 0)
+
+    return harmonic_sum
+end
+
+function normalized_closeness_centrality(instance::MAPF_Instance, edge)
+    ds = dijkstra_shortest_paths(instance.graph, dst(edge))
+    finite_dists = filter(d -> d != Inf && d > 0, ds.dists)
+
+    if isempty(finite_dists)
+        return 0.0
+    end
+
+    n_reachable = length(finite_dists)
+    sum_distances = sum(finite_dists)
+
+    return (n_reachable - 1) / sum_distances
 end
 
 function distance_to_closest_obstacle(instance::MAPF_Instance, edge)
-    obstacles = [v for v in collect(vertices(instance.graph)) if degree(v) == 0]
-    max_dist = 0
+    obstacles = [
+        v for v in collect(vertices(instance.graph)) if degree(instance.graph, v) == 0
+    ]
+    min_dist = Inf
     for o in obstacles
-        vertex_v = index_to_coords(dst(edge))
-        vertex_t = index_to_coords(o)
+        vertex_v = index_to_coords(dst(edge), instance.width)
+        vertex_t = index_to_coords(o, instance.width)
         dist = sqrt((vertex_v[1] - vertex_t[1])^2 + (vertex_v[2] - vertex_t[2])^2)
-        if dist > max_dist
-            max_dist = dist
+        if dist < min_dist
+            min_dist = dist
         end
     end
-    return dist
+    return min_dist
 end
 
 function distance_to_closest_agent(instance::MAPF_Instance, edge)
-    max_dist = 0
+    min_dist = Inf
     for g in instance.goals
-        vertex_v = index_to_coords(dst(edge))
-        vertex_t = index_to_coords(g)
+        vertex_v = index_to_coords(dst(edge), instance.width)
+        vertex_t = index_to_coords(g, instance.width)
         dist = sqrt((vertex_v[1] - vertex_t[1])^2 + (vertex_v[2] - vertex_t[2])^2)
-        if dist > max_dist
-            max_dist = dist
+        if dist < min_dist
+            min_dist = dist
         end
     end
-    return dist
+    return min_dist
 end
 
 function distance_to_all_agents(instance::MAPF_Instance, edge)
     sum_dists = 0
     for g in instance.goals
-        vertex_v = index_to_coords(dst(edge))
-        vertex_t = index_to_coords(g)
+        vertex_v = index_to_coords(dst(edge), instance.width)
+        vertex_t = index_to_coords(g, instance.width)
         dist = sqrt((vertex_v[1] - vertex_t[1])^2 + (vertex_v[2] - vertex_t[2])^2)
         sum_dists += dist
     end
@@ -78,12 +99,29 @@ end
 function number_of_agents_close(instance::MAPF_Instance, edge)
     c = 0
     for g in instance.goals
-        vertex_v = index_to_coords(dst(edge))
-        vertex_t = index_to_coords(g)
+        vertex_v = index_to_coords(dst(edge), instance.width)
+        vertex_t = index_to_coords(g, instance.width)
         dist = sqrt((vertex_v[1] - vertex_t[1])^2 + (vertex_v[2] - vertex_t[2])^2)
         if dist < sqrt(instance.width)
             c += 1
         end
     end
     return c
+end
+
+function Solution_to_paths(s::Solution, instance::MAPF_Instance)
+    list = [[] for _ in 1:length(s.paths)]
+    for i in 1:length(s.paths)
+        for v in 1:(length(s.paths[i]) - 1)
+            push!(
+                list[i],
+                SimpleWeightedEdge(
+                    s.paths[i][v],
+                    s.paths[i][v + 1],
+                    weights(instance.graph)[s.paths[i][v], s.paths[i][v + 1]],
+                ),
+            )
+        end
+    end
+    return list
 end

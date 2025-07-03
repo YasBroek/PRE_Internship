@@ -27,7 +27,7 @@ Converts input data into a MAPF_Instance struct
 - 'MAPF_Instance' struct
 
 """
-function convert_to_my_struct(file_instance, instance_data, num_agents, instance_solution)
+function convert_to_my_struct(file_instance, instance_data, num_agents)
     max_agents = length(instance_data) - 1
     if num_agents > max_agents
         error(
@@ -48,7 +48,6 @@ function convert_to_my_struct(file_instance, instance_data, num_agents, instance
         Vector{Int}(undef, num_agents),
         Vector{Float64}(undef, num_agents),
         Vector{Int}(undef, num_agents),
-        instance_solution,
     )
 
     # Fill in the graph based on map characters: '.' = possible direction, otherwise obstacle
@@ -106,4 +105,58 @@ function convert_to_my_struct(file_instance, instance_data, num_agents, instance
     end
 
     return instance
+end
+
+function increase_agent_quantity(
+    instance_data, instance::MAPF_Instance, new_number_of_agents::Int
+)
+    old_number_of_agents = length(instance.starts)
+    if old_number_of_agents < new_number_of_agents
+        for i in (old_number_of_agents + 1):new_number_of_agents
+            row = instance_data[i + 1]
+            fields = split(row)
+
+            start_x = parse(Int, fields[5]) + 1
+            start_y = parse(Int, fields[6]) + 1
+            goal_x = parse(Int, fields[7]) + 1
+            goal_y = parse(Int, fields[8]) + 1
+
+            push!(instance.scenario_numbers, parse(Int, fields[1]))
+            push!(instance.starts, coords_to_index((start_x, start_y), instance.width))
+            push!(instance.goals, coords_to_index((goal_x, goal_y), instance.width))
+            push!(instance.optimal_values, parse(Float64, fields[9]))
+        end
+    else
+        print(
+            "Warning: new number of agents is lesser or equal to previous: instance unchanged",
+        )
+    end
+    return instance
+end
+
+function change_scenarios(instance_data, instance::MAPF_Instance, num_agents::Int)
+    new_instance = MAPF_Instance(
+        instance.height,
+        instance.width,
+        instance.graph,
+        Vector{Int}(undef, num_agents),
+        Vector{Int}(undef, num_agents),
+        Vector{Float64}(undef, num_agents),
+        Vector{Int}(undef, num_agents),
+    )
+    for i in 1:num_agents
+        row = instance_data[i + 1]
+        fields = split(row)
+
+        start_x = parse(Int, fields[5]) + 1
+        start_y = parse(Int, fields[6]) + 1
+        goal_x = parse(Int, fields[7]) + 1
+        goal_y = parse(Int, fields[8]) + 1
+
+        new_instance.scenario_numbers[i] = parse(Int, fields[1])
+        new_instance.starts[i] = coords_to_index((start_x, start_y), instance.width)
+        new_instance.goals[i] = coords_to_index((goal_x, goal_y), instance.width)
+        new_instance.optimal_values[i] = parse(Float64, fields[9])
+    end
+    return new_instance
 end
