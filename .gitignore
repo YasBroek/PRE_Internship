@@ -3,3 +3,8 @@
 *.svg
 *.mp4
 *.pdf
+*.csv
+*.scen
+*.zip
+*.jld2
+input/
