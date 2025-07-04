@@ -41,6 +41,12 @@ function linear_regression(
     return edge_features * regression_weights
 end
 
+function generalized_linear_model(
+    edge_features::Array{Float64}, regression_weights::Vector{Float64}
+)
+    return abs.(edge_features * regression_weights)
+end
+
 """
     function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T})
 Attributes new calculated weights to graph edges
@@ -108,7 +114,7 @@ function training_LR(
             fill!(y_estimate, 0.0)
             println("b")
 
-            θ = linear_regression(features_list[index], regression_weights)
+            θ = generalized_linear_model(features_list[index], regression_weights)
             Z_m = Vector{Vector{Float64}}(undef, M)
             for m in 1:M
                 Z_m[m] = randn(size(θ))
@@ -166,14 +172,12 @@ function training_LR(
 end
 
 function fenchel_young_loss(instance, features, M, regression_weights, y_target, Z_m, ϵ)
-    θ = linear_regression(features, regression_weights)
+    θ = generalized_linear_model(features, regression_weights)
     sum = 0
     for m in 1:M
-        graph = adapt_weights(instance, θ + ϵ * Z_m[m]).graph
-        path = cooperative_astar(
-            MAPF(graph, instance.starts, instance.goals), collect(1:length(instance.starts))
-        )
-        sum += sum_of_costs(path)
+        weighted_instance = adapt_weights(instance, θ + ϵ * Z_m[m])
+        path = independent_shortest_paths(weighted_instance)
+        sum += path_cost(weighted_instance, path)
     end
     F_ϵ = sum / M # Mean of sums of costs calculated for each perturbation
     fenchel_loss = F_ϵ - dot(y_target, θ)
