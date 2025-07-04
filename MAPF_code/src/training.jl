@@ -98,6 +98,7 @@ function training_LR(
                 instance_list[index],
                 Solution_to_paths(benchmarkSols[index], instance_list[index]),
             )
+            println("a")
             if epoch == 1
                 push!(features_list, extract_features(instance_list[index]))
             end
@@ -105,21 +106,33 @@ function training_LR(
                 y_estimate = spzeros(ne(instance_list[1].graph))
             end
             fill!(y_estimate, 0.0)
+            println("b")
 
             θ = linear_regression(features_list[index], regression_weights)
+            Z_m = Vector{Vector{Float64}}(undef, M)
             for m in 1:M
-                Z_m = randn(size(θ))
-                perturbed_θ = θ .+ ϵ .* Z_m
+                Z_m[m] = randn(size(θ))
+                perturbed_θ = θ .+ ϵ .* Z_m[m]
                 weighted_instance = adapt_weights(instance_list[index], perturbed_θ)
                 y_estimate += path_to_binary_vector(
                     weighted_instance, independent_shortest_paths(weighted_instance)
                 )
             end
+            println("c")
             y_estimate = y_estimate ./ M
-            fenchel_loss_gradient = y_best_found_solution - y_estimate
+            fenchel_loss_gradient = -(y_best_found_solution - y_estimate)
             regression_weights =
                 regression_weights - α * features_list[index]' * fenchel_loss_gradient
-            fenchel_loss = fenchel_young_loss(θ, y_best_found_solution)
+            println("d")
+            fenchel_loss = fenchel_young_loss(
+                instance_list[index],
+                features_list[index],
+                M,
+                regression_weights,
+                y_best_found_solution,
+                Z_m,
+                ϵ,
+            )
             println("epoch: $epoch")
             avg_grad += sum(abs.(fenchel_loss_gradient))
             avg_loss += fenchel_loss
@@ -152,48 +165,17 @@ function training_LR(
     return regression_weights
 end
 
-function calculate_path(instance, regression_weights)
-    features = extract_features(instance)
-    weighted_instance = deepcopy(instance)
+function fenchel_young_loss(instance, features, M, regression_weights, y_target, Z_m, ϵ)
     θ = linear_regression(features, regression_weights)
-
-    weighted_instance = adapt_weights(weighted_instance, θ)
-
-    paths_vertices = cooperative_astar(
-        MAPF(weighted_instance.graph, instance.starts, instance.goals),
-        collect(1:length(instance.starts)),
-    )
-    paths = [
-        [
-            SimpleWeightedEdge(
-                paths_vertices.paths[k][i],
-                paths_vertices.paths[k][i + 1],
-                weights(instance.graph)[
-                    paths_vertices.paths[k][i], paths_vertices.paths[k][i + 1]
-                ],
-            ) for i in 1:(length(paths_vertices.paths[k]) - 1)
-        ] for k in 1:length(paths_vertices.paths)
-    ]
-
-    return paths
-end
-
-function calculate_path_v(instance, regression_weights)
-    features = extract_features(instance)
-    weighted_instance = deepcopy(instance)
-    θ = linear_regression(features, regression_weights)
-
-    weighted_instance = adapt_weights(weighted_instance, θ)
-
-    paths_vertices = cooperative_astar(
-        MAPF(weighted_instance.graph, instance.starts, instance.goals),
-        collect(1:length(instance.starts)),
-    )
-    return paths_vertices
-end
-
-function fenchel_young_loss(θ::Vector{Float64}, y_target)
-    # Regularização conjugada: Ω*(θ) = ½‖θ‖²
-    Ω_star = 0.5 * sum(θ .^ 2)
-    return Ω_star - dot(θ, y_target)
+    sum = 0
+    for m in 1:M
+        graph = adapt_weights(instance, θ + ϵ * Z_m[m]).graph
+        path = cooperative_astar(
+            MAPF(graph, instance.starts, instance.goals), collect(1:length(instance.starts))
+        )
+        sum += sum_of_costs(path)
+    end
+    F_ϵ = sum / M # Mean of sums of costs calculated for each perturbation
+    fenchel_loss = F_ϵ - dot(y_target, θ)
+    return fenchel_loss
 end

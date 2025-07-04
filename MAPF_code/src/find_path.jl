@@ -232,13 +232,13 @@ end
 
 function path_to_binary_matrix(instance::MAPF_Instance, paths)
     edge_list = collect(edges(instance.graph))
-    binary_variables = Matrix{Int}(undef, length(instance.starts), ne(instance.graph))
+    binary_variables = zeros(length(instance.starts), ne(instance.graph))
     for agent in 1:length(instance.starts)
         for edge in 1:ne(instance.graph)
             if edge_list[edge] in paths[agent]
-                binary_variables[agent, edge] = 1
+                binary_variables[agent, edge] += 1
             else
-                binary_variables[agent, edge] = 0
+                binary_variables[agent, edge] += 0
             end
         end
     end

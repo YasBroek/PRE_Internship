@@ -104,3 +104,23 @@ training_results = MAPF_code.training_LR(
 end
 
 @profview MAPF_code.training_LR(instance_list, best_solutions_list, 0.1, 10, 0.001, 3)
+
+θ = randn(9)
+perturbed_θ = θ .+ 0.1 * randn(9)
+graph = MAPF_code.adapt_weights(instance_list[1], perturbed_θ).graph
+MAP = MAPF(graph, instance_list[1].starts, instance_list[1].goals)
+path = cooperative_astar(MAP)
+
+y_best_found_solution = MAPF_code.path_to_binary_vector(
+    instance_list[1], MAPF_code.Solution_to_paths(best_solutions_list[1], instance_list[1])
+)
+
+fenchel_young_loss(
+    instance_list[1],
+    extract_features(instance_list[1]),
+    10,
+    randn(9),
+    y_best_found_solution,
+    Z_m,
+    0.1,
+)

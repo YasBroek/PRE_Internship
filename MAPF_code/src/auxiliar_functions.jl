@@ -125,3 +125,43 @@ function Solution_to_paths(s::Solution, instance::MAPF_Instance)
     end
     return list
 end
+
+function calculate_path(instance, regression_weights)
+    features = extract_features(instance)
+    weighted_instance = deepcopy(instance)
+    θ = linear_regression(features, regression_weights)
+
+    weighted_instance = adapt_weights(weighted_instance, θ)
+
+    paths_vertices = cooperative_astar(
+        MAPF(weighted_instance.graph, instance.starts, instance.goals),
+        collect(1:length(instance.starts)),
+    )
+    paths = [
+        [
+            SimpleWeightedEdge(
+                paths_vertices.paths[k][i],
+                paths_vertices.paths[k][i + 1],
+                weights(instance.graph)[
+                    paths_vertices.paths[k][i], paths_vertices.paths[k][i + 1]
+                ],
+            ) for i in 1:(length(paths_vertices.paths[k]) - 1)
+        ] for k in 1:length(paths_vertices.paths)
+    ]
+
+    return paths
+end
+
+function calculate_path_v(instance, regression_weights)
+    features = extract_features(instance)
+    weighted_instance = deepcopy(instance)
+    θ = linear_regression(features, regression_weights)
+
+    weighted_instance = adapt_weights(weighted_instance, θ)
+
+    paths_vertices = cooperative_astar(
+        MAPF(weighted_instance.graph, instance.starts, instance.goals),
+        collect(1:length(instance.starts)),
+    )
+    return paths_vertices
+end
