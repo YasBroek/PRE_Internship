@@ -6,7 +6,7 @@ Graphs.is_directed(g::TimeExpandedGraph) = true
 Graphs.is_directed(::Type{<:TimeExpandedGraph}) = true
 Graphs.neighbors(g::TimeExpandedGraph, v::Int) = outneighbors(g, v)
 
-function Graphs.weights(g::TimeExpandedGraph)
+function build_sparse_weights(g::TimeExpandedGraph)
     n = nv(g)
     s_n = nv(g.s_g)
     W_sg = Graphs.weights(g.s_g)
@@ -17,9 +17,11 @@ function Graphs.weights(g::TimeExpandedGraph)
 
     for e in edges(g)
         u, v = src(e), dst(e)
-
         orig_u = (u - 1) % s_n + 1
         orig_v = (v - 1) % s_n + 1
+        if u < 1 || v < 1
+            @warn "Índice inválido em build_sparse_weights: u=$u, v=$v"
+        end
 
         push!(I, u)
         push!(J, v)
@@ -54,10 +56,14 @@ function Graphs.edges(g::TimeExpandedGraph)
         end
     end
     for i in 1:(g.t - 1)
-        push!(
-            edge_list,
-            SimpleWeightedEdge(g.goal + (i - 1) * nv(g.s_g), g.goal + i * nv(g.s_g), 0.0),
-        )
+        if g.goal > 0
+            push!(
+                edge_list,
+                SimpleWeightedEdge(
+                    g.goal + (i - 1) * nv(g.s_g), g.goal + i * nv(g.s_g), 0.0
+                ),
+            )
+        end
     end
     return edge_list
 end

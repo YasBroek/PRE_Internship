@@ -109,9 +109,8 @@ function prioritized_planning_v2(instance::MAPF_Instance)
 
     n = nv(instance.graph)
 
-    # NOVO: Reservas de vértices e arestas
-    vertex_reservations = Dict{Tuple{Int,Int},Bool}()  # (v, t)
-    edge_reservations = Dict{Tuple{Int,Int,Int},Bool}()  # (u, v, t)
+    vertex_reservations = Dict{Tuple{Int,Int},Bool}()
+    edge_reservations = Dict{Tuple{Int,Int,Int},Bool}()
 
     for (t, e) in enumerate(paths[1])
         u = src(e)
@@ -119,7 +118,7 @@ function prioritized_planning_v2(instance::MAPF_Instance)
 
         vertex_reservations[(v, t)] = true
         edge_reservations[(u, v, t)] = true
-        edge_reservations[(v, u, t)] = true  # evitar troca
+        edge_reservations[(v, u, t)] = true
     end
     for pos in (length(paths[1]) + 1):max_len
         vertex_reservations[(instance.goals[1], pos)] = true
@@ -127,7 +126,6 @@ function prioritized_planning_v2(instance::MAPF_Instance)
 
     println("Creating mutable_graph")
 
-    # Montar rem_v e rem_e com base nas reservas
     rem_vertices = [v + n * t for ((v, t), _) in vertex_reservations]
     rem_edges = SimpleWeightedEdge{Int,Float64}[]
 
@@ -141,6 +139,7 @@ function prioritized_planning_v2(instance::MAPF_Instance)
     end
 
     mutable_graph = TimeExpandedGraph(instance.graph, max_len, rem_vertices, rem_edges)
+    time_expanded_weights = TimeExpandedWeights(build_sparse_weights(mutable_graph))
 
     for agent in 2:length(instance.starts)
         paths[agent] = Vector{SimpleWeightedEdge{Int64,Float64}}()
@@ -155,7 +154,7 @@ function prioritized_planning_v2(instance::MAPF_Instance)
             mutable_graph,
             instance.starts[agent],
             instance.goals[agent] + (mutable_graph.t - 1) * n,
-            weights(mutable_graph),
+            time_expanded_weights.W_sg,
             heuristic,
             SimpleWeightedEdge{Int,Float64},
         )
@@ -168,13 +167,13 @@ function prioritized_planning_v2(instance::MAPF_Instance)
                 mutable_graph,
                 instance.starts[agent],
                 instance.goals[agent] + (mutable_graph.t - 1) * n,
-                weights(mutable_graph),
+                time_expanded_weights.W_sg,
                 heuristic,
                 SimpleWeightedEdge{Int,Float64},
             )
         end
 
-        W = weights(mutable_graph)
+        W = time_expanded_weights.W_sg
         n_sg = nv(instance.graph)
         new_edges = Vector{SimpleWeightedEdge{Int}}(undef, length(new_path))
 
@@ -189,7 +188,6 @@ function prioritized_planning_v2(instance::MAPF_Instance)
 
         paths[agent] = new_edges
 
-        # ATUALIZA RESERVAS com o novo caminho
         for (t, e) in enumerate(paths[agent])
             u = src(e)
             v = dst(e)
@@ -201,7 +199,6 @@ function prioritized_planning_v2(instance::MAPF_Instance)
             vertex_reservations[(instance.goals[agent], pos)] = true
         end
 
-        # Atualizar rem_v e rem_e para o próximo agente
         mutable_graph.rem_v = [v + n * t for ((v, t), _) in vertex_reservations]
         mutable_graph.rem_e = SimpleWeightedEdge{Int,Float64}[]
         for ((u, v, t), _) in edge_reservations

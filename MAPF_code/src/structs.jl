@@ -47,3 +47,10 @@ function TimeExpandedGraph(
 )
     return TimeExpandedGraph(s_g, t, rem_v, rem_e, 0)
 end
+
+struct TimeExpandedWeights{T}
+    W_sg::SparseMatrixCSC{T,Int}
+end
+
+Base.getindex(w::TimeExpandedWeights, i::Int, j::Int) = w.W[i, j]
+Base.size(w::TimeExpandedWeights) = size(w.W)

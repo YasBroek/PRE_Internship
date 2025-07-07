@@ -66,11 +66,12 @@ function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T}) where {
         ),
     )
     edge_list = collect(edges(instance.graph))
+    adapted_instance = deepcopy(instance)
 
     for (i, edge) in enumerate(edge_list)
         u, v = src(edge), dst(edge)
-        instance.graph.weights[u, v] = perturbed_θ[i]
-        instance.graph.weights[v, u] = perturbed_θ[i]
+        adapted_instance.graph.weights[u, v] = perturbed_θ[i]
+        adapted_instance.graph.weights[v, u] = perturbed_θ[i]
     end
     return instance
 end

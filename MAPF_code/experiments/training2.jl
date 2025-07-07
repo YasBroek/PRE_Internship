@@ -62,31 +62,46 @@ for caminho_scen in arquivos_scen
 end
 
 training_results = MAPF_code.training_LR(
-    instance_list, best_solutions_list, 0.01, 10, 0.001, 30
+    instance_list, best_solutions_list, 0.01, 10, 0.001, 500
 )
 
-@profview for _ in 1:3
-    MAPF_code.training_LR(instance_list, best_solutions_list, 0.1, 10, 0.001, 1)
-end
+"Open map"
+file_instance = readlines(open("MAPF_code/input/room-32-32-4/instance/room-32-32-4.map"))
 
-@profview MAPF_code.training_LR(instance_list, best_solutions_list, 0.1, 10, 0.001, 3)
+"Open scenarios"
+instance_data = readlines(
+    open("MAPF_code/input/room-32-32-4/instance/room-32-32-4-even-1.scen")
+)
+instance_type_id = 1
+instance_scen_type = "even"
+num_agents = 10
 
-θ = randn(9)
-perturbed_θ = θ .+ 0.1 * randn(9)
-graph = MAPF_code.adapt_weights(instance_list[1], perturbed_θ).graph
-MAP = MAPF(graph, instance_list[1].starts, instance_list[1].goals)
-path = cooperative_astar(MAP)
+instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, num_agents)
 
-y_best_found_solution = MAPF_code.path_to_binary_vector(
-    instance_list[1], MAPF_code.Solution_to_paths(best_solutions_list[1], instance_list[1])
+sum_of_costs(
+    cooperative_astar(MAPF(instance.graph, instance.starts, instance.goals)),
+    MAPF(instance.graph, instance.starts, instance.goals),
+)
+adapted_instance = MAPF_code.adapt_weights(
+    instance,
+    MAPF_code.generalized_linear_model(
+        MAPF_code.extract_features(instance), training_results
+    ),
+)
+sum_of_costs(
+    cooperative_astar(MAPF(adapted_instance.graph, instance.starts, instance.goals)),
+    MAPF(instance.graph, instance.starts, instance.goals),
 )
 
-fenchel_young_loss(
-    instance_list[1],
-    extract_features(instance_list[1]),
-    10,
-    randn(9),
-    y_best_found_solution,
-    Z_m,
-    0.1,
+cooperative_astar(MAPF(adapted_instance.graph, instance.starts, instance.goals))
+
+PP = MAPF_code.path_cost(instance, MAPF_code.prioritized_planning_v2(instance))
+
+adapted_instance = MAPF_code.adapt_weights(
+    instance,
+    MAPF_code.generalized_linear_model(
+        MAPF_code.extract_features(instance), training_results
+    ),
 )
+
+MAPF_code.path_cost(instance, MAPF_code.prioritized_planning_v2(adapted_instance))
