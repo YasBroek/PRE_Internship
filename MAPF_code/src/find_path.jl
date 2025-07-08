@@ -97,22 +97,37 @@ function prioritized_planning_v2(instance::MAPF_Instance)
         undef, length(instance.starts)
     )
     heuristic = euclidean_heuristic(instance.goals[1], instance.width)
-    paths[1] = a_star(
+    independent_paths = independent_shortest_paths(instance)
+    max_len = maximum(length(path) for path in independent_paths) * 2
+
+    goal_conflicts = [[0, agent] for agent in 1:length(instance.goals)]
+    for agent in 1:length(instance.goals)
+        for path in independent_paths
+            for edge in path
+                if dst(edge) == instance.goals[agent]
+                    goal_conflicts[agent][1] += 1
+                end
+            end
+        end
+    end
+    ag_order = [g[2] for g in sort!(goal_conflicts; by=x -> x[1], rev=false)]
+    println(ag_order)
+    solved = []
+
+    paths[ag_order[1]] = a_star(
         instance.graph,
-        instance.starts[1],
-        instance.goals[1],
+        instance.starts[ag_order[1]],
+        instance.goals[ag_order[1]],
         weights(instance.graph),
         heuristic,
     )
-    independent_paths = independent_shortest_paths(instance)
-    max_len = maximum(length(path) for path in independent_paths) * 2
 
     n = nv(instance.graph)
 
     vertex_reservations = Dict{Tuple{Int,Int},Bool}()
     edge_reservations = Dict{Tuple{Int,Int,Int},Bool}()
 
-    for (t, e) in enumerate(paths[1])
+    for (t, e) in enumerate(paths[ag_order[1]])
         u = src(e)
         v = dst(e)
 
@@ -120,8 +135,8 @@ function prioritized_planning_v2(instance::MAPF_Instance)
         edge_reservations[(u, v, t)] = true
         edge_reservations[(v, u, t)] = true
     end
-    for pos in (length(paths[1]) + 1):max_len
-        vertex_reservations[(instance.goals[1], pos)] = true
+    for pos in (length(paths[ag_order[1]]) + 1):max_len
+        vertex_reservations[(instance.goals[ag_order[1]], pos)] = true
     end
 
     println("Creating mutable_graph")
@@ -140,37 +155,52 @@ function prioritized_planning_v2(instance::MAPF_Instance)
 
     mutable_graph = TimeExpandedGraph(instance.graph, max_len, rem_vertices, rem_edges)
     time_expanded_weights = TimeExpandedWeights(build_sparse_weights(mutable_graph))
+    push!(solved, ag_order[1])
+    popfirst!(ag_order)
 
-    for agent in 2:length(instance.starts)
-        paths[agent] = Vector{SimpleWeightedEdge{Int64,Float64}}()
-        println(agent)
+    while !isempty(ag_order)
+        paths[ag_order[1]] = Vector{SimpleWeightedEdge{Int64,Float64}}()
+        println(ag_order[1])
 
         heuristic = euclidean_heuristic_time_expanded(
-            instance.goals[agent], instance.width, n
+            instance.goals[ag_order[1]], instance.width, n
         )
-        mutable_graph.goal = instance.goals[agent]
+        mutable_graph.goal = instance.goals[ag_order[1]]
 
         new_path = a_star(
             mutable_graph,
-            instance.starts[agent],
-            instance.goals[agent] + (mutable_graph.t - 1) * n,
+            instance.starts[ag_order[1]],
+            instance.goals[ag_order[1]] + (mutable_graph.t - 1) * n,
             time_expanded_weights.W_sg,
             heuristic,
             SimpleWeightedEdge{Int,Float64},
         )
 
-        while isempty(new_path)
+        i = 0
+
+        while isempty(new_path) && i < 50
+            i += 1
             mutable_graph.t += 1
             print(mutable_graph.t)
+            time_expanded_weights = TimeExpandedWeights(build_sparse_weights(mutable_graph))
+            for s1 in 1:(ag_order[1] - 1)
+                vertex_reservations[(instance.goals[s1], mutable_graph.t)] = true
+            end
+            mutable_graph.rem_v = [v + n * t for ((v, t), _) in vertex_reservations]
 
             new_path = a_star(
                 mutable_graph,
-                instance.starts[agent],
-                instance.goals[agent] + (mutable_graph.t - 1) * n,
+                instance.starts[ag_order[1]],
+                instance.goals[ag_order[1]] + (mutable_graph.t - 1) * n,
                 time_expanded_weights.W_sg,
                 heuristic,
                 SimpleWeightedEdge{Int,Float64},
             )
+        end
+
+        if isempty(new_path)
+            push!(ag_order, popfirst!(ag_order))
+            continue
         end
 
         W = time_expanded_weights.W_sg
@@ -186,17 +216,17 @@ function prioritized_planning_v2(instance::MAPF_Instance)
             new_edges[i] = SimpleWeightedEdge(src_local, dst_local, W[u, v])
         end
 
-        paths[agent] = new_edges
+        paths[ag_order[1]] = new_edges
 
-        for (t, e) in enumerate(paths[agent])
+        for (t, e) in enumerate(paths[ag_order[1]])
             u = src(e)
             v = dst(e)
             vertex_reservations[(v, t)] = true
             edge_reservations[(u, v, t)] = true
             edge_reservations[(v, u, t)] = true
         end
-        for pos in (length(paths[agent]) + 1):(mutable_graph.t)
-            vertex_reservations[(instance.goals[agent], pos)] = true
+        for pos in (length(paths[ag_order[1]]) + 1):(mutable_graph.t)
+            vertex_reservations[(instance.goals[ag_order[1]], pos)] = true
         end
 
         mutable_graph.rem_v = [v + n * t for ((v, t), _) in vertex_reservations]
@@ -209,6 +239,8 @@ function prioritized_planning_v2(instance::MAPF_Instance)
             )
             push!(mutable_graph.rem_e, edge)
         end
+        push!(solved, ag_order[1])
+        popfirst!(ag_order)
     end
 
     return paths

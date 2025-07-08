@@ -105,7 +105,6 @@ function training_LR(
                 instance_list[index],
                 Solution_to_paths(benchmarkSols[index], instance_list[index]),
             )
-            println("a")
             if epoch == 1
                 push!(features_list, extract_features(instance_list[index]))
             end
@@ -113,9 +112,9 @@ function training_LR(
                 y_estimate = spzeros(ne(instance_list[1].graph))
             end
             fill!(y_estimate, 0.0)
-            println("b")
 
             θ = generalized_linear_model(features_list[index], regression_weights)
+            println(sum(θ))
             Z_m = Vector{Vector{Float64}}(undef, M)
             for m in 1:M
                 Z_m[m] = randn(size(θ))
@@ -125,12 +124,11 @@ function training_LR(
                     weighted_instance, independent_shortest_paths(weighted_instance)
                 )
             end
-            println("c")
             y_estimate = y_estimate ./ M
             fenchel_loss_gradient = -(y_best_found_solution - y_estimate)
             regression_weights =
                 regression_weights - α * features_list[index]' * fenchel_loss_gradient
-            println("d")
+            println(regression_weights)
             fenchel_loss = fenchel_young_loss(
                 instance_list[index],
                 features_list[index],
@@ -141,6 +139,9 @@ function training_LR(
                 ϵ,
             )
             println("epoch: $epoch")
+            if epoch > 3
+                break
+            end
             avg_grad += sum(abs.(fenchel_loss_gradient))
             avg_loss += fenchel_loss
         end

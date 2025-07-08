@@ -18,6 +18,9 @@ using MetaGraphsNext
 using Base.Threads
 using SparseArrays
 using MultiAgentPathFinding
+using ProgressMeter
+using Statistics
+using CUDA
 
 include("structs.jl")
 include("TEG_methods.jl")

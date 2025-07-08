@@ -9,6 +9,7 @@ ENV["DATADEPS_ALWAYS_ACCEPT"] = true
 instance_list = []
 best_solutions_list = []
 instancia = "MAPF_code/input/room-32-32-4/training/"
+
 mapa = "MAPF_code/input/room-32-32-4/training/room-32-32-4.map"
 
 file_instance = readlines(mapa)
@@ -62,7 +63,7 @@ for caminho_scen in arquivos_scen
 end
 
 training_results = MAPF_code.training_LR(
-    instance_list, best_solutions_list, 0.01, 10, 0.001, 500
+    instance_list[1:1], best_solutions_list, 0.01, 10, 0.001, 500
 )
 
 "Open map"
@@ -72,6 +73,7 @@ file_instance = readlines(open("MAPF_code/input/room-32-32-4/instance/room-32-32
 instance_data = readlines(
     open("MAPF_code/input/room-32-32-4/instance/room-32-32-4-even-1.scen")
 )
+
 instance_type_id = 1
 instance_scen_type = "even"
 num_agents = 10
@@ -105,3 +107,7 @@ adapted_instance = MAPF_code.adapt_weights(
 )
 
 MAPF_code.path_cost(instance, MAPF_code.prioritized_planning_v2(adapted_instance))
+
+MAPF_code.visualization(
+    file_instance, instance, MAPF_code.prioritized_planning_v2(instance)
+)
