@@ -21,6 +21,7 @@ using MultiAgentPathFinding
 using ProgressMeter
 using Statistics
 using CUDA
+using Zygote
 
 include("structs.jl")
 include("TEG_methods.jl")

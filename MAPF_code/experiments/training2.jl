@@ -62,9 +62,10 @@ for caminho_scen in arquivos_scen
     println("agents: $qte_agents")
 end
 
-training_results = MAPF_code.training_LR(
-    instance_list[1:1], best_solutions_list, 0.01, 10, 0.001, 500
-)
+model, losses =
+    training_results = MAPF_code.training(
+        instance_list, best_solutions_list, 0.01, 10, 0.01, 200
+    )
 
 "Open map"
 file_instance = readlines(open("MAPF_code/input/room-32-32-4/instance/room-32-32-4.map"))
@@ -76,38 +77,19 @@ instance_data = readlines(
 
 instance_type_id = 1
 instance_scen_type = "even"
-num_agents = 10
+num_agents = 20
 
 instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, num_agents)
 
-sum_of_costs(
-    cooperative_astar(MAPF(instance.graph, instance.starts, instance.goals)),
-    MAPF(instance.graph, instance.starts, instance.goals),
-)
-adapted_instance = MAPF_code.adapt_weights(
-    instance,
-    MAPF_code.generalized_linear_model(
-        MAPF_code.extract_features(instance), training_results
+PP_cost = sum_of_costs(
+    cooperative_astar(
+        MAPF(instance.graph, instance.starts, instance.goals),
+        collect(1:length(instance.starts)),
     ),
-)
-sum_of_costs(
-    cooperative_astar(MAPF(adapted_instance.graph, instance.starts, instance.goals)),
     MAPF(instance.graph, instance.starts, instance.goals),
 )
 
-cooperative_astar(MAPF(adapted_instance.graph, instance.starts, instance.goals))
-
-PP = MAPF_code.path_cost(instance, MAPF_code.prioritized_planning_v2(instance))
-
-adapted_instance = MAPF_code.adapt_weights(
-    instance,
-    MAPF_code.generalized_linear_model(
-        MAPF_code.extract_features(instance), training_results
-    ),
-)
-
-MAPF_code.path_cost(instance, MAPF_code.prioritized_planning_v2(adapted_instance))
-
-MAPF_code.visualization(
-    file_instance, instance, MAPF_code.prioritized_planning_v2(instance)
+trained_cost = sum_of_costs(
+    MAPF_code.solve_with_trained_model(model, instance),
+    MAPF(instance.graph, instance.starts, instance.goals),
 )

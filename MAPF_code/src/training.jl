@@ -73,7 +73,7 @@ function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T}) where {
         adapted_instance.graph.weights[u, v] = perturbed_θ[i]
         adapted_instance.graph.weights[v, u] = perturbed_θ[i]
     end
-    return instance
+    return adapted_instance
 end
 
 """
@@ -173,6 +173,118 @@ function training_LR(
     return regression_weights
 end
 
+function training(
+    instance_list, benchmarkSols, ϵ::Float64, M::Int, α::Float64, num_epochs::Int
+)
+    features_list = []
+    y_best_found_solution = []
+    for index in 1:length(instance_list)
+        push!(features_list, extract_features(instance_list[index]))
+        push!(
+            y_best_found_solution,
+            path_to_binary_vector(
+                instance_list[index],
+                Solution_to_paths(benchmarkSols[index], instance_list[index]),
+            ),
+        )
+    end
+    model = Chain(Dense(size(features_list[1], 2) => 1), x -> relu.(x) .+ 1e-6)
+    opt = Flux.Adam(α)
+    opt_state = Flux.setup(opt, model)
+
+    losses = Float64[]
+    epoch_list = []
+    grads_list = []
+
+    @showprogress for epoch in 1:num_epochs
+        total_loss = 0.0
+        total_grad = 0.0
+        for index in 1:length(instance_list)
+            x_input = features_list[index]'
+            y_target = y_best_found_solution[index]
+            oracle =
+                θ -> path_to_binary_vector(
+                    instance_list[index],
+                    independent_shortest_paths(
+                        adapt_weights(deepcopy(instance_list[index]), collect(θ))
+                    ),
+                )
+            layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
+            loss = FenchelYoungLoss(layer)
+            grads = Zygote.gradient(model) do m
+                θ = m(x_input)
+                θ_vec = vec(θ')
+                loss(θ_vec, y_target)
+            end
+
+            Flux.update!(opt_state, model, grads[1])
+            θ_current = model(x_input)
+            θ_vec_current = vec(θ_current')
+            current_loss = loss(θ_vec_current, y_target)
+            total_loss += current_loss
+            grad_norm = compute_gradient_norm(grads[1])
+            total_grad += grad_norm
+        end
+        avg_loss = total_loss / length(instance_list)
+        avg_grad = total_grad / length(instance_list)
+        push!(losses, avg_loss)
+        push!(grads_list, avg_grad)
+        push!(epoch_list, epoch)
+    end
+    display(
+        lineplot(
+            epoch_list,
+            grads_list;
+            title="Gradient loss over time",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    display(
+        lineplot(
+            epoch_list,
+            losses;
+            title="Loss over time",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    return model, losses
+end
+
+function compute_gradient_norm(grad)
+    total_norm = 0.0
+
+    function add_param_norm(param)
+        if param isa AbstractArray && eltype(param) <: Number
+            total_norm += sum(abs2, param)
+        end
+    end
+
+    function process_layer(layer_grad)
+        if layer_grad isa NamedTuple
+            for field in fieldnames(typeof(layer_grad))
+                param_grad = getfield(layer_grad, field)
+                add_param_norm(param_grad)
+            end
+        elseif layer_grad isa AbstractArray
+            add_param_norm(layer_grad)
+        end
+    end
+
+    if hasfield(typeof(grad), :layers)
+        for layer_grad in grad.layers
+            process_layer(layer_grad)
+        end
+    else
+        process_layer(grad)
+    end
+
+    return sqrt(total_norm)
+end
+
 function fenchel_young_loss(instance, features, M, regression_weights, y_target, Z_m, ϵ)
     θ = generalized_linear_model(features, regression_weights)
     sum = 0
@@ -184,4 +296,16 @@ function fenchel_young_loss(instance, features, M, regression_weights, y_target,
     F_ϵ = sum / M # Mean of sums of costs calculated for each perturbation
     fenchel_loss = F_ϵ - dot(y_target, θ)
     return fenchel_loss
+end
+
+function solve_with_trained_model(model, instance)
+    features = extract_features(instance)
+    x_input = features'
+    weights = model(x_input)
+    θ_vec = vec(weights')
+
+    weighted_instance = adapt_weights(deepcopy(instance), collect(θ_vec))
+    mapf = MAPF(weighted_instance.graph, instance.starts, instance.goals)
+
+    return cooperative_astar(mapf, collect(1:length(instance.starts)))
 end
