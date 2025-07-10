@@ -1,126 +1,66 @@
-using Revise
-using MAPF_code
-using Graphs
-using SimpleWeightedGraphs
 using MultiAgentPathFinding
 using Flux
 using InferOpt
-using Zygote
 using Graphs
+using SparseArrays
+using Zygote
 
-file_instance = readlines(open("MAPF_code/input/empty-16-16/instance/empty-16-16.map"))
+instance = "room-32-32-4"
+scen_type = "even"
+type_id = 1
+agents = 11
+scen = BenchmarkScenario(; instance, scen_type, type_id, agents)
 
-instance_data = readlines(
-    open("MAPF_code/input/empty-16-16/instance/empty-16-16-even-1.scen")
-)
-instance_type_id = 1
-instance_scen_type = "even"
-num_agents = 11
+bench_mapf = MAPF(scen; allow_diagonal_moves=true)
 
-instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, num_agents)
-
-features = MAPF_code.extract_features(instance)
-@info features
-model = Chain(Dense(size(features, 2) => 1), x -> relu.(x))
+model = Chain(Dense(8 => 1), x -> relu.(x))
 opt = Flux.Adam(0.01)
 opt_state = Flux.setup(opt, model)
 
-oracle =
-    θ -> MAPF_code.path_to_binary_vector(
-        instance,
-        MAPF_code.independent_shortest_paths(
-            MAPF_code.adapt_weights(deepcopy(instance), collect(θ))
+function adapt_weights(instance::MAPF, perturbed_θ::Vector{T}) where {T<:Real}
+    num_edges = ne(instance.graph)
+    length(perturbed_θ) == num_edges || throw(
+        ArgumentError(
+            "perturbed_θ must have length $num_edges, got $(length(perturbed_θ))"
         ),
     )
+    edge_list = collect(edges(instance.graph))
+    adapted_instance = deepcopy(instance)
+
+    for (i, edge) in enumerate(edge_list)
+        u, v = src(edge), dst(edge)
+        adapted_instance.graph.weights[u, v] = perturbed_θ[i]
+        adapted_instance.graph.weights[v, u] = perturbed_θ[i]
+    end
+    return adapted_instance
+end
+
+function path_to_binary_vector(instance::MAPF, paths)
+    edge_list = collect(edges(instance.graph))
+    edge_to_index = Dict((src(e), dst(e)) => i for (i, e) in enumerate(edge_list))
+    binary_variables = spzeros(length(edge_list))
+    for agent_path in paths
+        for v_index in 1:(length(agent_path) - 1)
+            key = (
+                min(agent_path[v_index], agent_path[v_index + 1]),
+                max(agent_path[v_index], agent_path[v_index + 1]),
+            )
+            i = get(edge_to_index, key, nothing)
+            if i !== nothing
+                binary_variables[i] += 1
+            end
+        end
+    end
+    return binary_variables
+end
+
+oracle =
+    θ -> path_to_binary_vector(
+        bench_mapf,
+        independent_dijkstra(adapt_weights(deepcopy(bench_mapf), collect(θ))),
+    )
 layer = PerturbedMultiplicative(oracle; ε=0.1, nb_samples=5);
-@info layer
 loss = FenchelYoungLoss(layer);
-@info loss
-target_solution = MAPF_code.path_to_binary_vector(
-    instance,
-    MAPF_code.Solution_to_paths(
-        Solution(
-            BenchmarkScenario(;
-                instance="empty-16-16",
-                scen_type=instance_scen_type,
-                type_id=instance_type_id,
-                agents=num_agents,
-            ),
-        ),
-        instance,
-    ),
-)
-
-losses = Float64[]
-bad_θ = []
-bad_target = []
-
-for epoch in 1:100
-    x_input = features'
-
-    grads = Zygote.gradient(model) do m
-        θ = m(x_input)
-        θ_vec = vec(θ')
-        println(θ_vec)
-        loss(θ_vec, target_solution)
-    end
-
-    Flux.update!(opt_state, model, grads[1])
-
-    θ_current = model(x_input)
-    θ_vec_current = vec(θ_current')
-    println("θ_vec_current: $θ_vec_current, target_solution: $target_solution")
-    push!(bad_θ, θ_vec_current)
-    push!(bad_target, target_solution)
-    current_loss = loss(θ_vec_current, target_solution)
-    if epoch % 10 == 0
-        println("Epoch: $epoch")
-    end
-end
-
-@info bad_θ[end]
-
-loss(bad_θ[end], target_solution)
-
-θ_vec_current
-
-loss_val = loss(vec(model(X')'), y_true)
-
-ne(instance.graph)
-
-# Debug the dimensions
-println("Features shape: ", size(features))
-println("Model input shape: ", size(features'))
-
-# Test the model output
-test_output = model(features')
-println("Model output shape: ", size(test_output))
-println("Model output vec shape: ", size(vec(test_output')))
-
-# Check target solution
-println("Target solution shape: ", size(target_solution))
-println("Target solution length: ", length(target_solution))
-
-# Check what the oracle expects
-# First, let's see what adapt_weights expects
-println("Number of edges in instance: ", ne(instance.graph))
-
-# Test oracle with a simple vector
-test_θ = rand(ne(instance.graph)) # This should match the number of edges
-println("Test theta length: ", length(test_θ))
-
-try
-    test_solution = oracle(test_θ)
-    println("Oracle output shape: ", size(test_solution))
-    println("Oracle output length: ", length(test_solution))
-catch e
-    println("Oracle error: ", e)
-end
-
-model = Chain(Dense(size(features, 2) => 1), x -> relu.(x))
-θ = model(features')
-θ_vec = vec(θ')
-loss(θ_vec, target_solution)
 
 θ_error = Float32[
     102.14395,
@@ -1871,4 +1811,6 @@ y_target = sparsevec(
     ],
     1646,
 )
+
+# Line that returns error
 loss(θ_error, y_target)

@@ -22,8 +22,10 @@ paths = MAPF_code.independent_shortest_paths(instance)
 end
 conflicts = MAPF_code.conflict_identifier(instance, paths)
 @info conflicts
+features = zeros(ne(instance.graph))
+edge_list = collect(edges(instance.graph))
 
-for edge in collect(edges(instance.graph))
-    c = MAPF_code.normalized_closeness_centrality(instance, edge)
-    println("Edge: $edge, c: $c")
+for edge in 1:ne(instance.graph)
+    features[edge] = MAPF_code.harmonic_centrality(instance, edge_list[edge])
 end
+@info features

@@ -10,7 +10,7 @@ Extracts features from an instance for each edge
 """
 function extract_features(instance::MAPF_Instance)
     edge_list = collect(edges(instance.graph))
-    features = zeros(Float64, ne(instance.graph), 9)
+    features = zeros(Float64, ne(instance.graph), 8)
     paths = independent_shortest_paths(instance)
     conflicts = conflict_identifier(instance, paths)
     for edge in 1:ne(instance.graph)
@@ -22,7 +22,7 @@ function extract_features(instance::MAPF_Instance)
         features[edge, 6] = distance_to_all_agents(instance, edge_list[edge])
         features[edge, 7] = distance_to_closest_agent(instance, edge_list[edge])
         features[edge, 8] = number_of_agents_close(instance, edge_list[edge])
-        features[edge, 9] = normalized_closeness_centrality(instance, edge_list[edge])
+        #features[edge, 9] = normalized_closeness_centrality(instance, edge_list[edge])
     end
     return features
 end
@@ -188,7 +188,7 @@ function training(
             ),
         )
     end
-    model = Chain(Dense(size(features_list[1], 2) => 1), x -> relu.(x) .+ 1e-6)
+    model = Chain(Dense(size(features_list[1], 2) => 1), σ)
     opt = Flux.Adam(α)
     opt_state = Flux.setup(opt, model)
 
@@ -209,7 +209,7 @@ function training(
                         adapt_weights(deepcopy(instance_list[index]), collect(θ))
                     ),
                 )
-            layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
+            layer = PerturbedAdditive(oracle; ε=ϵ, nb_samples=M)
             loss = FenchelYoungLoss(layer)
             grads = Zygote.gradient(model) do m
                 θ = m(x_input)

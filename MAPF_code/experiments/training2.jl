@@ -4,6 +4,7 @@ using Glob
 using MultiAgentPathFinding
 using UnicodePlots
 using JLD2
+using InferOpt
 ENV["DATADEPS_ALWAYS_ACCEPT"] = true
 
 instance_list = []
@@ -62,10 +63,7 @@ for caminho_scen in arquivos_scen
     println("agents: $qte_agents")
 end
 
-model, losses =
-    training_results = MAPF_code.training(
-        instance_list, best_solutions_list, 0.01, 10, 0.01, 200
-    )
+model, losses = MAPF_code.training(instance_list, best_solutions_list, 0.01, 10, 0.01, 200)
 
 "Open map"
 file_instance = readlines(open("MAPF_code/input/room-32-32-4/instance/room-32-32-4.map"))
@@ -77,9 +75,14 @@ instance_data = readlines(
 
 instance_type_id = 1
 instance_scen_type = "even"
-num_agents = 20
+num_agents = 17
 
 instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, num_agents)
+
+features = MAPF_code.extract_features(instance)
+x_input = features'
+weights = model(x_input)
+θ_vec = vec(weights')
 
 PP_cost = sum_of_costs(
     cooperative_astar(

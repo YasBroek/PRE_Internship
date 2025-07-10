@@ -53,7 +53,7 @@ function normalized_closeness_centrality(instance::MAPF_Instance, edge)
     n_reachable = length(finite_dists)
     sum_distances = sum(finite_dists)
 
-    return (n_reachable - 1) / sum_distances
+    return (n_reachable - 1)
 end
 
 function distance_to_closest_obstacle(instance::MAPF_Instance, edge)
