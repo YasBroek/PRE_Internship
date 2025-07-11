@@ -8,10 +8,10 @@ using InferOpt
 using Zygote
 using Graphs
 
-file_instance = readlines(open("MAPF_code/input/empty-16-16/instance/empty-16-16.map"))
+file_instance = readlines(open("MAPF_code/input/room-32-32-4/instance/room-32-32-4.map"))
 
 instance_data = readlines(
-    open("MAPF_code/input/empty-16-16/instance/empty-16-16-even-1.scen")
+    open("MAPF_code/input/room-32-32-4/instance/room-32-32-4-even-1.scen")
 )
 instance_type_id = 1
 instance_scen_type = "even"
@@ -21,7 +21,7 @@ instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, num_agen
 
 features = MAPF_code.extract_features(instance)
 @info features
-model = Chain(Dense(size(features, 2) => 1), x -> relu.(x))
+model = Chain(Dense(size(features, 2) => 1), softplus)
 opt = Flux.Adam(0.01)
 opt_state = Flux.setup(opt, model)
 
@@ -41,7 +41,7 @@ target_solution = MAPF_code.path_to_binary_vector(
     MAPF_code.Solution_to_paths(
         Solution(
             BenchmarkScenario(;
-                instance="empty-16-16",
+                instance="room-32-32-4",
                 scen_type=instance_scen_type,
                 type_id=instance_type_id,
                 agents=num_agents,

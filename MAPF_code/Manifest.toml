@@ -1095,7 +1095,9 @@ version = "1.0.0"
 
 [[deps.InferOpt]]
 deps = ["ChainRulesCore", "DensityInterface", "DifferentiableExpectations", "Distributions", "DocStringExtensions", "LinearAlgebra", "Random", "RequiredInterfaces", "Statistics", "StatsBase", "StatsFuns"]
-git-tree-sha1 = "f61b7d6371eb9cc7476d23916de48a99e6a5d998"
+git-tree-sha1 = "4381bad8c1d96466bd56f3079479dd1fb6689e66"
+repo-rev = "fix-perturbed-multiplicative"
+repo-url = "https://github.com/JuliaDecisionFocusedLearning/InferOpt.jl.git"
 uuid = "4846b161-c94e-4150-8dac-c7ae193c601f"
 version = "0.7.0"
 

@@ -5,7 +5,7 @@ function independent_shortest_paths(instance::MAPF_Instance)
             instance.starts[s],
             instance.goals[s],
             weights(instance.graph),
-            euclidean_heuristic(instance.goals[s], instance.width),
+            v -> 0.0,
             SimpleWeightedEdge{Int,Float64},
         ) for s in 1:length(instance.starts)
     ]
@@ -93,6 +93,9 @@ function unite_goal(instance::MAPF_Instance, teg::TimeExpandedGraph)
 end
 
 function prioritized_planning_v2(instance::MAPF_Instance)
+    if instance.width > 128
+        error("Instance dimentions must be lower or equal to 128x128")
+    end
     paths = Vector{Vector{SimpleWeightedEdge{Int64,Float64}}}(
         undef, length(instance.starts)
     )
@@ -111,7 +114,6 @@ function prioritized_planning_v2(instance::MAPF_Instance)
         end
     end
     ag_order = [g[2] for g in sort!(goal_conflicts; by=x -> x[1], rev=false)]
-    println(ag_order)
     solved = []
 
     paths[ag_order[1]] = a_star(
@@ -139,8 +141,6 @@ function prioritized_planning_v2(instance::MAPF_Instance)
         vertex_reservations[(instance.goals[ag_order[1]], pos)] = true
     end
 
-    println("Creating mutable_graph")
-
     rem_vertices = [v + n * t for ((v, t), _) in vertex_reservations]
     rem_edges = SimpleWeightedEdge{Int,Float64}[]
 
@@ -160,7 +160,6 @@ function prioritized_planning_v2(instance::MAPF_Instance)
 
     while !isempty(ag_order)
         paths[ag_order[1]] = Vector{SimpleWeightedEdge{Int64,Float64}}()
-        println(ag_order[1])
 
         heuristic = euclidean_heuristic_time_expanded(
             instance.goals[ag_order[1]], instance.width, n
@@ -181,7 +180,6 @@ function prioritized_planning_v2(instance::MAPF_Instance)
         while isempty(new_path) && i < 50
             i += 1
             mutable_graph.t += 1
-            print(mutable_graph.t)
             time_expanded_weights = TimeExpandedWeights(build_sparse_weights(mutable_graph))
             for s1 in 1:(ag_order[1] - 1)
                 vertex_reservations[(instance.goals[s1], mutable_graph.t)] = true
@@ -250,11 +248,10 @@ function path_cost(instance, paths)
     total_cost = 0
     for path in 1:length(paths)
         for edge in paths[path]
-            if dst(edge) != instance.goals[path]
-                total_cost += 1
+            if src(edge) != instance.goals[path]
+                total_cost += instance.graph.weights[src(edge), dst(edge)]
             end
         end
-        total_cost += 1
     end
     return total_cost
 end

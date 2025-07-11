@@ -69,6 +69,16 @@ function distance_to_closest_obstacle(instance::MAPF_Instance, edge)
             min_dist = dist
         end
     end
+    vertex_v = index_to_coords(dst(edge), instance.width)
+    dist_border_list = [
+        vertex_v[1],
+        vertex_v[2],
+        instance.width - vertex_v[1] + 1,
+        instance.height - vertex_v[2] + 1,
+    ]
+    if min_dist > minimum(dist_border_list)
+        min_dist = minimum(dist_border_list)
+    end
     return min_dist
 end
 

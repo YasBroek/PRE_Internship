@@ -24,6 +24,17 @@ function extract_features(instance::MAPF_Instance)
         features[edge, 8] = number_of_agents_close(instance, edge_list[edge])
         #features[edge, 9] = normalized_closeness_centrality(instance, edge_list[edge])
     end
+    max_list = Vector{Float64}(undef, 8)
+    for j in 1:8
+        max_list[j] = maximum(features[:, j])
+    end
+    for i in 1:size(features, 1)
+        for j in 1:size(features, 2)
+            if max_list[j] > 0
+                features[i, j] = features[i, j] / max_list[j]
+            end
+        end
+    end
     return features
 end
 
@@ -209,13 +220,104 @@ function training(
                         adapt_weights(deepcopy(instance_list[index]), collect(θ))
                     ),
                 )
-            layer = PerturbedAdditive(oracle; ε=ϵ, nb_samples=M)
+            layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
             loss = FenchelYoungLoss(layer)
             grads = Zygote.gradient(model) do m
                 θ = m(x_input)
                 θ_vec = vec(θ')
                 loss(θ_vec, y_target)
             end
+            yield()
+
+            Flux.update!(opt_state, model, grads[1])
+            θ_current = model(x_input)
+            θ_vec_current = vec(θ_current')
+            current_loss = loss(θ_vec_current, y_target)
+            total_loss += current_loss
+            grad_norm = compute_gradient_norm(grads[1])
+            total_grad += grad_norm
+        end
+        avg_loss = total_loss / length(instance_list)
+        avg_grad = total_grad / length(instance_list)
+        push!(losses, avg_loss)
+        push!(grads_list, avg_grad)
+        push!(epoch_list, epoch)
+    end
+    display(
+        lineplot(
+            epoch_list,
+            grads_list;
+            title="Gradient loss over time",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    display(
+        lineplot(
+            epoch_list,
+            losses;
+            title="Loss over time",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    return model, losses
+end
+
+function training_PP(
+    instance_list, benchmarkSols, ϵ::Float64, M::Int, α::Float64, num_epochs::Int
+)
+    features_list = []
+    y_best_found_solution = []
+    for index in 1:length(instance_list)
+        push!(features_list, extract_features(instance_list[index]))
+        push!(
+            y_best_found_solution,
+            path_to_binary_vector(
+                instance_list[index],
+                Solution_to_paths(benchmarkSols[index], instance_list[index]),
+            ),
+        )
+    end
+    model = Chain(Dense(size(features_list[1], 2) => 1), σ)
+    opt = Flux.Adam(α)
+    opt_state = Flux.setup(opt, model)
+
+    losses = Float64[]
+    epoch_list = []
+    grads_list = []
+
+    @showprogress for epoch in 1:num_epochs
+        total_loss = 0.0
+        total_grad = 0.0
+        for index in 1:length(instance_list)
+            x_input = features_list[index]'
+            y_target = y_best_found_solution[index]
+            oracle =
+                θ -> path_to_binary_vector(
+                    instance_list[index],
+                    Solution_to_paths(
+                        cooperative_astar(
+                            MAPF(
+                                adapt_weights(instance_list[index], collect(θ)).graph,
+                                instance_list[index].starts,
+                                instance_list[index].goals,
+                            ),
+                            collect(1:length(instance_list[index].starts)),
+                        ),
+                        instance_list[index],
+                    ),
+                )
+            layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
+            loss = FenchelYoungLoss(layer)
+            grads = Zygote.gradient(model) do m
+                θ = m(x_input)
+                θ_vec = vec(θ')
+                loss(θ_vec, y_target)
+            end
+            yield()
 
             Flux.update!(opt_state, model, grads[1])
             θ_current = model(x_input)
