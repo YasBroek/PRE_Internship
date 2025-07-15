@@ -199,7 +199,7 @@ function training(
             ),
         )
     end
-    model = Chain(Dense(size(features_list[1], 2) => 1), σ)
+    model = Chain(Dense(size(features_list[1], 2) => 1), softplus)
     opt = Flux.Adam(α)
     opt_state = Flux.setup(opt, model)
 
@@ -230,6 +230,12 @@ function training(
             yield()
 
             Flux.update!(opt_state, model, grads[1])
+            """
+            for p in Flux.params(model)
+                @. p = clamp(p, ϵ, 1.0)
+            end
+            """
+
             θ_current = model(x_input)
             θ_vec_current = vec(θ_current')
             current_loss = loss(θ_vec_current, y_target)
@@ -281,7 +287,7 @@ function training_PP(
             ),
         )
     end
-    model = Chain(Dense(size(features_list[1], 2) => 1), σ)
+    model = Chain(Dense(size(features_list[1], 2) => 1), softplus)
     opt = Flux.Adam(α)
     opt_state = Flux.setup(opt, model)
 
@@ -315,8 +321,10 @@ function training_PP(
             grads = Zygote.gradient(model) do m
                 θ = m(x_input)
                 θ_vec = vec(θ')
+                println(θ_vec)
                 loss(θ_vec, y_target)
             end
+            print("a")
             yield()
 
             Flux.update!(opt_state, model, grads[1])

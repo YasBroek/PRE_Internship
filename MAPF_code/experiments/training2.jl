@@ -65,7 +65,7 @@ for caminho_scen in arquivos_scen
 end
 
 model, losses = MAPF_code.training_PP(
-    instance_list, best_solutions_list, 0.001, 10, 0.01, 150
+    instance_list, best_solutions_list, 0.001, 10, 0.01, 400
 )
 
 "Open map"
@@ -102,10 +102,7 @@ trained_cost = sum_of_costs(
 )
 
 cost1 = MAPF_code.path_cost(instance, MAPF_code.prioritized_planning_v2(instance))
-mapf = MAPF(instance.graph, instance.starts, instance.goals)
 
-PP = MAPF_code.prioritized_planning_v2(instance)
-MAPF_code.path_cost(instance, PP)
 weighted_instance = MAPF_code.adapt_weights(deepcopy(instance), collect(θ_vec))
 cost2 = MAPF_code.path_cost(instance, MAPF_code.prioritized_planning_v2(weighted_instance))
 
