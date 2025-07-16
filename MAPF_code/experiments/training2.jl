@@ -5,6 +5,7 @@ using MultiAgentPathFinding
 using UnicodePlots
 using JLD2
 using InferOpt
+import Flux: param
 using Graphs
 ENV["DATADEPS_ALWAYS_ACCEPT"] = true
 
@@ -64,8 +65,10 @@ for caminho_scen in arquivos_scen
     println("agents: $qte_agents")
 end
 
-model, losses = MAPF_code.training_PP(
-    instance_list, best_solutions_list, 0.001, 10, 0.01, 400
+@save "room-32-32-4-random" instance_list
+
+model, losses = MAPF_code.training_weights(
+    instance_list, best_solutions_list, 0.001, 10, 0.1, 500, instance
 )
 
 "Open map"
@@ -88,22 +91,20 @@ x_input = features'
 weights = model(x_input)
 θ_vec = vec(weights')
 
-PP_cost = sum_of_costs(
-    cooperative_astar(
-        MAPF(instance.graph, instance.starts, instance.goals),
-        collect(1:length(instance.starts)),
-    ),
-    MAPF(instance.graph, instance.starts, instance.goals),
+mapf = MAPF(instance.graph, instance.starts, instance.goals)
+mapf_w = MAPF(
+    MAPF_code.adapt_weights(instance, model).graph, instance.starts, instance.goals
 )
 
+PP_cost = sum_of_costs(cooperative_astar(mapf, collect(1:length(instance.starts))), mapf)
+
 trained_cost = sum_of_costs(
-    MAPF_code.solve_with_trained_model(model, instance),
-    MAPF(instance.graph, instance.starts, instance.goals),
+    cooperative_astar(mapf_w, collect(1:length(instance.starts))), mapf
 )
 
 cost1 = MAPF_code.path_cost(instance, MAPF_code.prioritized_planning_v2(instance))
 
-weighted_instance = MAPF_code.adapt_weights(deepcopy(instance), collect(θ_vec))
+weighted_instance = MAPF_code.adapt_weights(deepcopy(instance), model)
 cost2 = MAPF_code.path_cost(instance, MAPF_code.prioritized_planning_v2(weighted_instance))
 
 @info MAPF_code.prioritized_planning_v2(weighted_instance)

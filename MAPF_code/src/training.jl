@@ -184,6 +184,127 @@ function training_LR(
     return regression_weights
 end
 
+function training_weights(
+    instance_list,
+    benchmarkSols,
+    ϵ::Float64,
+    M::Int,
+    α::Float64,
+    num_epochs::Int,
+    test_instance,
+)
+    weights_list = randn(ne(instance_list[1].graph)) * 0.1
+    y_best_found_solution = []
+    for index in 1:length(instance_list)
+        push!(
+            y_best_found_solution,
+            path_to_binary_vector(
+                instance_list[index],
+                Solution_to_paths(benchmarkSols[index], instance_list[index]),
+            ),
+        )
+    end
+    opt = Flux.Adam(α)
+    opt_state = Flux.setup(opt, weights_list)
+
+    losses = Float64[]
+    epoch_list = []
+    grads_list = []
+    training_cost = []
+    test_cost = []
+
+    @showprogress for epoch in 1:num_epochs
+        total_loss = 0.0
+        total_grad = 0.0
+        for index in 1:length(instance_list)
+            y_target = y_best_found_solution[index]
+            oracle =
+                θ -> path_to_binary_vector(
+                    instance_list[index],
+                    independent_shortest_paths(
+                        adapt_weights(deepcopy(instance_list[index]), σ.(collect(θ)))
+                    ),
+                )
+            layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
+            loss = FenchelYoungLoss(layer)
+            grads = Zygote.gradient(weights_list) do w
+                loss(w, y_target)
+            end
+            yield()
+
+            Flux.update!(opt_state, weights_list, grads[1])
+            """
+            for p in Flux.params(model)
+                @. p = clamp(p, ϵ, 1.0)
+            end
+            """
+
+            current_loss = loss(weights_list, y_target)
+            total_loss += current_loss
+            grad_norm = compute_gradient_norm(grads[1])
+            total_grad += grad_norm
+        end
+        avg_loss = total_loss / length(instance_list)
+        avg_grad = total_grad / length(instance_list)
+        if epoch % 20 == 0
+            weighted_instance_train = adapt_weights(instance_list[1], σ.(weights_list))
+            weighted_instance_test = adapt_weights(test_instance, σ.(weights_list))
+            path_cost_train = path_cost(
+                instance_list[1], prioritized_planning_v2(weighted_instance_train)
+            )
+            path_cost_test = path_cost(
+                test_instance, prioritized_planning_v2(weighted_instance_test)
+            )
+            push!(training_cost, path_cost_train)
+            push!(test_cost, path_cost_test)
+        end
+        push!(losses, avg_loss)
+        push!(grads_list, avg_grad)
+        push!(epoch_list, epoch)
+    end
+    display(
+        lineplot(
+            epoch_list,
+            grads_list;
+            title="Gradient loss over time",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    display(
+        lineplot(
+            epoch_list,
+            losses;
+            title="Loss over time",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    display(
+        lineplot(
+            1:length(training_cost),
+            training_cost;
+            title="Training cost",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    display(
+        lineplot(
+            1:length(test_cost),
+            test_cost;
+            title="Test cost",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    return weights_list, losses
+end
+
 function training(
     instance_list, benchmarkSols, ϵ::Float64, M::Int, α::Float64, num_epochs::Int
 )
@@ -414,7 +535,7 @@ function solve_with_trained_model(model, instance)
     weights = model(x_input)
     θ_vec = vec(weights')
 
-    weighted_instance = adapt_weights(deepcopy(instance), collect(θ_vec))
+    weighted_instance = adapt_weights(deepcopy(instance), model)
     mapf = MAPF(weighted_instance.graph, instance.starts, instance.goals)
 
     return cooperative_astar(mapf, collect(1:length(instance.starts)))
