@@ -5,7 +5,7 @@ using MultiAgentPathFinding
 using UnicodePlots
 using JLD2
 using InferOpt
-import Flux: param
+using Flux: softplus
 using Graphs
 ENV["DATADEPS_ALWAYS_ACCEPT"] = true
 
@@ -68,9 +68,13 @@ end
 @save "room-32-32-4-random" instance_list
 
 model, losses = MAPF_code.training_weights(
-    instance_list, best_solutions_list, 0.001, 10, 0.1, 500, instance
+    instance_list, best_solutions_list, 0.001, 10, 0.1, 100, instance
 )
 
+MAPF_code.visualize_edge_weights(file_instance, instance_list[1], model)
+MAPF_code.visualization(
+    file_instance, instance_list[1], MAPF_code.prioritized_planning_v2(instance_list[1])
+)
 "Open map"
 file_instance = readlines(open("MAPF_code/input/room-32-32-4/instance/room-32-32-4.map"))
 

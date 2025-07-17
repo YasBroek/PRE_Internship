@@ -222,7 +222,9 @@ function training_weights(
                 θ -> path_to_binary_vector(
                     instance_list[index],
                     independent_shortest_paths(
-                        adapt_weights(deepcopy(instance_list[index]), σ.(collect(θ)))
+                        adapt_weights(
+                            deepcopy(instance_list[index]), softplus.(collect(θ))
+                        ),
                     ),
                 )
             layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
@@ -247,8 +249,10 @@ function training_weights(
         avg_loss = total_loss / length(instance_list)
         avg_grad = total_grad / length(instance_list)
         if epoch % 20 == 0
-            weighted_instance_train = adapt_weights(instance_list[1], σ.(weights_list))
-            weighted_instance_test = adapt_weights(test_instance, σ.(weights_list))
+            weighted_instance_train = adapt_weights(
+                instance_list[1], softplus.(weights_list)
+            )
+            weighted_instance_test = adapt_weights(test_instance, softplus.(weights_list))
             path_cost_train = path_cost(
                 instance_list[1], prioritized_planning_v2(weighted_instance_train)
             )
@@ -257,6 +261,39 @@ function training_weights(
             )
             push!(training_cost, path_cost_train)
             push!(test_cost, path_cost_test)
+            """
+            println(softplus.(weights_list))
+            weighted_instance_train = adapt_weights(
+                instance_list[1], softplus.(weights_list)
+            )
+            weighted_instance_test = adapt_weights(test_instance, softplus.(weights_list))
+            mapf_train = MAPF(
+                instance_list[1].graph, instance_list[1].starts, instance_list[1].goals
+            )
+            mapf_test = MAPF(test_instance.graph, test_instance.starts, test_instance.goals)
+            weighted_mapf_train = MAPF(
+                weighted_instance_train.graph,
+                instance_list[1].starts,
+                instance_list[1].goals,
+            )
+            weighted_mapf_test = MAPF(
+                weighted_instance_test.graph, test_instance.starts, test_instance.goals
+            )
+            path_cost_train = sum_of_costs(
+                cooperative_astar(
+                    weighted_mapf_train, collect(1:length(instance_list[1].starts))
+                ),
+                mapf_train,
+            )
+            path_cost_test = sum_of_costs(
+                cooperative_astar(
+                    weighted_mapf_test, collect(1:length(test_instance.starts))
+                ),
+                mapf_test,
+            )
+            push!(training_cost, path_cost_train)
+            push!(test_cost, path_cost_test)
+            """
         end
         push!(losses, avg_loss)
         push!(grads_list, avg_grad)

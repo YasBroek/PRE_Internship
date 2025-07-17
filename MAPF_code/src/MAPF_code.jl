@@ -3,6 +3,7 @@ module MAPF_code
 using GLMakie
 using Graphs
 using Cairo: Cairo
+using CairoMakie
 using Fontconfig: Fontconfig
 using Profile
 using GraphNeuralNetworks
