@@ -131,53 +131,26 @@ function visualize_edge_weights(file_instance, instance, weights_list)
 
     weight_grid = fill(NaN, instance.height, instance.width)
 
-    actual_weights = softplus.(weights_list)
+    actual_weights = weights_list
+    edge_list = collect(Graphs.edges(instance.graph))
+    weights_vertices = [Vector{Float64}() for _ in 1:nv(instance.graph)]
+    for (edge_idx, e) in enumerate(edge_list)
+        dst_vertex = dst(e)
+        push!(weights_vertices[dst_vertex], actual_weights[edge_idx])
+    end
+    mean_weights_vertices = [isempty(w) ? NaN : maximum(w) for w in weights_vertices]
 
-    edge_idx = 1
-    for y in 1:(instance.height)
-        for x in 1:(instance.width)
-            if grid[x, y] == 1.0
-                vertex_idx = coords_to_index((x, y), instance.width)
-
-                connected_edges = []
-                for (edge_id, edge) in enumerate(edges(instance.graph))
-                    if src(edge) == vertex_idx || dst(edge) == vertex_idx
-                        push!(connected_edges, edge_id)
-                    end
-                end
-
-                if !isempty(connected_edges) &&
-                    maximum(connected_edges) <= length(actual_weights)
-                    avg_weight = mean([
-                        actual_weights[eid] for
-                        eid in connected_edges if eid <= length(actual_weights)
-                    ])
-                    weight_grid[y, x] = avg_weight
-                else
-                    weight_grid[y, x] = mean(actual_weights)
-                end
-            end
-        end
+    for v in Graphs.vertices(instance.graph)
+        coords = index_to_coords(v, instance.width)
+        weight_grid[Int(coords[1]), Int(coords[2])] = mean_weights_vertices[v]
     end
 
     fig = Figure(; resolution=(800, 800))
     ax = Axis(fig[1, 1]; aspect=DataAspect(), title="Learned Edge Weights")
 
-    hm = heatmap!(ax, weight_grid; colormap=:viridis, nan_color=:black)
+    hm = heatmap!(ax, weight_grid; colormap=:plasma, nan_color=:black)
 
     Colorbar(fig[1, 2], hm; label="Edge Weight")
-
-    for x in 1:(instance.width - 1)
-        lines!(
-            ax, [x + 0.5, x + 0.5], [0.5, instance.height + 0.5]; color=:gray70, linewidth=1
-        )
-    end
-
-    for y in 1:(instance.height - 1)
-        lines!(
-            ax, [0.5, instance.width + 0.5], [y + 0.5, y + 0.5]; color=:gray70, linewidth=1
-        )
-    end
 
     n = length(instance.starts)
     colors = Makie.categorical_colors(:tab20, 20)

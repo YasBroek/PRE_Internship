@@ -69,7 +69,7 @@ Attributes new calculated weights to graph edges
 # Returns
  - adapted instance with new weights
 """
-function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T}) where {T<:Real}
+function adapt_weights(instance, perturbed_θ::Vector{T}) where {T<:Real}
     num_edges = ne(instance.graph)
     length(perturbed_θ) == num_edges || throw(
         ArgumentError(
@@ -81,10 +81,15 @@ function adapt_weights(instance::MAPF_Instance, perturbed_θ::Vector{T}) where {
 
     for (i, edge) in enumerate(edge_list)
         u, v = src(edge), dst(edge)
-        adapted_instance.graph.weights[u, v] = perturbed_θ[i]
-        adapted_instance.graph.weights[v, u] = perturbed_θ[i]
+        weight = clamp(perturbed_θ[i], 1e-6, 1e6)
+        adapted_instance.graph.weights[u, v] = weight
+        adapted_instance.graph.weights[v, u] = weight
     end
     return adapted_instance
+end
+
+function is_symmetric(m::AbstractMatrix{T}) where {T<:Real}
+    return all(m .== transpose(m))
 end
 
 """
@@ -193,7 +198,7 @@ function training_weights(
     num_epochs::Int,
     test_instance,
 )
-    weights_list = randn(ne(instance_list[1].graph)) * 0.1
+    weights_list = rand(ne(instance_list[1].graph))
     y_best_found_solution = []
     for index in 1:length(instance_list)
         push!(
@@ -222,9 +227,7 @@ function training_weights(
                 θ -> path_to_binary_vector(
                     instance_list[index],
                     independent_shortest_paths(
-                        adapt_weights(
-                            deepcopy(instance_list[index]), softplus.(collect(θ))
-                        ),
+                        adapt_weights(deepcopy(instance_list[index]), collect(θ))
                     ),
                 )
             layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
@@ -235,11 +238,9 @@ function training_weights(
             yield()
 
             Flux.update!(opt_state, weights_list, grads[1])
-            """
-            for p in Flux.params(model)
-                @. p = clamp(p, ϵ, 1.0)
+            for i in eachindex(weights_list)
+                weights_list[i] = clamp(weights_list[i], 0.0, 1.0)
             end
-            """
 
             current_loss = loss(weights_list, y_target)
             total_loss += current_loss
@@ -339,6 +340,132 @@ function training_weights(
             ylabel="loss",
         ),
     )
+    return weights_list, losses
+end
+
+function training_weights_gdalle(
+    instance_list,
+    benchmarkSols,
+    ϵ::Float64,
+    M::Int,
+    α::Float64,
+    num_epochs::Int,
+    test_instance,
+)
+    weights_list = rand(ne(instance_list[1].graph))
+    y_best_found_solution = []
+    for index in 1:length(instance_list)
+        push!(
+            y_best_found_solution,
+            path_to_binary_vector_gdalle(instance_list[index], benchmarkSols[index]),
+        )
+    end
+    opt = Flux.Adam(α)
+    opt_state = Flux.setup(opt, weights_list)
+
+    losses = Float64[]
+    epoch_list = []
+    grads_list = []
+    training_cost = []
+    test_cost = []
+
+    @showprogress for epoch in 1:num_epochs
+        total_loss = 0.0
+        total_grad = 0.0
+        for index in 1:length(instance_list)
+            y_target = y_best_found_solution[index]
+            oracle =
+                θ -> path_to_binary_vector_gdalle(
+                    instance_list[index],
+                    independent_dijkstra(
+                        adapt_weights(deepcopy(instance_list[index]), collect(θ))
+                    ),
+                )
+            layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
+            loss = FenchelYoungLoss(layer)
+            grads = Zygote.gradient(weights_list) do w
+                loss(w, y_target)
+            end
+            yield()
+
+            Flux.update!(opt_state, weights_list, grads[1])
+            for i in eachindex(weights_list)
+                weights_list[i] = clamp(weights_list[i], 1e-6, 10.0)
+            end
+            current_loss = loss(weights_list, y_target)
+            total_loss += current_loss
+            grad_norm = compute_gradient_norm(grads[1])
+            total_grad += grad_norm
+        end
+        avg_loss = total_loss / length(instance_list)
+        avg_grad = total_grad / length(instance_list)
+        """
+        if epoch % 20 == 0
+            weighted_instance_train = adapt_weights(instance_list[1], weights_list)
+            weighted_instance_test = adapt_weights(test_instance, weights_list)
+
+            path_cost_train = sum_of_costs(
+                cooperative_astar(
+                    weighted_instance_train, collect(1:length(instance_list[1].departures))
+                ),
+                instance_list[1],
+            )
+            path_cost_test = sum_of_costs(
+                cooperative_astar(
+                    weighted_instance_test, collect(1:length(test_instance.departures))
+                ),
+                test_instance,
+            )
+            push!(training_cost, path_cost_train)
+            push!(test_cost, path_cost_test)
+        end
+        """
+        push!(losses, avg_loss)
+        push!(grads_list, avg_grad)
+        push!(epoch_list, epoch)
+    end
+    display(
+        lineplot(
+            epoch_list,
+            grads_list;
+            title="Gradient loss over time",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    display(
+        lineplot(
+            epoch_list,
+            losses;
+            title="Loss over time",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    """
+    display(
+        lineplot(
+            1:length(training_cost),
+            training_cost;
+            title="Training cost",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    display(
+        lineplot(
+            1:length(test_cost),
+            test_cost;
+            title="Test cost",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    """
     return weights_list, losses
 end
 

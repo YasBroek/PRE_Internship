@@ -68,8 +68,11 @@ end
 @save "room-32-32-4-random" instance_list
 
 model, losses = MAPF_code.training_weights(
-    instance_list, best_solutions_list, 0.001, 10, 0.1, 100, instance
+    instance_list, best_solutions_list, 0.001, 10, 0.1, 240, instance
 )
+@info model
+using CairoMakie
+using Makie: get_colormap
 
 MAPF_code.visualize_edge_weights(file_instance, instance_list[1], model)
 MAPF_code.visualization(

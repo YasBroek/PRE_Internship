@@ -23,6 +23,7 @@ using ProgressMeter
 using Statistics
 using CUDA
 using Zygote
+using ColorSchemes
 
 include("structs.jl")
 include("TEG_methods.jl")

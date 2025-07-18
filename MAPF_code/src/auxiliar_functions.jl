@@ -119,7 +119,7 @@ function number_of_agents_close(instance::MAPF_Instance, edge)
     return c
 end
 
-function Solution_to_paths(s::Solution, instance::MAPF_Instance)
+function Solution_to_paths(s::Solution, instance)
     list = [[] for _ in 1:length(s.paths)]
     for i in 1:length(s.paths)
         for v in 1:(length(s.paths[i]) - 1)

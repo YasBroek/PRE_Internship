@@ -271,12 +271,31 @@ function path_to_binary_matrix(instance::MAPF_Instance, paths)
     return binary_variables
 end
 
-function path_to_binary_vector(instance::MAPF_Instance, paths)
+function path_to_binary_vector(instance, paths)
     edge_list = collect(edges(instance.graph))
     edge_to_index = Dict((src(e), dst(e)) => i for (i, e) in enumerate(edge_list))
     binary_variables = spzeros(length(edge_list))
     for agent_path in paths
         for e in agent_path
+            key = (min(src(e), dst(e)), max(src(e), dst(e)))
+            i = get(edge_to_index, key, nothing)
+            if i !== nothing
+                binary_variables[i] += 1
+            end
+        end
+    end
+    return binary_variables
+end
+
+function path_to_binary_vector_gdalle(instance, solution)
+    edge_list = collect(edges(instance.graph))
+    edge_to_index = Dict((src(e), dst(e)) => i for (i, e) in enumerate(edge_list))
+    binary_variables = spzeros(length(edge_list))
+    for agent_path in solution.paths
+        for v in 1:(length(agent_path) - 1)
+            e = SimpleWeightedEdge(
+                agent_path[v], agent_path[v + 1], instance.graph.weights[v, v + 1]
+            )
             key = (min(src(e), dst(e)), max(src(e), dst(e)))
             i = get(edge_to_index, key, nothing)
             if i !== nothing
