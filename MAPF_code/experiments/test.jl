@@ -16,7 +16,7 @@ type_id = 13
 agents = 60
 scen = BenchmarkScenario(; instance, scen_type, type_id, agents)
 bench_mapf = MAPF(scen; allow_diagonal_moves=false)
-cooperative_astar(bench_mapf, collect(1:agents); max_nodes=nv(bench_mapf.graph)^2)
+cooperative_astar(bench_mapf, collect(1:agents))
 
 benchmark_solution_best = Solution(scen)
 
@@ -30,7 +30,7 @@ test_scen = BenchmarkScenario(;
 test_bench_mapf = MAPF(test_scen; allow_diagonal_moves=false)
 
 weight_list, losses = MAPF_code.training_weights_gdalle(
-    [bench_mapf], [benchmark_solution_best], 0.001, 10, 0.01, 200, test_bench_mapf
+    [bench_mapf], [benchmark_solution_best], 0.001, 10, 0.01, 500, test_bench_mapf
 )
 
 MAPF_code.visualize_edge_weights(file_instance, my_instance, weight_list)
@@ -41,3 +41,25 @@ MAPF_code.path_cost(
     my_instance,
     MAPF_code.prioritized_planning_v2(MAPF_code.adapt_weights(my_instance, weight_list)),
 )
+
+mapa = "MAPF_code/input/empty-8-8/instance/empty-8-8.map"
+
+file_instance = readlines(mapa)
+instance_data = readlines(open("MAPF_code/input/empty-8-8/instance/empty-8-8-even-5.scen"))
+my_instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, 20)
+instance = "empty-8-8"
+scen_type = "random"
+type_id = 13
+agents = 7
+scen = BenchmarkScenario(; instance, scen_type, type_id, agents)
+bench_mapf = MAPF(scen; allow_diagonal_moves=false)
+
+benchmark_solution_best = Solution(scen)
+
+@info benchmark_solution_best
+
+@info MAPF_code.path_to_binary_vector_gdalle(bench_mapf, benchmark_solution_best)
+
+@info MAPF_code.Solution_to_paths(benchmark_solution_best, bench_mapf)
+
+@info edges(benchmark_solution_best)
