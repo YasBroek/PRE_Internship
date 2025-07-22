@@ -81,9 +81,9 @@ function adapt_weights(instance, perturbed_θ::Vector{T}) where {T<:Real}
 
     for (i, edge) in enumerate(edge_list)
         u, v = src(edge), dst(edge)
-        weight = clamp(perturbed_θ[i], 1e-6, 1e6)
-        adapted_instance.graph.weights[u, v] = weight
-        adapted_instance.graph.weights[v, u] = weight
+
+        adapted_instance.graph.weights[u, v] = perturbed_θ[i]
+        adapted_instance.graph.weights[v, u] = perturbed_θ[i]
     end
     return adapted_instance
 end
@@ -354,10 +354,10 @@ function training_weights_gdalle(
 )
     weights_list = rand(ne(instance_list[1].graph))
     y_best_found_solution = []
-    for index in 1:length(instance_list)
+    for (index, instance) in enumerate(instance_list)
         push!(
             y_best_found_solution,
-            path_to_binary_vector_gdalle(instance_list[index], benchmarkSols[index]),
+            path_to_binary_vector_gdalle(instance, benchmarkSols[index]),
         )
     end
     opt = Flux.Adam(α)
@@ -372,14 +372,12 @@ function training_weights_gdalle(
     @showprogress for epoch in 1:num_epochs
         total_loss = 0.0
         total_grad = 0.0
-        for index in 1:length(instance_list)
+        for (index, instance) in enumerate(instance_list)
             y_target = y_best_found_solution[index]
             oracle =
                 θ -> path_to_binary_vector_gdalle(
-                    instance_list[index],
-                    independent_dijkstra(
-                        adapt_weights(deepcopy(instance_list[index]), collect(θ))
-                    ),
+                    instance,
+                    independent_dijkstra(adapt_weights(deepcopy(instance), collect(θ))),
                 )
             layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
             loss = FenchelYoungLoss(layer)
@@ -389,9 +387,7 @@ function training_weights_gdalle(
             yield()
 
             Flux.update!(opt_state, weights_list, grads[1])
-            for i in eachindex(weights_list)
-                weights_list[i] = clamp(weights_list[i], 1e-6, 10.0)
-            end
+            weights_list .= softplus.(weights_list)
             current_loss = loss(weights_list, y_target)
             total_loss += current_loss
             grad_norm = compute_gradient_norm(grads[1])
@@ -399,7 +395,7 @@ function training_weights_gdalle(
         end
         avg_loss = total_loss / length(instance_list)
         avg_grad = total_grad / length(instance_list)
-        """
+
         if epoch % 20 == 0
             weighted_instance_train = adapt_weights(instance_list[1], weights_list)
             weighted_instance_test = adapt_weights(test_instance, weights_list)
@@ -419,7 +415,7 @@ function training_weights_gdalle(
             push!(training_cost, path_cost_train)
             push!(test_cost, path_cost_test)
         end
-        """
+
         push!(losses, avg_loss)
         push!(grads_list, avg_grad)
         push!(epoch_list, epoch)
@@ -444,7 +440,6 @@ function training_weights_gdalle(
             ylabel="loss",
         ),
     )
-    """
     display(
         lineplot(
             1:length(training_cost),
@@ -465,7 +460,6 @@ function training_weights_gdalle(
             ylabel="loss",
         ),
     )
-    """
     return weights_list, losses
 end
 
