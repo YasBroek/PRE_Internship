@@ -11,9 +11,9 @@ ENV["DATADEPS_ALWAYS_ACCEPT"] = true
 
 instance_list = []
 best_solutions_list = []
-instancia = "MAPF_code/input/room-32-32-4/training/"
+instancia = "MAPF_code/input/Berlin_1_256/instance/"
 
-mapa = "MAPF_code/input/room-32-32-4/training/room-32-32-4.map"
+mapa = "MAPF_code/input/Berlin_1_256/instance/Berlin_1_256.map"
 
 file_instance = readlines(mapa)
 

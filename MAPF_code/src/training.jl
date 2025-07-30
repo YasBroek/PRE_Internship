@@ -8,7 +8,7 @@ Extracts features from an instance for each edge
 # Returns
  - Matrix of edges x features
 """
-function extract_features(instance::MAPF_Instance)
+function extract_features(instance)
     edge_list = collect(edges(instance.graph))
     features = zeros(Float64, ne(instance.graph), 8)
     paths = independent_shortest_paths(instance)
@@ -387,7 +387,9 @@ function training_weights_gdalle(
             yield()
 
             Flux.update!(opt_state, weights_list, grads[1])
-            weights_list .= softplus.(weights_list)
+            for i in eachindex(weights_list)
+                weights_list[i] = clamp(weights_list[i], 1e-6, 1000)
+            end
             current_loss = loss(weights_list, y_target)
             total_loss += current_loss
             grad_norm = compute_gradient_norm(grads[1])
@@ -498,6 +500,89 @@ function training(
                     independent_shortest_paths(
                         adapt_weights(deepcopy(instance_list[index]), collect(θ))
                     ),
+                )
+            layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
+            loss = FenchelYoungLoss(layer)
+            grads = Zygote.gradient(model) do m
+                θ = m(x_input)
+                θ_vec = vec(θ')
+                loss(θ_vec, y_target)
+            end
+            yield()
+
+            Flux.update!(opt_state, model, grads[1])
+            """
+            for p in Flux.params(model)
+                @. p = clamp(p, ϵ, 1.0)
+            end
+            """
+
+            θ_current = model(x_input)
+            θ_vec_current = vec(θ_current')
+            current_loss = loss(θ_vec_current, y_target)
+            total_loss += current_loss
+            grad_norm = compute_gradient_norm(grads[1])
+            total_grad += grad_norm
+        end
+        avg_loss = total_loss / length(instance_list)
+        avg_grad = total_grad / length(instance_list)
+        push!(losses, avg_loss)
+        push!(grads_list, avg_grad)
+        push!(epoch_list, epoch)
+    end
+    display(
+        lineplot(
+            epoch_list,
+            grads_list;
+            title="Gradient loss over time",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    display(
+        lineplot(
+            epoch_list,
+            losses;
+            title="Loss over time",
+            name="my line",
+            xlabel="epoch",
+            ylabel="loss",
+        ),
+    )
+    return model, losses
+end
+
+function training_gdalle(
+    instance_list, benchmarkSols, ϵ::Float64, M::Int, α::Float64, num_epochs::Int
+)
+    features_list = []
+    y_best_found_solution = []
+    for (index, instance) in enumerate(instance_list)
+        push!(features_list, extract_features(instance))
+        push!(
+            y_best_found_solution,
+            path_to_binary_vector_gdalle(instance, benchmarkSols[index]),
+        )
+    end
+    model = Chain(Dense(size(features_list[1], 2) => 1), softplus)
+    opt = Flux.Adam(α)
+    opt_state = Flux.setup(opt, model)
+
+    losses = Float64[]
+    epoch_list = []
+    grads_list = []
+
+    @showprogress for epoch in 1:num_epochs
+        total_loss = 0.0
+        total_grad = 0.0
+        for (index, instance) in enumerate(instance_list)
+            x_input = features_list[index]'
+            y_target = y_best_found_solution[index]
+            oracle =
+                θ -> path_to_binary_vector_gdalle(
+                    instance,
+                    independent_dijkstra(adapt_weights(deepcopy(instance), collect(θ))),
                 )
             layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
             loss = FenchelYoungLoss(layer)
@@ -693,8 +778,8 @@ function solve_with_trained_model(model, instance)
     weights = model(x_input)
     θ_vec = vec(weights')
 
-    weighted_instance = adapt_weights(deepcopy(instance), model)
+    weighted_instance = adapt_weights(deepcopy(instance), collect(θ_vec))
     mapf = MAPF(weighted_instance.graph, instance.starts, instance.goals)
 
-    return cooperative_astar(mapf, collect(1:length(instance.starts)))
+    return prioritized_planning_v2(weighted_instance)
 end

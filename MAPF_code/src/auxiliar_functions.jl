@@ -34,7 +34,7 @@ function step_counter(paths, edge)
     return step_counter
 end
 
-function harmonic_centrality(instance::MAPF_Instance, edge)
+function harmonic_centrality(instance, edge)
     ds = dijkstra_shortest_paths(instance.graph, dst(edge))
 
     harmonic_sum = sum(d == Inf ? 0.0 : 1.0 / d for d in ds.dists if d > 0)
