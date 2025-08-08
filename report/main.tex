@@ -1,0 +1,256 @@
+\documentclass[twoside, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{abstract,lipsum}
+\usepackage[english,french]{babel}
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={160mm,247mm},
+ left=30mm,
+ top=30mm,
+ asymmetric
+ }
+\usepackage{graphicx}
+\usepackage{eso-pic}
+\usepackage{xcolor}
+\usepackage{ragged2e}
+\usepackage{fancyhdr}
+\usepackage[nottoc, notlof, notlot,numbib]{tocbibind}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage[]{algorithm2e}
+\usepackage{amssymb}
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{float}
+\usepackage{appendix}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{makecell}
+\usepackage{biblatex}
+\addbibresource{MAPF.bib}
+
+\usepackage{minted}
+\usepackage{csquotes}
+\setlength{\headheight}{15pt}
+\addtolength{\topmargin}{-3pt}
+
+\newcommand{\mycode}{                               % Name after the Language used
+    \lstset{
+        basicstyle=\ttfamily\small,                 % Code Font Size
+        keywordstyle=\color{darkpurple}\bfseries,   % Color Key Word
+        stringstyle=\color{darkblue},               % Color String
+        identifierstyle=\color{teal},
+        commentstyle=\color{darkgreen},             % Color Comment
+        morecomment=[s][\color{blue}]{/**}{*/},     % Color Comment
+        tabsize=2,                                  % Tab Size
+        captionpos=b,                               % Caption Position
+        showtabs=false,                             % Show Tabs within Strings
+        showspaces=false,                           % Show Spaces Code
+        showstringspaces=false,                     % Show Spaces Strings
+        stepnumber=1,                               % Line Number Step
+        numbers=left,                               % Line Number Position
+        numbersep=5pt,                              % Line Number Distance from Code
+        numberstyle=\tiny\color{gray},              % Line Number Style
+        frame=single,                               % Frame
+        rulecolor=\color{black},                    % Frame Color
+        xleftmargin=10pt,                            % Left Margin
+        backgroundcolor=\color{white},              % Background Color
+        breaklines=true,                            % Break Automatic Line
+        breakatwhitespace=true,                     % Break Automatic Spaces 
+        breakautoindent=false,                      % Break Automatic Indent
+        extendedchars=true,                         % 
+        inputencoding=latin1,                       % Encoding
+        literate=                                   % Including Especial Charects To Write in French
+                {é}{{\'{e}}}1
+                {è}{{\`{e}}}1
+                {ê}{{\^{e}}}1
+                {ë}{{\¨{e}}}1
+                {É}{{\'{E}}}1
+                {Ê}{{\^{E}}}1
+                {û}{{\^{u}}}1
+                {ù}{{\`{u}}}1
+                {ú}{{\'{u}}}1
+                {â}{{\^{a}}}1
+                {à}{{\`{a}}}1
+                {á}{{\'{a}}}1
+                {ã}{{\~{a}}}1
+                {ä}{{\"{a}}}1
+                {Á}{{\'{A}}}1
+                {Â}{{\^{A}}}1
+                {Ã}{{\~{A}}}1
+                {Ä}{{\"{A}}}1
+                {ç}{{\c{c}}}1
+                {Ç}{{\c{C}}}1
+                {õ}{{\~{o}}}1
+                {ó}{{\'{o}}}1
+                {ô}{{\^{o}}}1
+                {ö}{{\"{o}}}1
+                {Õ}{{\~{O}}}1
+                {Ó}{{\'{O}}}1
+                {Ô}{{\^{O}}}1
+                {Ö}{{\"{O}}}1
+                {î}{{\^{i}}}1
+                {Î}{{\^{I}}}1
+                {í}{{\'{i}}}1
+                {Í}{{\~{Í}}}1
+                {ü}{{\"{u}}}1
+                {Ü}{{\"{U}}}1
+    }
+}
+
+\makeatletter
+\renewenvironment{titlepage}
+ {%
+  \if@twocolumn
+    \@restonecoltrue\onecolumn
+  \else
+    \@restonecolfalse\newpage
+  \fi
+  \thispagestyle{plain}%
+ }
+ {%
+  \if@restonecol
+    \twocolumn
+  \else
+    \newpage
+  \fi
+ }
+\makeatother
+
+\providecommand{\keywords}[1]
+{
+  \small	
+  \textbf{\textit{Keywords---}} #1
+}
+
+\newcommand{\source}[1]{\caption*{Source: {#1}} }
+
+%\title{Projet de Recherche (PRe}
+\author{Yasmin van den Broek}
+\date{August 2025}
+
+% -----------------------------------------------------------------
+% Top and bottom of the pages are set here
+% -----------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[CO]{Decision-Focused learning for Multi-Agent Path Finding}
+\fancyhead[CE]{\rightmark}
+\cfoot{Yasmin van den Broek}
+\rfoot{\thepage}
+
+\begin{document}
+
+% -------------------------------------------
+% Title Page
+% -------------------------------------------
+
+\begin{titlepage}
+    \thispagestyle{empty}
+
+    \begin{figure}[h]
+    \centering
+    \begin{minipage}[b]{0.45\textwidth}
+        \raggedleft
+        % \includegraphics[height=0.55\textwidth]{logo_ENSTA_Paris.jpg} old logo from ENSTA
+        \includegraphics[height=0.45\textwidth]{Images/logo_ensta_new2.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.45\textwidth}
+        \RaggedRight
+        \includegraphics[height=0.7\textwidth]{Images/csm_logo-UniversiteGustaveEiffel_b8b8bb3ba7.png}
+    \end{minipage}
+    \end{figure}
+    
+    \vfill
+    
+    \centering{\LARGE \textbf{Research Internship (PRe)}} \\
+    \hfill\\
+    \centering{\large \textbf{Field of Study: Machine Learning and Optimization}}\\
+    \centering{\large \textbf{Scholar Year : 2024-2025}} \\
+    \hfill\\
+    \vfill
+    \centering{\huge \textbf{A Decision-Focused Learning
+Approach for Multi-Agent
+Pathfinding}}
+    \vfill
+     \color{red} \noindent  \fbox{%
+     \parbox{\textwidth}{%
+        \centering{\LARGE \textbf{Confidentiality Notice}}\\
+        \centering{\normalsize Non-confidential and publishable report}
+        }%
+    }
+    \vfill
+    \color{black}
+    \large \textbf{Author: VAN DEN BROEK Yasmin \hfill Promotion: 2026}\\
+    \vspace{5mm}
+    \FlushLeft{\normalsize \textbf{ENSTA Paris Tutor: Zacharie Ales}} \\
+    \normalsize \textbf{Host Organism Tutor: Guillaume Dalle}
+    
+    \vfill
+    \centering{\normalsize \textbf{Internship from 26/05/2025 to 15/08/2025}} \\
+    \vspace{1cm}
+    \centering{\normalsize \textbf{Université Gustave Eiffel}} \\
+    \centering{\normalsize \textbf{Address: 5 boulevard Descartes, 77454 Champs-sur-Marne, Cedex 2, France}}
+\end{titlepage}
+
+
+% -------------------------------------------
+% Blank page (?)
+% -------------------------------------------
+\section*{}
+\vfill
+\paragraph{}
+\begin{center}
+    This page was intentionally left blank.
+\end{center}
+\vfill
+
+% -------------------------------------------
+% Confidentialy Notice
+% -------------------------------------------
+\newpage
+
+\section*{Confidentiality Notice}
+\vfill
+\paragraph{}
+This present document is not confidential. It can be communicated outside in paper format
+or distributed in electronic format.
+\vfill
+
+% -------------------------------------------------------------------
+% Writing part
+% -------------------------------------------------------------------
+
+\include{Sections/0.1-Abstracts}
+
+\include{Sections/0.2-Acknowledgments}
+
+\newpage
+\tableofcontents
+
+\newpage
+\listoffigures
+
+\fancyhead[CE]{\leftmark}
+\include{Sections/1-Introduction}
+\include{Sections/2-Literature_Review}
+\include{Sections/3-Methodology}
+\include{Sections/4-Results}
+\include{Sections/5-Discussion}
+\include{Sections/6-Conclusion}
+\printbibliography
+{
+\cleardoublepage 
+\phantomsection 
+\addcontentsline{}{section}{References}
+}
+
+\include{Sections/A-Apendix}
+
+\end{document}

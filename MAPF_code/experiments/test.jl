@@ -2,6 +2,9 @@ using Revise
 using MAPF_code
 using MultiAgentPathFinding
 using Graphs
+using CairoMakie
+using Statistics
+using MultiAgentPathFinding: NoConflictFreePathError
 
 instance = "room-32-32-4"
 scen_type = "even"
@@ -30,26 +33,42 @@ for type_id in 1:25
     i += 1
     println(i)
 end
+i = 0
+for type_id in 1:25
+    for agents in 1:40
+        scen = BenchmarkScenario(; instance, scen_type, type_id, agents)
+        bench_mapf = MAPF(scen; allow_diagonal_moves=false)
+        benchmark_solution_best = Solution(scen)
+        push!(instance_list, bench_mapf)
+        push!(best_solutions_list, benchmark_solution_best)
+        i += 1
+        println(i)
+    end
+end
 
 test_instance = "room-32-32-4"
 test_scen_type = "random"
 test_type_id = 5
-test_agents = 10
+test_agents = 45
 test_scen = BenchmarkScenario(;
     instance, scen_type=test_scen_type, type_id=test_type_id, agents=test_agents
 )
 test_bench_mapf = MAPF(test_scen; allow_diagonal_moves=false)
 
 weight_list, losses = MAPF_code.training_weights_gdalle(
-    instance_list, best_solutions_list, 0.001, 10, 0.01, 200, test_bench_mapf
+    instance_list, best_solutions_list, 0.1, 10, 0.01, 200, test_bench_mapf
 )
 impact = 0
 for type_id in 1:5
     for agents in [5, 10, 15, 20]
-        a = sum_of_costs(cooperative_astar(test_bench_mapf, collect(1:10)), test_bench_mapf)
+        test_scen = BenchmarkScenario(; instance, scen_type=test_scen_type, type_id, agents)
+        test_bench_mapf = MAPF(test_scen; allow_diagonal_moves=false)
+        a = sum_of_costs(
+            cooperative_astar(test_bench_mapf, collect(1:agents)), test_bench_mapf
+        )
         b = sum_of_costs(
             cooperative_astar(
-                MAPF_code.adapt_weights(test_bench_mapf, weight_list), collect(1:10)
+                MAPF_code.adapt_weights(test_bench_mapf, weight_list), collect(1:agents)
             ),
             test_bench_mapf,
         )
@@ -57,6 +76,53 @@ for type_id in 1:5
     end
 end
 impact / 20
+
+impact_list = []
+for agents in 1:50
+    impact = []
+    for type_id in 1:10
+        test_scen = BenchmarkScenario(; instance, scen_type=test_scen_type, type_id, agents)
+        test_bench_mapf = MAPF(test_scen; allow_diagonal_moves=false)
+        try
+            a = sum_of_costs(
+                cooperative_astar(test_bench_mapf, collect(1:agents)), test_bench_mapf
+            )
+            b = sum_of_costs(
+                cooperative_astar(
+                    MAPF_code.adapt_weights(test_bench_mapf, weight_list), collect(1:agents)
+                ),
+                test_bench_mapf,
+            )
+            push!(impact, b / a)
+        catch e
+            continue
+        end
+    end
+    push!(impact_list, mean(impact))
+end
+impact_list
+
+agents = 1:50
+fig = Figure(; resolution=(800, 500))
+
+ax = Axis(
+    fig[1, 1];
+    xlabel="Number of Agents",
+    ylabel="Path cost change ratio",
+    title="Cost ratio vs Number of Agents",
+)
+
+lines!(ax, agents, impact_list; color=:blue, linewidth=2)
+scatter!(ax, agents, impact_list; color=:red)
+
+fig
+impact_list
+
+instance_data = readlines(
+    "MAPF_code/input/room-32-32-4/instance/room-32-32-4-random-10.scen"
+)
+file_instance = readlines("MAPF_code/input/room-32-32-4/training/room-32-32-4.map")
+my_instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, 25)
 
 MAPF_code.visualize_edge_weights(file_instance, my_instance, weight_list)
 

@@ -2,7 +2,7 @@
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "a8e1d5bc9e0cbb2f2f8440c45857703784c4bc00"
+project_hash = "71c32f30dcb081aafa93b64d34615d4af7a52e73"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1747,9 +1747,9 @@ version = "1.2.1"
 
 [[deps.MultiAgentPathFinding]]
 deps = ["CSV", "Colors", "DataDeps", "DataFrames", "DataStructures", "DocStringExtensions", "Graphs", "LinearAlgebra", "Makie", "Printf", "Random", "SimpleWeightedGraphs", "SparseArrays", "StableRNGs"]
-git-tree-sha1 = "61b54d6faf7ae70412823f8e6b842b7ffa442d5c"
-repo-rev = "gd/maxnodes"
-repo-url = "https://github.com/gdalle/MultiAgentPathFinding.jl"
+git-tree-sha1 = "4a90b9fc1e7f3821e7b51981b99f174c1d1489d3"
+repo-rev = "main"
+repo-url = "https://github.com/gdalle/MultiAgentPathFinding.jl.git"
 uuid = "1f5aa91a-953b-4f4c-bed6-d21f3af349fa"
 version = "0.5.3"
 

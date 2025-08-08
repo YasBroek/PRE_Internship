@@ -60,6 +60,20 @@ function conflict_verification(s1, s2, paths)
     return conflicts
 end
 
+function conflict_verification_gdalle(s1, s2, paths)
+    conflicts = []
+    if s1 != s2
+        for i in 1:min(length(paths[s1]), length(paths[s2]))
+            if paths[s1][i + 1] == paths[s2][i + 1] ||
+                (paths[s1][i + 1] == paths[s2][i] && paths[s2][i + 1] == paths[s1][i])
+                push!(conflicts, paths[s1][i])
+                push!(conflicts, paths[s2][i])
+            end
+        end
+    end
+    return conflicts
+end
+
 function timed_graph(g::SimpleWeightedGraph, max_len::Int)
     n = nv(g)
     sources = Vector{Int}()
@@ -157,8 +171,10 @@ function prioritized_planning_v2(instance::MAPF_Instance)
     time_expanded_weights = TimeExpandedWeights(build_sparse_weights(mutable_graph))
     push!(solved, ag_order[1])
     popfirst!(ag_order)
+    len = length(ag_order)
 
     while !isempty(ag_order)
+        println("$(length(ag_order)) out of $len")
         paths[ag_order[1]] = Vector{SimpleWeightedEdge{Int64,Float64}}()
 
         heuristic = euclidean_heuristic_time_expanded(

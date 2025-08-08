@@ -38,7 +38,7 @@ for caminho_scen in arquivos_scen
     i += 1
     println("$i / $l")
     nums = []
-    for _ in 1:8
+    for _ in 1:2
         nome_scen = split(caminho_scen, '/')[end]
         nome_sem_ext = splitext(nome_scen)[1]
         partes = split(nome_sem_ext, '-')
@@ -51,9 +51,9 @@ for caminho_scen in arquivos_scen
         instance = MAPF_code.change_scenarios(instance_data, instance, 1)
         println("b")
 
-        qte_agents = rand(1:60)
+        qte_agents = rand(1:30)
         while qte_agents in nums
-            qte_agents = rand(1:60)
+            qte_agents = rand(1:30)
         end
         push!(nums, qte_agents)
 
@@ -74,10 +74,9 @@ for caminho_scen in arquivos_scen
     end
 end
 
-@save "instances_100_even_room" instance_list
-@save "solutions_100_even_room" best_solutions_list
-
-model, losses = MAPF_code.training(instance_list, best_solutions_list, 0.001, 10, 0.1, 80)
+model, losses = MAPF_code.training_PP(
+    instance_list[2:end], best_solutions_list, 0.001, 10, 0.1, 100, instance_list[1]
+)
 
 function compute_average_path_cost_gdalle(num_agents::Int, sampled_numbers)
     instance = "room-32-32-4"
@@ -128,7 +127,7 @@ end
 # Define the number of agents to test
 agent_counts = [10, 25, 60]
 
-list = randperm(25)[1:5]
+list = 1:5
 
 # Compute and print the average path costs for each number of agents
 for agents in agent_counts

@@ -1,0 +1,209 @@
+\section{Literature Review}
+\subsection{Shortest Paths}
+Shortest path algorithms are fundamental to the study of Multi-Agent Path Finding (MAPF), as they form the basis for computing individual agent paths before considering interactions that take other agents into account. The objective of a shortest path algorithm is to determine a path between two nodes in a graph that minimizes a certain cost function, like the total edge weight or number of steps.
+
+Let \( \mathcal{G} = (\mathcal{V}, \mathcal{E}) \) be a directed graph, with a cost \( c(e) \) assigned to every edge \( e \in \mathcal{E} \),the objective is to find a path between a start vertex \( v^{(s)} \) and a goal vertex \( v^{(g)} \) such that the path has the minimum total cost.
+
+A path can be defined as a sequence of vertices \( \pi = (v_0 = v^{(s)}, v_1, v_2, \ldots, v_{n-1} = v^{(g)}) \in \mathcal{V}^n \). The total cost of the path is given by:
+\[
+\sum_{i=1}^{n-1} c(v_i, v_{i+1}) \tag{1}
+\] 
+A widely used algorithm for this purpose is \textbf{Dijkstra’s algorithm} \cite{dijkstraNoteTwoProblems1959}, which systematically explores the graph from a source node using a cost-based breadth-first strategy. It assumes that all edge costs are positive, i.e., \( c(e) > 0 \) for all \( e \in \mathcal{E} \). The algorithm maintains a tentative cost to reach each node and updates these values whenever a lower-cost path is found through a neighbor. Once a node's minimum cost is determined, it does not need to be revisited. This property allows Dijkstra’s algorithm to efficiently compute the minimum cost from a single source to all other nodes.
+
+An extension of Dijkstra’s method is the \textbf{A* (A-star)} \cite{hartFormalBasisHeuristic1968} algorithm, which introduces a heuristic function \( h(v) \) to estimate the remaining cost from a vertex \( v \) to the goal node \( v^{(g)} \). This makes A* a best-first search algorithm, as it selects at each step the node with the lowest estimated total cost \( f(v) = g(v) + h(v) \), where \( g(v) \) is the cost from the start to \( v \). If the heuristic \( h \) is admissible (i.e., it never overestimates the true cost) and consistent, A* is guaranteed to find the optimal path. In practice, a well-designed heuristic allows A* to explore significantly fewer nodes than Dijkstra’s, improving runtime without sacrificing optimality. 
+
+In the context of MAPF, shortest path algorithms are typically used as as a base to higher-level planning frameworks, such as Conflict-Based Search (CBS) or prioritized planning, explained in the following subsections. In these approaches, Dijkstra’s or A* is often used to compute or re-compute individual agent paths under specific constraints. 
+
+\subsection{The Multi-Agent PathFinding Problem}
+
+\subsubsection{Definition}
+
+Multi-Agent Pathfinding (MAPF) \cite{sternMultiAgentPathfindingDefinitions2019} is an important type of multi-agent planning problem in which the task is to plan paths for multiple agents, where the key constraint is that agents will be able to follow these paths without colliding into each other, or into posed obstacles.
+
+We can find a wide range of MAPF applications nowadays, making it a relevant topic of study, which has received attention in recent years. Some of the applications we can mention are warehouse automation, where fleets of robots must navigate efficiently without collisions; autonomous vehicle coordination in traffic systems; and drone fleet management for tasks like delivery or environmental monitoring. The growing demand for scalable and safe multi-agent coordination continues to drive research into more efficient, robust, and adaptable MAPF algorithms.
+
+The MAPF problem is most generally represented as an undirected graph \( \mathcal{G} = (\mathcal{V}, \mathcal{E}) \) with a set of \(m\) agents \(A = \{a_1,...,a_m\}\), where each agent \(a_i \in A\) has a start vertex \(s_i \in V\) and a target vertex \(g_i \in V\). At each timestep, an agent can either move to a free adjacent cell, or wait at its current vertex. A path \(\pi\) for agent \(a_i\) is a sequence of vertices containing acceptable moves, and which starts at \(s_i\) and ends at \(g_i\) \cite{liAnytimeMultiAgentPath2021}.
+
+
+\subsubsection{Variations}
+
+The content of the following subsection is inspired by Stern et al (2019).
+
+Broadly studied in the present days, the MAPF problem presents a number of different possible interpretations and approaches. It's main variations are explored below:
+
+\begin{enumerate}
+    \item \textbf{Types of conflicts: } As mentioned before, one of the main constraints in MAPF is that in which there must not be any conflicts between agents' paths, which makes it important to define what exactly constitutes a conflict in that context.
+    This work focuses mainly on vertex and swapping conflicts:
+    \begin{itemize}
+        \item \textbf{Vertex conflict:} Two agents occupying the same space at the same time;
+        \item \textbf{Swapping conflict:} Two agents swapping locations simultaneously;
+    \end{itemize}
+    In the MAPF literature, other types of conflicts can be taken into consideration, such as edge conflicts, following conflicts or cycle conflicts, which can be consulted at \cite{liAnytimeMultiAgentPath2021}
+    \item \textbf{Agent behavior at target:} Another important characteristic to be defined in a MAPF study is what are the next steps of an agent who has already reached its target, while the others still haven't.
+
+    In this study we choose to proceed by making the agents stay fixed in their target locations until the end of the simulation, behaving like an obstacle for any other agents who are still moving. An alterative explored by some other studies is to make agents disappear once they reach their targets.
+
+    The "stay at target" behavior was chosen for this work as it is relatively closer to behavior of agents in real world applications, where, for example, scheduled vehicles rest at their places once they're parked.
+    \item \textbf{Objective function: } It is also important to pre-define how to measure the cost function to be optimized for the MAPF problem.
+
+    In this work, the objective function of \(\pi = \{\pi_1,...,\pi_k\}\) is given by
+    \[
+    z = \sum_{1<=i<=k}|\pi_i|,
+    \]
+    that is, the path cost is defined by the sum of time steps necessary for each agent to go from their departure cells until their target locations.
+
+    Other works may also define cost as the number of steps necessary for all agent to reach their target (\(\max_{1<=i<=k}|\pi_i|\)), but the "sum of costs" approach was chosen as it is the most used strategy in the sources of good solutions obtained by alternative studies that were used for training, which will be explained in the following sections.
+\end{enumerate}
+
+Finding a makespan or sum-of-costs optimal solution for the classical MAPF problem is currently proven to be NP-hard \cite{yuStructureIntractabilityOptimal2013}. \textbf{Optimal algorithms} aim at finding exact optimal solutions, starting from a lower-bound and progressively pushing it until they find a feasible solution that is provably optimal, but they are associated with a long computation time. Apart from Optimal Algorithms, in general, MAPF benchmarks present two other types of algorithms: \textbf{Bounded Suboptimal Algorithms}, to find the suboptimal solution within theoretical guarantees, and \textbf{Unbounded Suboptimal Algorithms}, which focus on finding feasible solutions. 
+
+
+\subsection{Algorithms for the MAPF problem}
+The large number of studies available nowadays regarding the MAPF problem propose a number of various algorithms. To understand the difference between those different approaches, we must first set some important definitions:
+\begin{itemize}
+    \item \textbf{Completeness: } An algorithm is considered complete if it is guaranteed to find a solution when one exists;
+    \item \textbf{Optimality: }  An algorithm is optimal if it always finds the best solution;
+    \item \textbf{Lower-bound: } A lower-bound of a set S is a value that is less than or equal to every element of S.
+\end{itemize}
+
+In the following subsections, we will present some of the most commonly used algorithms for the MAPF problem.
+
+\subsubsection{Local Repair A*}
+In Local Repair A* (LRA*) \cite{silverCooperativePathfinding2005}, each agent plans its path to the goal using the A* algorithm while considering only nearby agents and ignoring the rest. Agents then start moving along their planned paths until a potential collision is detected. If an agent is about to enter a space already occupied by another, it recalculates the rest of its path from that point onward. 
+
+While simple, LRA* suffers from major limitations in complex or congested environments. In areas with narrow passages or high agent density, deadlocks or bottlenecks can emerge and may persist for unpredictable amounts of time. Agents stuck in these situations repeatedly replan their paths, often invoking a complete A* search at nearly every step. This leads to  inefficient behavior that appears irrational, such as agents moving in circles or getting stuck in loops, since each decision is made without coordinating with others.
+
+\subsubsection{Prioritized Planning}
+Cooperative A* \cite{silverCooperativePathfinding2005}, or Prioritized Planning (PP), is one of the fastest approaches for solving MAPF in a suboptimal manner. It relies on a straightforward planning scheme where each agent is assigned a unique priority, and their paths are computed sequentially in decreasing order of priority. During this process, each agent avoids both static obstacles and the paths already planned for higher-priority agents.
+
+As a result, each agent follows a shortest path that is conflict-free with respect to all agents of higher priority. Rather than planning for all agents simultaneously, PP decomposes the problem and solves it one agent at a time.
+
+Although PP does not guarantee completeness or optimality, it is widely used in research due to its simplicity and high efficiency. For instance, the winners of the 2020 Flatland Challenge (a rail planning problem based on MAPF) used a strategy based on PP application, which gives a efficient setting, followed by a Large Neighborhood Search (LNS) applying PP once again, in smaller groups of neighbors \cite{liScalableRailPlanning2021a}.
+
+A critical factor in PP is how the total priority ordering is determined, as the quality of the final solution is highly sensitive to this choice.
+
+\subsubsection{Other important algorithms}
+
+The algorithms above were the main base for the development of this study, but we must also briefly mention some other important methods for the MAPF problem elaborated by researchers throughout the years \cite{gaoReviewGraphbasedMultiagent2024}:
+\begin{itemize}
+    \item \textbf{Reduction-based solvers} reduce the MAPF instance so it can be treated as another better known problem, to which there are already existing solvers. 
+    An example of alternative problem applied by \cite{gomezSolvingSumofCostsMultiAgent2020} is Answer Set Programming (ASP) \cite{lifschitzWhatAnswerSet}, a logic-based framework for solving optimization problems. Other approaches have also been explored, such as using Satisfiability solving (SAT) \cite{surynekEfficientSATApproach2016}, Integer Linear Programming (ILP) \cite{yuOptimalMultirobotPath2016}, and many others.
+    
+    This solution is optimal and complete, offering a quick solution for small-scale MAPF problems, but proof of the correctness of the reduction process usually requires complex mathematical reasoning;
+    \item \textbf{Increaseing Cost Tree Search (ICTS) based solvers \cite{sharonIncreasingCostTree2013}} offer a two level search framework, in which the high-level searches a tree with the exact path cost for each agent, and the low-level verifies to see whether there is a solution on each ICT node. In most instances, these solvers can obtain an optimal solution faster than the A$^*$-based solvers. But they still work on a k-agent state space, which grows exponentially with the number of ICT levels. Additionally, ICTS is inefficient in some instances with dense obstacles or agents;
+    \item \textbf{Conflict Based Search (CBS) solvers \cite{sharonConflictbasedSearchOptimal2015} \cite{liEECBSBoundedSuboptimalSearch2021}} is also a two-level solver, executing a binary tree search based on path conflict at the high level, while the lower level is responsible for applying A* to plan a path under conflict constraints for each agent. It performs significantly better than A*-based solvers and ICTS in most instances \cite{gaoReviewGraphbasedMultiagent2024}.
+    
+\end{itemize}
+
+\subsection{Machine Learning for Constrained Optimization}
+
+The content of the following subsection is inspired by \cite{mandiDecisionFocusedLearningFoundations2024}.
+
+In recent years, machine learning (ML) has been increasingly integrated into constrained optimization workflows, aiming to improve decision-making in complex, structured environments. Traditional optimization methods often rely on handcrafted models or assumptions that may not hold in dynamic or uncertain settings. By leveraging data, ML techniques can assist in learning components of the optimization pipeline (such as parameters, constraints, or cost functions) directly from observations or historical examples.
+
+In this context, when referring to Constrained Optimization, the focus rests on the process of optimizing an objective function \(F\) subjected to a number of constraints, as represented by the following example:
+\begin{alignat}{2}
+    \mathbf{y}^\star(\mathbf{\theta}) &= \arg\min_{\mathbf{y \in C}} \quad &&F(\mathbf{y}, \mathbf{\theta}) \tag{2a} \\
+    \text{s.t.} \quad &g(\mathbf{y}, \mathbf{\theta}) \leq 0 \quad &&\tag{2b} \\
+    &h(\mathbf{y}, \mathbf{\theta}) = 0. &&\tag{2c}
+\end{alignat}
+The goal of the CO problem above is to find a solution \(\mathbf{y}^\star(\mathbf{\theta}) \in \mathbb{R}^n\) (n being the dimension of the decision variable y), that minimizes F , subject to equality and inequality constraints (\(g\) and \(h\)).
+
+Two major paradigms have emerged in the study of ML application to CO: Prediction-Focused Learning, where ML models are trained to estimate inputs to an optimization problem, and Decision-Focused Learning, which integrates the optimization task into the learning process to train models that lead to high-quality decisions. Both approaches seek to bridge the gap between predictive modeling and downstream decision quality, but differ significantly in methodology and application.
+
+The following subsections review the key ideas, motivations, and limitations of each approach.
+
+\subsubsection{Prediction-Focused Learning}
+
+Prediction-Focused Learning (PFL) is a widely used strategy in which machine learning is applied to estimate the input parameters required for a downstream constrained optimization (CO) task. In this approach, the prediction and optimization phases are treated as two distinct steps. First, an ML model is trained to learn a mapping from observed data to the parameters that define the optimization problem. Once these parameters are predicted, an optimization algorithm—run independently of the learning step—is used to compute the final decision.
+
+The focus of this kind of learning rests on the accuracy of the parameter predictions \(\hat{\theta}\) preceding the decision model, and the model doesn't take into account directly the CO solver, which will only later use the provided parameters \(\hat{\theta}\) to provide \(\mathbf{y}^\star(\mathbf{\hat{\theta}})\).
+
+The core assumption behind this framework is that more accurate predictions will naturally lead to better optimization outcomes. In an ideal scenario, if the predicted parameters exactly matched the true ones, the resulting optimization would produce fully optimal decisions. However, since ML models often introduce some level of error, these inaccuracies can propagate through the pipeline and lead to decisions that are far from optimal. This separation between learning and optimization stages can thus limit overall performance, especially in sensitive or high-stakes decision-making contexts.
+
+\subsubsection{Decision-Focused Learning}
+
+Decision-Focused Learning (DFL) is another strategy that integrates Machine Learning into Constrained Optimization problems, by directly training the ML model to make predictions leading to good decisions by the solver.
+
+The Machine Learning model trained using DFL integrates prediction and optimization components into a composite framework, capable of making full decisions. The focus of the model for this strategy isn't set on accuracy of the predicted parameters \(\hat{\theta}\) anymore, but rather on the error incurred after optimization, which will be taken into account in the model's loss function. In other words, instead of measuring the error in \(\hat{\theta}\), DFL measures the error in \(\mathbf{y}^\star(\mathbf{\hat{\theta}})\).
+
+The existent DFL methodologies developed to this day can be classified into two categories: Gradient-based DFL and Gradient-free DFL. For this literature review, we will focus on Gradient-Based DFL Metodologies \cite{mandiDecisionFocusedLearningFoundations2024}, used as the basis for the development of this study. 
+
+The methodology chosen was \textbf{Smoothing by Random Perturbations}, which introduces randomness into the optimization problem as a form of implicit smoothing, making the resulting optimization mapping smoother by applying small, random changes to the problem’s inputs or structure, enabling the use of gradient-based optimization techniques. 
+
+Other methods explored by Mandi et al include Analytical Differentiation of Optimization Mappings, Analytical Smoothing of Optimization Mappings and Differentiation of Surrogate Loss Functions, which can be further consulted in \cite{mandiDecisionFocusedLearningFoundations2024}
+
+Smoothing by Random Perturbations was chosen as it was considered the most appropriate approach to deal with the current problem, addressing non-differentiable algorithms to solve a Integer Linear Problem (ILP).
+
+In the context of solving the Multi-Agent Pathfinding problem, we must remember that not all the DFL metodologies mentioned are applicable, as many algorithms, such as Prioritized Planning, are non-differentiable functions, once they're not necessarily continuous or, in a lot of cases, have zero-valued gradients in long intervals.
+
+\subsection{Learning with Differentiable Perturbed Optimizers}
+
+As mentioned before, many optimization fields studied today may not present differentiable functions for training by gradient descent, requiring discrete decisions at a certain step in the pipeline. This is particularly relevant for problems like the Multi-Agent Path Finding (MAPF) problem, which relies on discrete solvers. In such cases, small variations in the inputs often result in either unchanged outputs or abrupt, discontinuous shifts. As a result, discrete solvers disrupt the flow of gradients during backpropagation and cannot be seamlessly integrated into end-to-end learning pipelines.
+
+An alternative to this dilemma was proposed by Berthet et al. \cite{berthetLearningDifferentiablePertubed2020}, presenting a systematic method to transform discrete optimizers into differentiable operations. Given a finite set of distinct points $\mathcal{Y}$ and $C$ its convex hull, the standard formulation for a discrete optimization problem, 
+\[y^\star(\theta) = \arg \max_{y \in C} \langle y, \theta \rangle \tag{1},\]
+doesn't guarantee differentiability. To address this, Berthet et al. introduce randomness into the parameter $\theta$ by adding a noise vector $\varepsilon Z$, where $\varepsilon > 0$ is a temperature parameter and $Z$ is a random variable on $\mathbb{R}^d$ with a Gaussian density.
+
+Under this formulation, the decision $y^\star(\theta + \varepsilon Z)$ is almost surely (a.s.) uniquely defined. This construction induces a probability distribution $p_\theta$ over outcomes $Y \in \mathcal{Y}$, defined by: 
+
+\[
+p_\theta(y) = \mathbb{P}(y^\star(\theta + \varepsilon Z) = y) \tag{4}
+\]
+
+which is represented in Figure 2.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/diff.png}
+    \caption{Stochastic smoothing yields a perturbed optimizer \(y_\epsilon \star\) in expectation \cite{berthetLearningDifferentiablePertubed2020}.}
+    \label{fig:enter-label}
+\end{figure}
+
+Taking expectations with respect to this random perturbation leads to a smoothed version of the original maximizer, known as the perturbed maximizer: 
+
+\[
+y^\star_\varepsilon(\theta) = \mathbb{E}[\arg \max_{y \in C} \langle y, \theta + \varepsilon Z \rangle] \tag{5}
+\]
+
+This perturbed maximizer is differentiable in its inputs, with a well-defined and non-zero Jacobian everywhere, thereby avoiding vanishing gradients that plague discrete solvers.
+
+\subsubsection{Monte Carlo Perturbations for Practical Implementation}
+
+A significant advantage of this perturbed approach is its practical implementation. While the perturbed maximizer can be expressed as the solution of a convex optimization problem, its definition as an expectation allows for efficient approximation using Monte Carlo methods. 
+
+Given $\theta \in \mathbb{R}^d$, and $M$ independent and identically distributed (i.i.d.) copies of $Z$, denoted as $(Z^{(1)}, \dots, Z^{(M)})$, a Monte Carlo estimate $\bar{y}_{\epsilon,M}(\theta)$ of $y^\star_\epsilon(\theta)$ is given by: 
+\[
+\bar{y}_{\epsilon,M}(\theta) = \frac{1}{M} \sum_{m=1}^M y^{(m)} \tag{6}
+\],
+where
+
+\[
+y^{(m)} = y^\star(\theta + \varepsilon Z^{(m)}) = \arg \max_{y \in C} \langle y, \theta + \varepsilon Z^{(m)} \rangle \tag{7}
+\]
+
+This estimate is unbiased, as $\mathbb{E}[y^{(m)}] = y^\star_\varepsilon(\theta)$. The process simply requires efficiently sampling from the noise distribution $\mu$ and solving the original, unperturbed discrete optimization problem for each sample. This makes the method highly versatile. 
+
+\subsubsection{Fenchel-Young Loss}
+
+In their study, by providing this perturbed approach for learning, Berthet also used the definition of the Fenchel-Young loss \cite{blondelLearningFenchelYoungLosses} for the perturbed model as
+\[
+L_\epsilon (\theta;y) = F_\epsilon (\theta) + \epsilon \Omega(y) - \langle \theta - y \tag{8}\rangle.
+\]
+which is nonnegative, convex in \(\theta\) and minimized with value 0 if and only if \(\theta\) is such that \(y^\star_\varepsilon(\theta) = y\). The gradient of the loss is
+
+\[
+\nabla_\theta \mathcal{L}_\varepsilon(\theta; y) = \nabla_\theta F_\varepsilon(\theta) - y = y^\star_\varepsilon(\theta) - y \tag{9}
+\]
+
+The Fenchel-Young loss can therefore be interpreted as a loss in $\theta$ that is a function of \(y^\star_\epsilon(\theta)\).
+
+
+\subsection{MAPF with Machine Learning Approaches}
+
+With the exponential increase in the number of studies regarding the MAPF problem in recent years, many researchers developed possible approaches for using Machine Learning models in this context \cite{wangWherePathsCollide2025}.
+
+One method that inspired this study is the Guidance Graph Optimization (GGO) proposed by \cite{zhangGuidanceGraphOptimization2024}. In this approach, the authors adopt a Decision-Focused Learning paradigm by directly integrating optimization within the learning process. Specifically, they introduce a guidance graph—a directed, weighted graph that modifies movement and waiting costs on the underlying MAPF map to guide agents toward high-throughput behavior. They propose two GGO algorithms: one that directly optimizes edge weights using a black-box optimizer (CMA-ES), and another that learns a parameterized update model—a neural network trained via CMA-ES—that iteratively refines the guidance graph based on simulated traffic statistics. This tight coupling of learning and optimization ensures that the model receives feedback from the downstream planning performance. Experimental results show that both methods significantly improve throughput in lifelong MAPF scenarios across various algorithms and map types, outperforming existing human-designed and handcrafted guidance strategies.
+
+Another paper that applies ML to the MAPF problem is \cite{andreychukMAPFGPTImitationLearning2025}, which studies an approach based on Imitation Learning (IL), as we are doing in our current work. In his study, Andreychuk relies on IL using a large dataset
+of expert MAPF solutions and transformer-based neural network to create a foundation model for MAPF, capable of generating actions without additional heuristics or communication. The developed model demonstrated great performances on a diverse range of problem instances and presented itself computationally efficient during inference.

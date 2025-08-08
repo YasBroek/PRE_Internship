@@ -1,0 +1,602 @@
+@online{191202175DifferentiationBlackbox,
+  title   = {[1912.02175] {{Differentiation}} of {{Blackbox Combinatorial Solvers}}},
+  url     = {https://arxiv.org/abs/1912.02175},
+  urldate = {2025-06-11},
+  file    = {C\:\\Users\\yasbr\\Zotero\\storage\\H9AJP563\\[1912.02175] Differentiation of Blackbox Combinatorial Solvers.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\WM4E88VP\\1912.html}
+}
+
+@article{almagorExplainableMultiAgent,
+  title    = {Explainable {{Multi Agent Path Finding}}},
+  author   = {Almagor, Shaull and Lahijanian, Morteza},
+  abstract = {Multi Agent Path Finding (MAPF) is the problem of planning paths for agents to reach their targets from their start locations, such that the agents do not collide while executing the plan. In safety-critical systems, the plan is typically checked by a human supervisor, who decides on whether to allow its execution. In such cases, we wish to convince the human that the plan is indeed collision free.},
+  langid   = {english},
+  file     = {C:\Users\yasbr\Zotero\storage\U9JVAD8L\Almagor and Lahijanian - Explainable Multi Agent Path Finding.pdf}
+}
+
+@inproceedings{berthetLearningDifferentiablePertubed2020,
+  title     = {Learning with {{Differentiable Pertubed Optimizers}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author    = {Berthet, Quentin and Blondel, Mathieu and Teboul, Olivier and Cuturi, Marco and Vert, Jean-Philippe and Bach, Francis},
+  date      = {2020},
+  volume    = {33},
+  pages     = {9508--9519},
+  publisher = {Curran Associates, Inc.},
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2020/hash/6bb56208f672af0dd65451f869fedfd9-Abstract.html},
+  urldate   = {2025-06-06},
+  abstract  = {Machine learning pipelines often rely on optimizers procedures to make discrete decisions (e.g., sorting, picking closest neighbors, or shortest paths). Although these discrete decisions are easily computed in a forward manner, they break the back-propagation of computational graphs. In order to expand the scope of learning problems that can be solved in an end-to-end fashion, we propose a systematic method to transform optimizers into operations that are differentiable and never locally constant. Our approach relies on stochastically perturbed optimizers, and can be used readily within existing solvers. Their derivatives can be evaluated efficiently, and smoothness tuned via the chosen noise amplitude. We also show how this framework can be connected to a family of losses developed in structured prediction, and give theoretical guarantees for their use in learning tasks. We demonstrate experimentally the performance of our approach on various tasks.},
+  file      = {C:\Users\yasbr\Zotero\storage\YVUUMN6B\Berthet et al. - 2020 - Learning with Differentiable Pertubed Optimizers.pdf}
+}
+
+@article{blondelLearningFenchelYoungLosses,
+  title    = {Learning with {{Fenchel-Young Losses}}},
+  author   = {Blondel, Mathieu and Martins, Andre F T and Niculae, Vlad},
+  abstract = {Over the past decades, numerous loss functions have been been proposed for a variety of supervised learning tasks, including regression, classification, ranking, and more generally structured prediction. Understanding the core principles and theoretical properties underpinning these losses is key to choose the right loss for the right problem, as well as to create new losses which combine their strengths. In this paper, we introduce Fenchel-Young losses, a generic way to construct a convex loss function for a regularized prediction function. We provide an in-depth study of their properties in a very broad setting, covering all the aforementioned supervised learning tasks, and revealing new connections between sparsity, generalized entropies, and separation margins. We show that Fenchel-Young losses unify many well-known loss functions and allow to create useful new ones easily. Finally, we derive efficient predictive and training algorithms, making Fenchel-Young losses appealing both in theory and practice.},
+  langid   = {english},
+  file     = {C:\Users\yasbr\Zotero\storage\W7Q5KBDH\Blondel et al. - Learning with Fenchel-Young Losses.pdf}
+}
+
+@online{dalleLearningCombinatorialOptimization2022,
+  title       = {Learning with {{Combinatorial Optimization Layers}}: A {{Probabilistic Approach}}},
+  shorttitle  = {Learning with {{Combinatorial Optimization Layers}}},
+  author      = {Dalle, Guillaume and Baty, Léo and Bouvier, Louis and Parmentier, Axel},
+  date        = {2022-12-03},
+  eprint      = {2207.13513},
+  eprinttype  = {arXiv},
+  eprintclass = {stat},
+  doi         = {10.48550/arXiv.2207.13513},
+  url         = {http://arxiv.org/abs/2207.13513},
+  urldate     = {2025-06-05},
+  abstract    = {Combinatorial optimization (CO) layers in machine learning (ML) pipelines are a powerful tool to tackle data-driven decision tasks, but they come with two main challenges. First, the solution of a CO problem often behaves as a piecewise constant function of its objective parameters. Given that ML pipelines are typically trained using stochastic gradient descent, the absence of slope information is very detrimental. Second, standard ML losses do not work well in combinatorial settings. A growing body of research addresses these challenges through diverse methods. Unfortunately, the lack of well-maintained implementations slows down the adoption of CO layers. In this paper, building upon previous works, we introduce a probabilistic perspective on CO layers, which lends itself naturally to approximate differentiation and the construction of structured losses. We recover many approaches from the literature as special cases, and we also derive new ones. Based on this unifying perspective, we present InferOpt.jl, an open-source Julia package that 1) allows turning any CO oracle with a linear objective into a differentiable layer, and 2) defines adequate losses to train pipelines containing such layers. Our library works with arbitrary optimization algorithms, and it is fully compatible with Julia's ML ecosystem. We demonstrate its abilities using a pathfinding problem on video game maps as guiding example, as well as three other applications from operations research.},
+  pubstate    = {prepublished},
+  keywords    = {Computer Science - Machine Learning,Mathematics - Optimization and Control,Statistics - Machine Learning},
+  file        = {C\:\\Users\\yasbr\\Zotero\\storage\\LV5QYR6F\\Dalle et al. - 2022 - Learning with Combinatorial Optimization Layers a Probabilistic Approach.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\KDFMBAZD\\2207.html}
+}
+
+@thesis{dalleMachineLearningCombinatorial2022,
+  type        = {phdthesis},
+  title       = {Machine Learning and Combinatorial Optimization Algorithms, with Applications to Railway Planning},
+  author      = {Dalle, Guillaume},
+  date        = {2022-12-16},
+  institution = {École des Ponts ParisTech},
+  url         = {https://pastel.hal.science/tel-04053322},
+  urldate     = {2025-06-05},
+  abstract    = {This thesis investigates the frontier between machine learning and combinatorial optimization, two active areas of applied mathematics research. We combine theoretical insights with efficient algorithms, and develop several open source Julia libraries. Inspired by a collaboration with the Société nationale des chemins de fer français (SNCF), we study high-impact use cases from the railway world: train failure prediction, delay propagation, and track allocation. In Part I, we provide mathematical background and describe software implementations for various tools that will be needed later on: implicit differentiation, temporal point processes, Hidden Markov Models and Multi-Agent Path Finding. Our publicly available code fills a void in the Julia package ecosystem, aiming at ease of use without compromising on performance. In Part II, we highlight theoretical contributions related to both statistics and decision-making. We consider a Vector AutoRegressive process with partial observations, and prove matching upper and lower bounds on the estimation error. We unify and extend the state of the art for combinatorial optimization layers in deep learning, gathering various approaches in a Julia library called InferOpt.jl. We also seek to differentiate through multi-objective optimization layers, which leads to a novel theory of lexicographic convex analysis. In Part III, these mathematical and algorithmic foundations come together to tackle railway problems. We design a hierarchical model of train failures, propose a graph-based framework for delay propagation, and suggest new avenues for track allocation, with the Flatland challenge as a testing ground.},
+  langid      = {english},
+  file        = {C:\Users\yasbr\Zotero\storage\DVSKEH56\Dalle - 2022 - Machine learning and combinatorial optimization algorithms, with applications to railway planning.pdf}
+}
+
+@article{elmachtoubSmartPredictThen2021,
+  title        = {Smart “{{Predict}}, Then {{Optimize}}”},
+  author       = {Elmachtoub, Adam N. and Grigas, Paul},
+  date         = {2021-03-12},
+  journaltitle = {Management Science},
+  publisher    = {INFORMS},
+  doi          = {10.1287/mnsc.2020.3922},
+  url          = {https://pubsonline.informs.org/doi/abs/10.1287/mnsc.2020.3922},
+  urldate      = {2025-06-05},
+  abstract     = {Many real-world analytics problems involve two significant challenges: prediction and optimization. Because of the typically complex nature of each challenge, the standard paradigm is predict-then-...},
+  langid       = {english},
+  file         = {C\:\\Users\\yasbr\\Zotero\\storage\\Y9TZS68B\\Elmachtoub and Grigas - 2021 - Smart “Predict, then Optimize”.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\5R849U6E\\mnsc.2020.html}
+}
+
+@article{gaoReviewGraphbasedMultiagent2024,
+  title        = {A Review of Graph-Based Multi-Agent Pathfinding Solvers: {{From}} Classical to beyond Classical},
+  shorttitle   = {A Review of Graph-Based Multi-Agent Pathfinding Solvers},
+  author       = {Gao, Jianqi and Li, Yanjie and Li, Xinyi and Yan, Kejian and Lin, Ke and Wu, Xinyu},
+  date         = {2024-01-11},
+  journaltitle = {Knowledge-Based Systems},
+  shortjournal = {Knowledge-Based Systems},
+  volume       = {283},
+  pages        = {111121},
+  issn         = {0950-7051},
+  doi          = {10.1016/j.knosys.2023.111121},
+  url          = {https://www.sciencedirect.com/science/article/pii/S0950705123008717},
+  urldate      = {2025-05-26},
+  abstract     = {Multi-agent pathfinding (MAPF) is a well-studied abstract model for navigation in a multi-robot system, where every robot finds the path to its goal position without any collision. Due to its numerous practical applications of multi-robot systems, MAPF has steadily emerged as a research hotspot. The optimal solution for MAPF is NP-hard. In this paper, we offer a comprehensive analysis of different MAPF solvers. First, we review the cutting-edge solvers of classical MAPF, including optimal, bounded sub-optimal, and unbounded sub-optimal. The performance of some representative classical MAPF solvers is quantitatively compared. In the next part, we summarize the beyond classical MAPF solvers, which try to use the classical MAPF solvers in real-world scenarios. Last, we conclude some challenges that MAPF is experiencing in detail, review recent research on these issues, and make some suggestions for further work.},
+  keywords     = {Collision avoidance,Multi-agent pathfinding,Multi-agent systems,Scheduling and coordination,working on it},
+  file         = {C\:\\Users\\yasbr\\Zotero\\storage\\T45B4H6H\\Gao et al. - 2024 - A review of graph-based multi-agent pathfinding solvers From classical to beyond classical.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\B6EI7R9B\\S0950705123008717.html}
+}
+
+@article{jonesLipschitzianOptimizationLipschitz1993,
+  title        = {Lipschitzian Optimization without the {{Lipschitz}} Constant},
+  author       = {Jones, D. R. and Perttunen, C. D. and Stuckman, B. E.},
+  date         = {1993-10-01},
+  journaltitle = {Journal of Optimization Theory and Applications},
+  shortjournal = {J Optim Theory Appl},
+  volume       = {79},
+  number       = {1},
+  pages        = {157--181},
+  issn         = {1573-2878},
+  doi          = {10.1007/BF00941892},
+  url          = {https://doi.org/10.1007/BF00941892},
+  urldate      = {2025-06-05},
+  abstract     = {We present a new algorithm for finding the global minimum of a multivariate function subject to simple bounds. The algorithm is a modification of the standard Lipschitzian approach that eliminates the need to specify a Lipschitz constant. This is done by carrying out simultaneous searches using all possible constants from zero to infinity. On nine standard test functions, the new algorithm converges in fewer function evaluations than most competing methods.},
+  langid       = {english},
+  keywords     = {Algorithms,Calculus of Variations and Optimization,Continuous Optimization,Discrete Optimization,Global Analysis and Analysis on Manifolds,Global optimization,Lipschitzian optimization,Optimization,space covering,space partitioning},
+  file         = {C:\Users\yasbr\Zotero\storage\KXX6NIWT\Jones et al. - 1993 - Lipschitzian optimization without the Lipschitz constant.pdf}
+}
+
+@inproceedings{kotaryEndtoEndConstrainedOptimization2021,
+  title      = {End-to-{{End Constrained Optimization Learning}}: {{A Survey}}},
+  shorttitle = {End-to-{{End Constrained Optimization Learning}}},
+  author     = {Kotary, James and Fioretto, Ferdinando and Hentenryck, Pascal Van and Wilder, Bryan},
+  date       = {2021-08-09},
+  volume     = {5},
+  pages      = {4475--4482},
+  issn       = {1045-0823},
+  doi        = {10.24963/ijcai.2021/610},
+  url        = {https://www.ijcai.org/proceedings/2021/610},
+  urldate    = {2025-05-26},
+  abstract   = {Electronic proceedings of IJCAI 2021},
+  eventtitle = {Twenty-{{Ninth International Joint Conference}} on {{Artificial Intelligence}}},
+  langid     = {english},
+  keywords   = {done},
+  file       = {C:\Users\yasbr\Zotero\storage\WL4LF8L6\Kotary et al. - 2021 - End-to-End Constrained Optimization Learning A Survey.pdf}
+}
+
+@inproceedings{liAnytimeMultiAgentPath2021,
+  title      = {Anytime {{Multi-Agent Path Finding}} via {{Large Neighborhood Search}}},
+  author     = {Li, Jiaoyang and Chen, Zhe and Harabor, Daniel and Stuckey, Peter J. and Koenig, Sven},
+  date       = {2021-08-09},
+  volume     = {4},
+  pages      = {4127--4135},
+  issn       = {1045-0823},
+  doi        = {10.24963/ijcai.2021/568},
+  url        = {https://www.ijcai.org/proceedings/2021/568},
+  urldate    = {2025-05-26},
+  abstract   = {Electronic proceedings of IJCAI 2021},
+  eventtitle = {Twenty-{{Ninth International Joint Conference}} on {{Artificial Intelligence}}},
+  langid     = {english},
+  keywords   = {done},
+  file       = {C:\Users\yasbr\Zotero\storage\VPBNNYXP\Li et al. - 2021 - Anytime Multi-Agent Path Finding via Large Neighborhood Search.pdf}
+}
+
+@inproceedings{liMultiAgentPathFinding2023,
+  title      = {Multi-{{Agent Path Finding Based}} on {{Graph Neural Network}}},
+  booktitle  = {2023 42nd {{Chinese Control Conference}} ({{CCC}})},
+  author     = {Li, Xinyi and Gao, Jianqi and Li, Yanjie},
+  date       = {2023-07},
+  pages      = {5458--5463},
+  issn       = {1934-1768},
+  doi        = {10.23919/CCC58697.2023.10240345},
+  url        = {https://ieeexplore.ieee.org/abstract/document/10240345},
+  urldate    = {2025-06-11},
+  abstract   = {In order to improve the efficiency of logistics warehouses, multi-agent path finding (MAPF) has become a hot research. Although most of the current decentralized MAPF algorithms can obtain good results in experiments, the agents in the system do not communicate with each other, and do not fully utilize the scalability of decentralized control. The decentralized framework of this paper combines convolutional neural networks (CNN) and improved graph neural networks (GNN) to train a decentralized controller to simulate a coupled central controller. The decentralized framework based on GNN is used to find the path of the multi-agent system, and the optimal or near-optimal agent action sequence is obtained. This paper assumes that under the premise that the agent's hardware conditions are limited and can only perceive the local environment within the field of view. And realize efficient collision-free path planning by exchanging local information observed by agents through the GNN. Experiments show that the results obtained by the path finding algorithm based on GNN in this study are close to the optimal results, and have good scalability.},
+  eventtitle = {2023 42nd {{Chinese Control Conference}} ({{CCC}})},
+  keywords   = {Communication networks,convolutional neural networks,Decentralized control,graph neural networks,Graph neural networks,Hardware,imitation learning,multi-agent systems,path finding,Path planning,Scalability,Warehousing},
+  file       = {C:\Users\yasbr\Zotero\storage\WIC4H3HP\Li et al. - 2023 - Multi-Agent Path Finding Based on Graph Neural Network.pdf}
+}
+
+@article{mandiDecisionFocusedLearningFoundations2024,
+  title        = {Decision-{{Focused Learning}}: {{Foundations}}, {{State}} of the {{Art}}, {{Benchmark}} and {{Future Opportunities}}},
+  shorttitle   = {Decision-{{Focused Learning}}},
+  author       = {Mandi, Jayanta and Kotary, James and Berden, Senne and Mulamba, Maxime and Bucarey, Victor and Guns, Tias and Fioretto, Ferdinando},
+  date         = {2024-08-31},
+  journaltitle = {Journal of Artificial Intelligence Research},
+  volume       = {80},
+  pages        = {1623--1701},
+  issn         = {1076-9757},
+  doi          = {10.1613/jair.1.15320},
+  url          = {https://www.jair.org/index.php/jair/article/view/15320},
+  urldate      = {2025-05-26},
+  abstract     = {Decision-focused learning (DFL) is an emerging paradigm that integrates machine learning (ML) and constrained optimization to enhance decision quality by training ML models in an end-to-end system. This approach shows significant potential to revolutionize combinatorial decision-making in real-world applications that operate under uncertainty, where estimating unknown parameters within decision models is a major challenge. This paper presents a comprehensive review of DFL, providing an in-depth analysis of both gradient-based and gradient-free techniques used to combine ML and constrained optimization. It evaluates the strengths and limitations of these techniques and includes an extensive empirical evaluation of eleven methods across seven problems. The survey also offers insights into recent advancements and future research directions in DFL.},
+  langid       = {english},
+  keywords     = {Constraint Programming,Decision making under uncertainty,done,Machine Learining},
+  file         = {C:\Users\yasbr\Zotero\storage\VVDEVV46\Mandi et al. - 2024 - Decision-Focused Learning Foundations, State of the Art, Benchmark and Future Opportunities.pdf}
+}
+
+@online{shenTrackingProgressMultiAgent2023,
+  title       = {Tracking {{Progress}} in {{Multi-Agent Path Finding}}},
+  author      = {Shen, Bojie and Chen, Zhe and Cheema, Muhammad Aamir and Harabor, Daniel D. and Stuckey, Peter J.},
+  date        = {2023-05-15},
+  eprint      = {2305.08446},
+  eprinttype  = {arXiv},
+  eprintclass = {cs},
+  doi         = {10.48550/arXiv.2305.08446},
+  url         = {http://arxiv.org/abs/2305.08446},
+  urldate     = {2025-05-26},
+  abstract    = {Multi-Agent Path Finding (MAPF) is an important core problem for many new and emerging industrial applications. Many works appear on this topic each year, and a large number of substantial advancements and performance improvements have been reported. Yet measuring overall progress in MAPF is difficult: there are many potential competitors, and the computational burden for comprehensive experimentation is prohibitively large. Moreover, detailed data from past experimentation is usually unavailable. In this work, we introduce a set of methodological and visualisation tools which can help the community establish clear indicators for state-of-the-art MAPF performance and which can facilitate large-scale comparisons between MAPF solvers. Our objectives are to lower the barrier of entry for new researchers and to further promote the study of MAPF, since progress in the area and the main challenges are made much clearer.},
+  pubstate    = {prepublished},
+  keywords    = {Computer Science - Artificial Intelligence,Computer Science - Robotics,done},
+  file        = {C\:\\Users\\yasbr\\Zotero\\storage\\6ZEJSW7H\\Shen et al. - 2023 - Tracking Progress in Multi-Agent Path Finding.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\8YNL5VEL\\2305.html}
+}
+
+@article{silverCooperativePathfinding2005,
+  title        = {Cooperative {{Pathfinding}}},
+  author       = {Silver, David},
+  date         = {2005},
+  journaltitle = {Proceedings of the AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment},
+  volume       = {1},
+  number       = {1},
+  pages        = {117--122},
+  issn         = {2334-0924},
+  doi          = {10.1609/aiide.v1i1.18726},
+  url          = {https://ojs.aaai.org/index.php/AIIDE/article/view/18726},
+  urldate      = {2025-05-26},
+  abstract     = {Cooperative Pathfinding is a multi-agent path planning problem where agents must find non-colliding routes to separate destinations, given full information about the routes of other agents. This paper presents three new algorithms for efficiently solving this problem, suitable for use in Real-Time Strategy games and other real-time environments. The algorithms are decoupled approaches that break down the problem into a series of single-agent searches. Cooperative A* (CA*) searches space-time for a non-colliding route. Hierarchical Cooperative A* (HCA*) uses an abstract heuristic to boost performance. Finally, Windowed Hierarchical Cooperative A* (WHCA*) limits the space-time search depth to a dynamic window, spreading computation over the duration of the route. The algorithms are applied to a series of challenging, maze-like environments, and compared to A* with Local Repair (the current video-games industry standard). The results show that the new algorithms, especially WHCA*, are robust and efficient solutions to the Cooperative Pathfinding problem, finding more successful routes and following better paths than Local Repair A*},
+  issue        = {1},
+  langid       = {english},
+  keywords     = {done},
+  file         = {C:\Users\yasbr\Zotero\storage\42GR65CA\Silver - 2005 - Cooperative Pathfinding.pdf}
+}
+
+@article{sternMultiAgentPathfindingDefinitions2019,
+  title        = {Multi-{{Agent Pathfinding}}: {{Definitions}}, {{Variants}}, and {{Benchmarks}}},
+  shorttitle   = {Multi-{{Agent Pathfinding}}},
+  author       = {Stern, Roni and Sturtevant, Nathan and Felner, Ariel and Koenig, Sven and Ma, Hang and Walker, Thayne and Li, Jiaoyang and Atzmon, Dor and Cohen, Liron and Kumar, T. K. and Barták, Roman and Boyarski, Eli},
+  date         = {2019},
+  journaltitle = {Proceedings of the International Symposium on Combinatorial Search},
+  volume       = {10},
+  number       = {1},
+  pages        = {151--158},
+  issn         = {2832-9163},
+  doi          = {10.1609/socs.v10i1.18510},
+  url          = {https://ojs.aaai.org/index.php/SOCS/article/view/18510},
+  urldate      = {2025-05-26},
+  abstract     = {The multi-agent pathfinding problem (MAPF) is the fundamental problem of planning paths for multiple agents, where the key constraint is that the agents will be able to follow these paths concurrently without colliding with each other. Applications of MAPF include automated warehouses, autonomous vehicles, and robotics. Research on MAPF has been flourishing in the past couple of years. Different MAPF research papers assume different sets of assumptions, e.g., whether agents can traverse the same road at the same time, and have different objective functions, e.g., minimize makespan or sum of agents' actions costs. These assumptions and objectives are sometimes implicitly assumed or described informally. This makes it difficult for establishing appropriate baselines for comparison in research papers, as well as making it difficult for practitioners to find the papers relevant to their concrete application. This paper aims to fill this gap and facilitate future research and practitioners by providing a unifying terminology for describing the common MAPF assumptions and objectives. In addition, we also provide pointers to two MAPF benchmarks. In particular, we introduce a new grid-based benchmark for MAPF, and demonstrate experimentally that it poses a challenge to contemporary MAPF algorithms.},
+  issue        = {1},
+  langid       = {english},
+  keywords     = {done,PRE},
+  file         = {C:\Users\yasbr\Zotero\storage\8VG87S5R\Stern et al. - 2019 - Multi-Agent Pathfinding Definitions, Variants, and Benchmarks.pdf}
+}
+
+@article{sturtevantBenchmarksGridBasedPathfinding2012,
+  title        = {Benchmarks for {{Grid-Based Pathfinding}}},
+  author       = {Sturtevant, Nathan R.},
+  date         = {2012-06},
+  journaltitle = {IEEE Transactions on Computational Intelligence and AI in Games},
+  volume       = {4},
+  number       = {2},
+  pages        = {144--148},
+  issn         = {1943-0698},
+  doi          = {10.1109/TCIAIG.2012.2197681},
+  url          = {https://ieeexplore.ieee.org/abstract/document/6194296},
+  urldate      = {2025-05-26},
+  abstract     = {The study of algorithms on grids has been widespread in a number of research areas. Grids are easy to implement and offer fast memory access. Because of their simplicity, they are used even in commercial video games. But, the evaluation of work on grids has been inconsistent between different papers. Many research papers use different problem sets, making it difficult to compare results between papers. Furthermore, the performance characteristics of each test set are not necessarily obvious. This has motivated the creation of a standard test set of maps and problems on the maps that are open for all researchers to use. In addition to creating these sets, we use a variety of metrics to analyze the properties of the test sets. The goal is that these test sets will be useful to many researchers, making experimental results more comparable across papers, and improving the quality of research on grid-based domains.},
+  keywords     = {Accuracy,Benchmark testing,done,Educational institutions,Games,Grid,Logic gates,map,Measurement,path planning,pathfinding,Road transportation,search},
+  file         = {C:\Users\yasbr\Zotero\storage\LKLVIMXY\Sturtevant - 2012 - Benchmarks for Grid-Based Pathfinding.pdf}
+}
+
+@article{wilderMeldingDataDecisionsPipeline2019,
+  title        = {Melding the {{Data-Decisions Pipeline}}: {{Decision-Focused Learning}} for {{Combinatorial Optimization}}},
+  shorttitle   = {Melding the {{Data-Decisions Pipeline}}},
+  author       = {Wilder, Bryan and Dilkina, Bistra and Tambe, Milind},
+  date         = {2019-07-17},
+  journaltitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume       = {33},
+  number       = {01},
+  pages        = {1658--1665},
+  issn         = {2374-3468},
+  doi          = {10.1609/aaai.v33i01.33011658},
+  url          = {https://ojs.aaai.org/index.php/AAAI/article/view/3982},
+  urldate      = {2025-06-05},
+  abstract     = {Creating impact in real-world settings requires artificial intelligence techniques to span the full pipeline from data, to predictive models, to decisions. These components are typically approached separately: a machine learning model is first trained via a measure of predictive accuracy, and then its predictions are used as input into an optimization algorithm which produces a decision. However, the loss function used to train the model may easily be misaligned with the end goal, which is to make the best decisions possible. Hand-tuning the loss function to align with optimization is a difficult and error-prone process (which is often skipped entirely).We focus on combinatorial optimization problems and introduce a general framework for decision-focused learning, where the machine learning model is directly trained in conjunction with the optimization algorithm to produce highquality decisions. Technically, our contribution is a means of integrating common classes of discrete optimization problems into deep learning or other predictive models, which are typically trained via gradient descent. The main idea is to use a continuous relaxation of the discrete problem to propagate gradients through the optimization procedure. We instantiate this framework for two broad classes of combinatorial problems: linear programs and submodular maximization. Experimental results across a variety of domains show that decisionfocused learning often leads to improved optimization performance compared to traditional methods. We find that standard measures of accuracy are not a reliable proxy for a predictive model’s utility in optimization, and our method’s ability to specify the true goal as the model’s training objective yields substantial dividends across a range of decision problems.},
+  issue        = {01},
+  langid       = {english},
+  file         = {C:\Users\yasbr\Zotero\storage\YS3ZSXPE\Wilder et al. - 2019 - Melding the Data-Decisions Pipeline Decision-Focused Learning for Combinatorial Optimization.pdf}
+}
+
+@article{zhangGuidanceGraphOptimization2024,
+  title      = {Guidance {{Graph Optimization}} for {{Lifelong Multi-Agent Path Finding}}},
+  author     = {Zhang, Yulun and Jiang, He and Bhatt, Varun and Nikolaidis, Stefanos and Li, Jiaoyang},
+  date       = {2024-08-01},
+  volume     = {1},
+  pages      = {311--320},
+  issn       = {1045-0823},
+  doi        = {10.24963/ijcai.2024/35},
+  url        = {https://www.ijcai.org/proceedings/2024/35},
+  urldate    = {2025-05-30},
+  abstract   = {Electronic proceedings of IJCAI 2024},
+  eventtitle = {Thirty-{{Third International Joint Conference}} on {{Artificial Intelligence}}},
+  langid     = {english},
+  keywords   = {done},
+  file       = {C:\Users\yasbr\Zotero\storage\AW54NXUX\Zhang et al. - 2024 - Guidance Graph Optimization for Lifelong Multi-Agent Path Finding.pdf}
+}
+
+@article{zhangLearningPriorityOrdering2022,
+  title        = {Learning a {{Priority Ordering}} for {{Prioritized Planning}} in {{Multi-Agent Path Finding}}},
+  author       = {Zhang, Shuyang and Li, Jiaoyang and Huang, Taoan and Koenig, Sven and Dilkina, Bistra},
+  date         = {2022-07-17},
+  journaltitle = {Proceedings of the International Symposium on Combinatorial Search},
+  volume       = {15},
+  number       = {1},
+  pages        = {208--216},
+  issn         = {2832-9163},
+  doi          = {10.1609/socs.v15i1.21769},
+  url          = {https://ojs.aaai.org/index.php/SOCS/article/view/21769},
+  urldate      = {2025-05-30},
+  abstract     = {Prioritized Planning (PP) is a fast and popular framework for solving Multi-Agent Path Finding, but its solution quality depends heavily on the predetermined priority ordering of the agents. Current PP algorithms use either greedy policies or random assignments to determine a total priority ordering, but none of them dominates the others in terms of the success rate and solution quality (measured by the sum-of-costs). We propose a machine-learning (ML) framework to learn a good priority ordering for PP. We develop two models, namely ML-T, which is trained on a total priority ordering, and ML-P, which is trained on a partial priority ordering. We propose to boost the effectiveness of PP by further applying stochastic ranking and random restarts. The results show that our ML-guided PP algorithms outperform the existing PP algorithms in success rate, runtime, and solution quality on small maps in most cases and are competitive with them on large maps despite the difficulty of collecting training data on these maps.},
+  issue        = {1},
+  langid       = {english},
+  keywords     = {done,Search In Robotics},
+  file         = {C:\Users\yasbr\Zotero\storage\XW58VU6I\Zhang et al. - 2022 - Learning a Priority Ordering for Prioritized Planning in Multi-Agent Path Finding.pdf}
+}
+
+@article{dijkstraNoteTwoProblems1959,
+  title        = {A note on two problems in connexion with graphs},
+  author       = {Dijkstra, E.W.},
+  date         = {1959-12-01},
+  journaltitle = {Numer. Math.},
+  volume       = {1},
+  pages        = {269-271},
+  issn         = {0945-3245},
+  doi          = {10.1007/BF01386390},
+  url          = {https://doi.org/10.1007/BF01386390},
+  urldate      = {2025-07-23},
+  issue        = {1},
+  langid       = {english},
+  keywords     = {done,Search In Robotics}
+}
+
+@article{hartFormalBasisHeuristic1968,
+  title        = {A {{Formal Basis}} for the {{Heuristic Determination}} of {{Minimum Cost Paths}}},
+  author       = {Hart, Peter E. and Nilsson, Nils J. and Raphael, Bertram},
+  date         = {1968-07},
+  journaltitle = {IEEE Transactions on Systems Science and Cybernetics},
+  volume       = {4},
+  number       = {2},
+  pages        = {100--107},
+  issn         = {2168-2887},
+  doi          = {10.1109/TSSC.1968.300136},
+  url          = {https://ieeexplore.ieee.org/document/4082128},
+  urldate      = {2025-07-23},
+  abstract     = {Although the problem of determining the minimum cost path through a graph arises naturally in a number of interesting applications, there has been no underlying theory to guide the development of efficient search procedures. Moreover, there is no adequate conceptual framework within which the various ad hoc search strategies proposed to date can be compared. This paper describes how heuristic information from the problem domain can be incorporated into a formal mathematical theory of graph searching and demonstrates an optimality property of a class of search strategies.},
+  keywords     = {Automatic control,Automatic programming,Chemical technology,Costs,Functional programming,Gradient methods,Instruction sets,Mathematical programming,Minimax techniques,Minimization methods},
+  file         = {C:\Users\yasbr\Zotero\storage\XE8FIDRI\Hart et al. - 1968 - A Formal Basis for the Heuristic Determination of Minimum Cost Paths.pdf}
+}
+
+@online{IEEEXploreIEEE,
+  title   = {{{IEEE Xplore}}: {{IEEE Transactions}} on {{Systems Science}} and {{Cybernetics}}},
+  urldate = {2025-07-23},
+  file    = {C:\Users\yasbr\Zotero\storage\AYPEIFTP\RecentIssue.html}
+}
+
+@inproceedings{buckleyFastMotionPlanning1989,
+  title      = {Fast Motion Planning for Multiple Moving Robots},
+  booktitle  = {1989 {{International Conference}} on {{Robotics}} and {{Automation Proceedings}}},
+  author     = {Buckley, S.J.},
+  date       = {1989-05},
+  pages      = {322-326 vol.1},
+  doi        = {10.1109/ROBOT.1989.100008},
+  url        = {https://ieeexplore.ieee.org/document/100008},
+  urldate    = {2025-07-29},
+  abstract   = {The author presents an efficient solution to the motion-planning problem for multiple translating robots in the plane. It is shown that careful priority assignment can greatly reduce the average running time of the planner. A priority assignment method is introduced which attempts to maximize the number of robots which can move in a straight line form their start point to their goal point, thereby minimizing the number of robots for which expensive collision-avoiding search is necessary. This prioritization method is extremely effective in sparse workspaces where the moving robots are the primary obstacle.{$<>$}},
+  eventtitle = {1989 {{International Conference}} on {{Robotics}} and {{Automation}}},
+  keywords   = {Electronic equipment testing,Magnetic levitation,Motion planning,Orbital robotics,Parallel robots,Polynomials,Radio access networks,Robotic assembly},
+  file       = {C:\Users\yasbr\Zotero\storage\RN6HDAGV\Buckley - 1989 - Fast motion planning for multiple moving robots.pdf}
+}
+
+@article{yuStructureIntractabilityOptimal2013,
+  title        = {Structure and {{Intractability}} of {{Optimal Multi-Robot Path Planning}} on {{Graphs}}},
+  author       = {Yu, Jingjin and LaValle, Steven},
+  date         = {2013-06-29},
+  journaltitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume       = {27},
+  number       = {1},
+  pages        = {1443--1449},
+  issn         = {2374-3468},
+  doi          = {10.1609/aaai.v27i1.8541},
+  url          = {https://ojs.aaai.org/index.php/AAAI/article/view/8541},
+  urldate      = {2025-08-06},
+  abstract     = {In this paper, we study the structure and computational complexity of optimal multi-robot path planning problems on graphs. Our results encompass three formulations of the discrete multi-robot path planning problem, including a variant that allows synchronous rotations of robots along fully occupied, disjoint cycles on the graph. Allowing rotation of robots provides a more natural model for multi-robot path planning because robots can communicate.Our optimality objectives are to minimize the total arrival time, the makespan (last arrival time), and the total distance. On the structure side, we show that, in general, these objectives demonstrate a pairwise Pareto optimal structure and cannot be simultaneously optimized. On the computational complexity side, we extend previous work and show that, regardless of the underlying multi-robot path planning problem, these objectives are all intractable to compute. In particular, our NP-hardness proof for the time optimal versions, based on a minimal and direct reduction from the 3-satisfiability problem, shows that these problems remain NP-hard even when there are only two groups of robots (i.e. robots within each group are interchangeable).},
+  issue        = {1},
+  langid       = {english},
+  keywords     = {NP-hardness},
+  file         = {C:\Users\yasbr\Zotero\storage\I7TKWCWH\Yu and LaValle - 2013 - Structure and Intractability of Optimal Multi-Robot Path Planning on Graphs.pdf}
+}
+
+@article{liScalableRailPlanning2021a,
+  title        = {Scalable {{Rail Planning}} and {{Replanning}}: {{Winning}} the 2020 {{Flatland Challenge}}},
+  shorttitle   = {Scalable {{Rail Planning}} and {{Replanning}}},
+  author       = {Li, Jiaoyang and Chen, Zhe and Zheng, Yi and Chan, Shao-Hung and Harabor, Daniel and Stuckey, Peter J. and Ma, Hang and Koenig, Sven},
+  date         = {2021-05-17},
+  journaltitle = {Proceedings of the International Conference on Automated Planning and Scheduling},
+  volume       = {31},
+  pages        = {477--485},
+  issn         = {2334-0843},
+  doi          = {10.1609/icaps.v31i1.15994},
+  url          = {https://ojs.aaai.org/index.php/ICAPS/article/view/15994},
+  urldate      = {2025-08-06},
+  abstract     = {Multi-Agent Path Finding (MAPF) is the combinatorial problem of finding collision-free paths for multiple agents on a graph. This paper describes MAPF-based software for solving train planning and replanning problems on large-scale rail networks under uncertainty. The software recently won the 2020 Flatland Challenge, a NeurIPS competition trying to determine how to efficiently manage dense traffic on rail networks. The software incorporates many state-of-the-art MAPF or, in general, optimization technologies, such as prioritized planning, large neighborhood search, safe interval path planning, minimum communication policies, parallel computing, and simulated annealing. It can plan collision-free paths for thousands of trains within a few minutes and deliver deadlock-free actions in real-time during execution.},
+  langid       = {english},
+  keywords     = {Engineering Issues In Using Planning And Scheduling Techniques},
+  file         = {C:\Users\yasbr\Zotero\storage\7Z5HYSZB\Li et al. - 2021 - Scalable Rail Planning and Replanning Winning the 2020 Flatland Challenge.pdf}
+}
+
+@article{sharonConflictbasedSearchOptimal2015,
+  title        = {Conflict-Based Search for Optimal Multi-Agent Pathfinding},
+  author       = {Sharon, Guni and Stern, Roni and Felner, Ariel and Sturtevant, Nathan R.},
+  date         = {2015-02-01},
+  journaltitle = {Artificial Intelligence},
+  shortjournal = {Artificial Intelligence},
+  volume       = {219},
+  pages        = {40--66},
+  issn         = {0004-3702},
+  doi          = {10.1016/j.artint.2014.11.006},
+  url          = {https://www.sciencedirect.com/science/article/pii/S0004370214001386},
+  urldate      = {2025-08-06},
+  abstract     = {In the multi-agent pathfinding problem (MAPF) we are given a set of agents each with respective start and goal positions. The task is to find paths for all agents while avoiding collisions. Most previous work on solving this problem optimally has treated the individual agents as a single ‘joint agent’ and then applied single-agent search variants of the A* algorithm. In this paper we present the Conflict Based Search (CBS) a new optimal multi-agent pathfinding algorithm. CBS is a two-level algorithm that does not convert the problem into the single ‘joint agent’ model. At the high level, a search is performed on a Conflict Tree (CT) which is a tree based on conflicts between individual agents. Each node in the CT represents a set of constraints on the motion of the agents. At the low level, fast single-agent searches are performed to satisfy the constraints imposed by the high level CT node. In many cases this two-level formulation enables CBS to examine fewer states than A* while still maintaining optimality. We analyze CBS and show its benefits and drawbacks. Additionally we present the Meta-Agent CBS (MA-CBS) algorithm. MA-CBS is a generalization of CBS. Unlike basic CBS, MA-CBS is not restricted to single-agent searches at the low level. Instead, MA-CBS allows agents to be merged into small groups of joint agents. This mitigates some of the drawbacks of basic CBS and further improves performance. In fact, MA-CBS is a framework that can be built on top of any optimal and complete MAPF solver in order to enhance its performance. Experimental results on various problems show a speedup of up to an order of magnitude over previous approaches.},
+  keywords     = {Heuristic search,Multi-agent,Pathfinding},
+  file         = {C\:\\Users\\yasbr\\Zotero\\storage\\GLWNGIWF\\Sharon et al. - 2015 - Conflict-based search for optimal multi-agent pathfinding.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\72UIZ7G2\\S0004370214001386.html}
+}
+
+@online{liEECBSBoundedSuboptimalSearch2021,
+  title       = {{{EECBS}}: {{A Bounded-Suboptimal Search}} for {{Multi-Agent Path Finding}}},
+  shorttitle  = {{{EECBS}}},
+  author      = {Li, Jiaoyang and Ruml, Wheeler and Koenig, Sven},
+  date        = {2021-03-12},
+  eprint      = {2010.01367},
+  eprinttype  = {arXiv},
+  eprintclass = {cs},
+  doi         = {10.48550/arXiv.2010.01367},
+  url         = {http://arxiv.org/abs/2010.01367},
+  urldate     = {2025-08-06},
+  abstract    = {Multi-Agent Path Finding (MAPF), i.e., finding collision-free paths for multiple robots, is important for many applications where small runtimes are necessary, including the kind of automated warehouses operated by Amazon. CBS is a leading two-level search algorithm for solving MAPF optimally. ECBS is a bounded-suboptimal variant of CBS that uses focal search to speed up CBS by sacrificing optimality and instead guaranteeing that the costs of its solutions are within a given factor of optimal. In this paper, we study how to decrease its runtime even further using inadmissible heuristics. Motivated by Explicit Estimation Search (EES), we propose Explicit Estimation CBS (EECBS), a new bounded-suboptimal variant of CBS, that uses online learning to obtain inadmissible estimates of the cost of the solution of each high-level node and uses EES to choose which high-level node to expand next. We also investigate recent improvements of CBS and adapt them to EECBS. We find that EECBS with the improvements runs significantly faster than the state-of-the-art bounded-suboptimal MAPF algorithms ECBS, BCP-7, and eMDD-SAT on a variety of MAPF instances. We hope that the scalability of EECBS enables additional applications for bounded-suboptimal MAPF algorithms.},
+  pubstate    = {prepublished},
+  keywords    = {Computer Science - Artificial Intelligence,Computer Science - Multiagent Systems,Computer Science - Robotics},
+  file        = {C\:\\Users\\yasbr\\Zotero\\storage\\H946BWM3\\Li et al. - 2021 - EECBS A Bounded-Suboptimal Search for Multi-Agent Path Finding.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\GDT7YUXI\\2010.html}
+}
+
+
+@article{sharonIncreasingCostTree2013,
+  title        = {The Increasing Cost Tree Search for Optimal Multi-Agent Pathfinding},
+  author       = {Sharon, Guni and Stern, Roni and Goldenberg, Meir and Felner, Ariel},
+  date         = {2013-02-01},
+  journaltitle = {Artificial Intelligence},
+  shortjournal = {Artificial Intelligence},
+  volume       = {195},
+  pages        = {470--495},
+  issn         = {0004-3702},
+  doi          = {10.1016/j.artint.2012.11.006},
+  url          = {https://www.sciencedirect.com/science/article/pii/S0004370212001543},
+  urldate      = {2025-08-06},
+  abstract     = {We address the problem of optimal pathfinding for multiple agents. Given a start state and a goal state for each of the agents, the task is to find minimal paths for the different agents while avoiding collisions. Previous work on solving this problem optimally, used traditional single-agent search variants of the A* algorithm. We present a novel formalization for this problem which includes a search tree called the increasing cost tree (ICT) and a corresponding search algorithm, called the increasing cost tree search (ICTS) that finds optimal solutions. ICTS is a two-level search algorithm. The high-level phase of ICTS searches the increasing cost tree for a set of costs (cost per agent). The low-level phase of ICTS searches for a valid path for every agent that is constrained to have the same cost as given by the high-level phase. We analyze this new formalization, compare it to the A* search formalization and provide the pros and cons of each. Following, we show how the unique formalization of ICTS allows even further pruning of the state space by grouping small sets of agents and identifying unsolvable combinations of costs. Experimental results on various domains show the benefits and limitations of our new approach. A speedup of up to 3 orders of magnitude was obtained in some cases.},
+  keywords     = {Heuristic search,Multi-agent pathfinding},
+  file         = {C\:\\Users\\yasbr\\Zotero\\storage\\UBQP4JSX\\Sharon et al. - 2013 - The increasing cost tree search for optimal multi-agent pathfinding.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\LL3XQILR\\S0004370212001543.html}
+}
+
+
+@article{gomezSolvingSumofCostsMultiAgent2020,
+  title        = {Solving {{Sum-of-Costs Multi-Agent Pathfinding}} with {{Answer-Set Programming}}},
+  author       = {Gómez, Rodrigo N. and Hernández, Carlos and Baier, Jorge A.},
+  date         = {2020-04-03},
+  journaltitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume       = {34},
+  number       = {06},
+  pages        = {9867--9874},
+  issn         = {2374-3468},
+  doi          = {10.1609/aaai.v34i06.6540},
+  url          = {https://ojs.aaai.org/index.php/AAAI/article/view/6540},
+  urldate      = {2025-08-06},
+  abstract     = {Solving a Multi-Agent Pathfinding (MAPF) problem involves finding non-conflicting paths that lead a number of agents to their goal location. In the sum-of-costs variant of MAPF, one is also required to minimize the total number of moves performed by agents before stopping at the goal. Not surprisingly, since MAPF is combinatorial, a number of compilations to Satisfiability solving (SAT) and Answer Set Programming (ASP) exist. In this paper, we propose the first family of compilations to ASP that solve sum-of-costs MAPF over 4-connected grids. Unlike existing compilations to ASP that we are aware of, our encoding is the first that, after grounding, produces a number of clauses that is linear on the number of agents. In addition, the representation of the optimization objective is also carefully written, such that its size after grounding does not depend on the size of the grid. In our experimental evaluation, we show that our approach outperforms search- and SAT-based sum-of-costs MAPF solvers when grids are congested with agents.},
+  issue        = {06},
+  langid       = {english}
+}
+
+
+@article{lifschitzWhatAnswerSet,
+  title    = {What {{Is Answer Set Programming}}?},
+  author   = {Lifschitz, Vladimir},
+  abstract = {Answer set programming (ASP) is a form of declarative programming oriented towards difficult search problems. As an outgrowth of research on the use of nonmonotonic reasoning in knowledge representation, it is particularly useful in knowledge-intensive applications. ASP programs consist of rules that look like Prolog rules, but the computational mechanisms used in ASP are different: they are based on the ideas that have led to the creation of fast satisfiability solvers for propositional logic.},
+  langid   = {english},
+  file     = {C:\Users\yasbr\Zotero\storage\JM6BK5WQ\Lifschitz - What Is Answer Set Programming.pdf}
+}
+
+@incollection{surynekEfficientSATApproach2016,
+  title     = {Efficient {{SAT Approach}} to {{Multi-Agent Path Finding Under}} the {{Sum}} of {{Costs Objective}}},
+  booktitle = {{{ECAI}} 2016},
+  author    = {Surynek, Pavel and Felner, Ariel and Stern, Roni and Boyarski, Eli},
+  date      = {2016},
+  pages     = {810--818},
+  publisher = {IOS Press},
+  doi       = {10.3233/978-1-61499-672-9-810},
+  url       = {https://ebooks.iospress.nl/doi/10.3233/978-1-61499-672-9-810},
+  urldate   = {2025-08-06},
+  langid    = {english},
+  file      = {C\:\\Users\\yasbr\\Zotero\\storage\\HIUWBHVG\\Surynek et al. - 2016 - Efficient SAT Approach to Multi-Agent Path Finding Under the Sum of Costs Objective.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\GILISXWU\\978-1-61499-672-9-810.html}
+}
+
+
+@article{yuOptimalMultirobotPath2016,
+  title        = {Optimal {{Multirobot Path Planning}} on {{Graphs}}: {{Complete Algorithms}} and {{Effective Heuristics}}},
+  shorttitle   = {Optimal {{Multirobot Path Planning}} on {{Graphs}}},
+  author       = {Yu, Jingjin and LaValle, Steven M.},
+  date         = {2016-10},
+  journaltitle = {IEEE Transactions on Robotics},
+  volume       = {32},
+  number       = {5},
+  pages        = {1163--1177},
+  issn         = {1941-0468},
+  doi          = {10.1109/TRO.2016.2593448},
+  url          = {https://ieeexplore.ieee.org/abstract/document/7539623},
+  urldate      = {2025-08-06},
+  abstract     = {We study optimal multirobot path planning on graphs (MPP) over four minimization objectives: the makespan (last arrival time), the maximum (single-robot traveled) distance, the total arrival time, and the total distance. Having established previously that these objectives are distinct and NP-hard to optimize, in this paper, we focus on efficient algorithmic solutions for solving these optimal MPP problems. Toward this goal, we first establish a one-to-one solution mapping between MPP and a special type of multiflow network. Based on this equivalence and integer linear programming (ILP), we design novel and complete algorithms for optimizing over each of the four objectives. In particular, our exact algorithm for computing optimal makespan solutions is a first that is capable of solving extremely challenging problems with robot-vertex ratios as high as 100\%. Then, we further improve the computational performance of these exact algorithms through the introduction of principled heuristics, at the expense of slight optimality loss. The combination of ILP model based algorithms and the heuristics proves to be highly effective, allowing the computation of 1.x-optimal solutions for problems containing hundreds of robots, densely populated in the environment, often in just seconds.},
+  keywords     = {Algorithm design and analysis,Collision avoidance,Games,Heuristic algorithms,Path planning,Robot kinematics},
+  file         = {C:\Users\yasbr\Zotero\storage\ZXQQFECI\Yu and LaValle - 2016 - Optimal Multirobot Path Planning on Graphs Complete Algorithms and Effective Heuristics.pdf}
+}
+
+@online{wangWherePathsCollide2025,
+  title       = {Where {{Paths Collide}}: {{A Comprehensive Survey}} of {{Classic}} and {{Learning-Based Multi-Agent Pathfinding}}},
+  shorttitle  = {Where {{Paths Collide}}},
+  author      = {Wang, Shiyue and Xu, Haozheng and Zhang, Yuhan and Lin, Jingran and Lu, Changhong and Wang, Xiangfeng and Li, Wenhao},
+  date        = {2025-07-31},
+  eprint      = {2505.19219},
+  eprinttype  = {arXiv},
+  eprintclass = {cs},
+  doi         = {10.48550/arXiv.2505.19219},
+  url         = {http://arxiv.org/abs/2505.19219},
+  urldate     = {2025-08-07},
+  abstract    = {Multi-Agent Path Finding (MAPF) is a fundamental problem in artificial intelligence and robotics, requiring the computation of collision-free paths for multiple agents navigating from their start locations to designated goals. As autonomous systems become increasingly prevalent in warehouses, urban transportation, and other complex environments, MAPF has evolved from a theoretical challenge to a critical enabler of real-world multi-robot coordination. This comprehensive survey bridges the long-standing divide between classical algorithmic approaches and emerging learning-based methods in MAPF research. We present a unified framework that encompasses search-based methods (including Conflict-Based Search, Priority-Based Search, and Large Neighborhood Search), compilation-based approaches (SAT, SMT, CSP, ASP, and MIP formulations), and data-driven techniques (reinforcement learning, supervised learning, and hybrid strategies). Through systematic analysis of experimental practices across 200+ papers, we uncover significant disparities in evaluation methodologies, with classical methods typically tested on larger-scale instances (up to 200 by 200 grids with 1000+ agents) compared to learning-based approaches (predominantly 10-100 agents). We provide a comprehensive taxonomy of evaluation metrics, environment types, and baseline selections, highlighting the need for standardized benchmarking protocols. Finally, we outline promising future directions including mixed-motive MAPF with game-theoretic considerations, language-grounded planning with large language models, and neural solver architectures that combine the rigor of classical methods with the flexibility of deep learning. This survey serves as both a comprehensive reference for researchers and a practical guide for deploying MAPF solutions in increasingly complex real-world applications.},
+  pubstate    = {prepublished},
+  keywords    = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Computer Science - Multiagent Systems,Mathematics - Combinatorics},
+  file        = {C\:\\Users\\yasbr\\Zotero\\storage\\QCAGVI7Y\\Wang et al. - 2025 - Where Paths Collide A Comprehensive Survey of Classic and Learning-Based Multi-Agent Pathfinding.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\7EXUY9FW\\2505.html}
+}
+
+@inreference{Centrality2025,
+  title      = {Centrality},
+  booktitle  = {Wikipedia},
+  date       = {2025-03-11T13:09:27Z},
+  url        = {https://en.wikipedia.org/w/index.php?title=Centrality&oldid=1279935815},
+  urldate    = {2025-08-07},
+  abstract   = {In graph theory and network analysis, indicators of centrality assign numbers or rankings to nodes within a graph corresponding to their network position. Applications include identifying the most influential person(s) in a social network, key infrastructure nodes in the Internet or urban networks, super-spreaders of disease, and brain networks. Centrality concepts were first developed in social network analysis, and many of the terms used to measure centrality reflect their sociological origin.},
+  langid     = {english},
+  annotation = {Page Version ID: 1279935815},
+  file       = {C:\Users\yasbr\Zotero\storage\C5I867UE\index.html}
+}
+
+@article{andreychukMAPFGPTImitationLearning2025,
+  title        = {{{MAPF-GPT}}: {{Imitation Learning}} for {{Multi-Agent Pathfinding}} at {{Scale}}},
+  shorttitle   = {{{MAPF-GPT}}},
+  author       = {Andreychuk, Anton and Yakovlev, Konstantin and Panov, Aleksandr and Skrynnik, Alexey},
+  date         = {2025-04-11},
+  journaltitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume       = {39},
+  number       = {22},
+  pages        = {23126--23134},
+  issn         = {2374-3468},
+  doi          = {10.1609/aaai.v39i22.34477},
+  url          = {https://ojs.aaai.org/index.php/AAAI/article/view/34477},
+  urldate      = {2025-08-08},
+  abstract     = {Multi-agent pathfinding (MAPF) is a problem that generally requires finding collision-free paths for multiple agents in a shared environment. Solving MAPF optimally, even under restrictive assumptions, is NP-hard, yet efficient solutions for this problem are critical for numerous applications, such as automated warehouses and transportation systems. Recently, learning-based approaches to MAPF have gained attention, particularly those leveraging deep reinforcement learning. Typically, such learning-based MAPF solvers are augmented with additional components like single-agent planning or communication. Orthogonally, in this work we rely solely on imitation learning that leverages a large dataset of expert MAPF solutions and transformer-based neural network to create a foundation model for MAPF called MAPF-GPT. The latter is capable of generating actions without additional heuristics or communication. MAPF-GPT demonstrates zero-shot learning abilities when solving the MAPF problems that are not present in the training dataset. We show that MAPF-GPT notably outperforms the current best-performing learnable MAPF solvers on a diverse range of problem instances and is computationally efficient during inference.},
+  langid       = {english},
+  file         = {C:\Users\yasbr\Zotero\storage\NGM6VGY8\Andreychuk et al. - 2025 - MAPF-GPT Imitation Learning for Multi-Agent Pathfinding at Scale.pdf}
+}
+
+@article{Flux.jl-2018,
+  author        = {Michael Innes and
+                   Elliot Saba and
+                   Keno Fischer and
+                   Dhairya Gandhi and
+                   Marco Concetto Rudilosso and
+                   Neethu Mariya Joy and
+                   Tejan Karmali and
+                   Avik Pal and
+                   Viral Shah},
+  title         = {Fashionable Modelling with Flux},
+  journal       = {CoRR},
+  volume        = {abs/1811.01457},
+  year          = {2018},
+  url           = {https://arxiv.org/abs/1811.01457},
+  archiveprefix = {arXiv},
+  eprint        = {1811.01457},
+  timestamp     = {Thu, 22 Nov 2018 17:58:30 +0100},
+  biburl        = {https://dblp.org/rec/bib/journals/corr/abs-1811-01457},
+  bibsource     = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{innes:2018,
+  author  = {Mike Innes},
+  title   = {Flux: Elegant Machine Learning with Julia},
+  journal = {Journal of Open Source Software},
+  year    = {2018},
+  doi     = {10.21105/joss.00602}
+}
+
+@online{optimisersjl,
+  author       = {{FluxML}},
+  title        = {Optimisers.jl},
+  year         = {2025},
+  url          = {https://github.com/FluxML/Optimisers.jl},
+  note         = {Accessed: 2025-08-08},
+  organization = {GitHub}
+}

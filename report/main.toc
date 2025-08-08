@@ -1,0 +1,45 @@
+\babel@toc {french}{}\relax 
+\contentsline {paragraph}{}{2}{section*.3}%
+\contentsline {paragraph}{}{3}{section*.5}%
+\babel@toc {english}{}\relax 
+\babel@toc {french}{}\relax 
+\babel@toc {english}{}\relax 
+\contentsline {paragraph}{}{5}{section*.7}%
+\contentsline {section}{\numberline {1}Introduction}{8}{section.1}%
+\contentsline {section}{\numberline {2}Literature Review}{9}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Shortest Paths}{9}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}The Multi-Agent PathFinding Problem}{9}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Definition}{9}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Variations}{10}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}Algorithms for the MAPF problem}{11}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Local Repair A*}{11}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Prioritized Planning}{11}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Other important algorithms}{11}{subsubsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.4}Machine Learning for Constrained Optimization}{12}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Prediction-Focused Learning}{12}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Decision-Focused Learning}{13}{subsubsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.5}Learning with Differentiable Perturbed Optimizers}{13}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Monte Carlo Perturbations for Practical Implementation}{14}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Fenchel-Young Loss}{15}{subsubsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.6}MAPF with Machine Learning Approaches}{15}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Methodology}{16}{section.3}%
+\contentsline {subsection}{\numberline {3.1}PathFinding Algorithms}{16}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Independent Shortest Paths}{16}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Prioritized Planning}{16}{subsubsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.2}Training Procedure}{18}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Training Approaches}{18}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Feature Attribution}{18}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Linear Regression application}{19}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Generalized linear model}{20}{subsubsection.3.2.4}%
+\contentsline {subsubsection}{\numberline {3.2.5}Testing}{22}{subsubsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.3}Julia libraries}{22}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Results}{23}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Learning through feature attribution}{23}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Learning directly from map}{24}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Discussion}{27}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Insufficient training data}{27}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Inappropriate training data}{28}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Lack of scenario diversity}{28}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Mismatch between training and testing algorithms}{28}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Conclusion}{29}{section.6}%
+\contentsline {section}{\numberline {A}Apendix Title}{33}{appendix.A}%

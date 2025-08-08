@@ -24,6 +24,7 @@ using Statistics
 using CUDA
 using Zygote
 using ColorSchemes
+using MultiAgentPathFinding: NoConflictFreePathError
 
 include("structs.jl")
 include("TEG_methods.jl")

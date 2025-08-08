@@ -153,6 +153,7 @@ function visualize_edge_weights(file_instance, instance, weights_list)
     Colorbar(fig[1, 2], hm; label="Edge Weight")
 
     n = length(instance.starts)
+    """
     colors = Makie.categorical_colors(:tab20, 20)
     markers = [
         :+,
@@ -206,6 +207,7 @@ function visualize_edge_weights(file_instance, instance, weights_list)
         strokewidth=1,
         strokecolor=:black,
     )
+    """
 
     ax.yreversed = true
     ax.limits = (0.5, instance.width + 0.5, 0.5, instance.height + 0.5)

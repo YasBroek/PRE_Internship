@@ -1,0 +1,1273 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{berthetLearningDifferentiablePertubed2020}{inproceedings}{}
+      \name{author}{6}{}{%
+        {{hash=a5a45875c180d5136325798b472b95d8}{%
+           family={Berthet},
+           familyi={B\bibinitperiod},
+           given={Quentin},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=d3b6c8582cea4e8b6576137b6a72cadc}{%
+           family={Blondel},
+           familyi={B\bibinitperiod},
+           given={Mathieu},
+           giveni={M\bibinitperiod}}}%
+        {{hash=7b33444af396b31f38a47964b0f031d7}{%
+           family={Teboul},
+           familyi={T\bibinitperiod},
+           given={Olivier},
+           giveni={O\bibinitperiod}}}%
+        {{hash=a771427291cb72a39e026a68b102335d}{%
+           family={Cuturi},
+           familyi={C\bibinitperiod},
+           given={Marco},
+           giveni={M\bibinitperiod}}}%
+        {{hash=0df2e0c86d89bfaf4f3726c0bc382d4f}{%
+           family={Vert},
+           familyi={V\bibinitperiod},
+           given={Jean-Philippe},
+           giveni={J\bibinithyphendelim P\bibinitperiod}}}%
+        {{hash=93da2819ab01d8a5e7bae39ce6f17c1f}{%
+           family={Bach},
+           familyi={B\bibinitperiod},
+           given={Francis},
+           giveni={F\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Curran Associates, Inc.}%
+      }
+      \strng{namehash}{b3346ade8c0ce8c2fa23b64bf98d6e1c}
+      \strng{fullhash}{db4f6ab8e77aab8a37a04e247a1c8f5d}
+      \strng{bibnamehash}{b3346ade8c0ce8c2fa23b64bf98d6e1c}
+      \strng{authorbibnamehash}{b3346ade8c0ce8c2fa23b64bf98d6e1c}
+      \strng{authornamehash}{b3346ade8c0ce8c2fa23b64bf98d6e1c}
+      \strng{authorfullhash}{db4f6ab8e77aab8a37a04e247a1c8f5d}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Machine learning pipelines often rely on optimizers procedures to make discrete decisions (e.g., sorting, picking closest neighbors, or shortest paths). Although these discrete decisions are easily computed in a forward manner, they break the back-propagation of computational graphs. In order to expand the scope of learning problems that can be solved in an end-to-end fashion, we propose a systematic method to transform optimizers into operations that are differentiable and never locally constant. Our approach relies on stochastically perturbed optimizers, and can be used readily within existing solvers. Their derivatives can be evaluated efficiently, and smoothness tuned via the chosen noise amplitude. We also show how this framework can be connected to a family of losses developed in structured prediction, and give theoretical guarantees for their use in learning tasks. We demonstrate experimentally the performance of our approach on various tasks.}
+      \field{booktitle}{Advances in {{Neural Information Processing Systems}}}
+      \field{title}{Learning with {{Differentiable Pertubed Optimizers}}}
+      \field{urlday}{6}
+      \field{urlmonth}{6}
+      \field{urlyear}{2025}
+      \field{volume}{33}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{9508\bibrangedash 9519}
+      \range{pages}{12}
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\YVUUMN6B\Berthet et al. - 2020 - Learning with Differentiable Pertubed Optimizers.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://proceedings.neurips.cc/paper_files/paper/2020/hash/6bb56208f672af0dd65451f869fedfd9-Abstract.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.neurips.cc/paper_files/paper/2020/hash/6bb56208f672af0dd65451f869fedfd9-Abstract.html
+      \endverb
+    \endentry
+    \entry{buckleyFastMotionPlanning1989}{inproceedings}{}
+      \name{author}{1}{}{%
+        {{hash=4965f1d5594b42a10dac78b5d532308e}{%
+           family={Buckley},
+           familyi={B\bibinitperiod},
+           given={S.J.},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{4965f1d5594b42a10dac78b5d532308e}
+      \strng{fullhash}{4965f1d5594b42a10dac78b5d532308e}
+      \strng{bibnamehash}{4965f1d5594b42a10dac78b5d532308e}
+      \strng{authorbibnamehash}{4965f1d5594b42a10dac78b5d532308e}
+      \strng{authornamehash}{4965f1d5594b42a10dac78b5d532308e}
+      \strng{authorfullhash}{4965f1d5594b42a10dac78b5d532308e}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The author presents an efficient solution to the motion-planning problem for multiple translating robots in the plane. It is shown that careful priority assignment can greatly reduce the average running time of the planner. A priority assignment method is introduced which attempts to maximize the number of robots which can move in a straight line form their start point to their goal point, thereby minimizing the number of robots for which expensive collision-avoiding search is necessary. This prioritization method is extremely effective in sparse workspaces where the moving robots are the primary obstacle.{$<>$}}
+      \field{booktitle}{1989 {{International Conference}} on {{Robotics}} and {{Automation Proceedings}}}
+      \field{eventtitle}{1989 {{International Conference}} on {{Robotics}} and {{Automation}}}
+      \field{month}{5}
+      \field{title}{Fast Motion Planning for Multiple Moving Robots}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{year}{1989}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{322\bibrangedash 326 vol.1}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1109/ROBOT.1989.100008
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\RN6HDAGV\Buckley - 1989 - Fast motion planning for multiple moving robots.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/document/100008
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/document/100008
+      \endverb
+      \keyw{Electronic equipment testing,Magnetic levitation,Motion planning,Orbital robotics,Parallel robots,Polynomials,Radio access networks,Robotic assembly}
+    \endentry
+    \entry{dijkstraNoteTwoProblems1959}{article}{}
+      \name{author}{1}{}{%
+        {{hash=fa6182769b69c9f7b1559f8430d88929}{%
+           family={Dijkstra},
+           familyi={D\bibinitperiod},
+           given={E.W.},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{fa6182769b69c9f7b1559f8430d88929}
+      \strng{fullhash}{fa6182769b69c9f7b1559f8430d88929}
+      \strng{bibnamehash}{fa6182769b69c9f7b1559f8430d88929}
+      \strng{authorbibnamehash}{fa6182769b69c9f7b1559f8430d88929}
+      \strng{authornamehash}{fa6182769b69c9f7b1559f8430d88929}
+      \strng{authorfullhash}{fa6182769b69c9f7b1559f8430d88929}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{1}
+      \field{issn}{0945-3245}
+      \field{issue}{1}
+      \field{journaltitle}{Numer. Math.}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{title}{A note on two problems in connexion with graphs}
+      \field{urlday}{23}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{volume}{1}
+      \field{year}{1959}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{269\bibrangedash 271}
+      \range{pages}{3}
+      \verb{doi}
+      \verb 10.1007/BF01386390
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/BF01386390
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/BF01386390
+      \endverb
+      \keyw{done,Search In Robotics}
+    \endentry
+    \entry{gaoReviewGraphbasedMultiagent2024}{article}{}
+      \name{author}{6}{}{%
+        {{hash=d27136a7a6068b8f552be0bef3e4d87e}{%
+           family={Gao},
+           familyi={G\bibinitperiod},
+           given={Jianqi},
+           giveni={J\bibinitperiod}}}%
+        {{hash=e37598c4ce1aa1fb674325b4d0d3c2fe}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Yanjie},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=cbe02927c85d376296cbbbdee715fb05}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Xinyi},
+           giveni={X\bibinitperiod}}}%
+        {{hash=16ec21e35930a41dcf67c7de5963584f}{%
+           family={Yan},
+           familyi={Y\bibinitperiod},
+           given={Kejian},
+           giveni={K\bibinitperiod}}}%
+        {{hash=8c9b1231cb31bae79160b3e87f967ae0}{%
+           family={Lin},
+           familyi={L\bibinitperiod},
+           given={Ke},
+           giveni={K\bibinitperiod}}}%
+        {{hash=bf524999cf9c4645d7480402cf26c6c5}{%
+           family={Wu},
+           familyi={W\bibinitperiod},
+           given={Xinyu},
+           giveni={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{5f7283da49fd6e90f1c9a2dbb1c1bb05}
+      \strng{fullhash}{d8f302f65c01c2e3fe75550d3371d9f9}
+      \strng{bibnamehash}{5f7283da49fd6e90f1c9a2dbb1c1bb05}
+      \strng{authorbibnamehash}{5f7283da49fd6e90f1c9a2dbb1c1bb05}
+      \strng{authornamehash}{5f7283da49fd6e90f1c9a2dbb1c1bb05}
+      \strng{authorfullhash}{d8f302f65c01c2e3fe75550d3371d9f9}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Multi-agent pathfinding (MAPF) is a well-studied abstract model for navigation in a multi-robot system, where every robot finds the path to its goal position without any collision. Due to its numerous practical applications of multi-robot systems, MAPF has steadily emerged as a research hotspot. The optimal solution for MAPF is NP-hard. In this paper, we offer a comprehensive analysis of different MAPF solvers. First, we review the cutting-edge solvers of classical MAPF, including optimal, bounded sub-optimal, and unbounded sub-optimal. The performance of some representative classical MAPF solvers is quantitatively compared. In the next part, we summarize the beyond classical MAPF solvers, which try to use the classical MAPF solvers in real-world scenarios. Last, we conclude some challenges that MAPF is experiencing in detail, review recent research on these issues, and make some suggestions for further work.}
+      \field{day}{11}
+      \field{issn}{0950-7051}
+      \field{journaltitle}{Knowledge-Based Systems}
+      \field{month}{1}
+      \field{shortjournal}{Knowledge-Based Systems}
+      \field{shorttitle}{A Review of Graph-Based Multi-Agent Pathfinding Solvers}
+      \field{title}{A Review of Graph-Based Multi-Agent Pathfinding Solvers: {{From}} Classical to beyond Classical}
+      \field{urlday}{26}
+      \field{urlmonth}{5}
+      \field{urlyear}{2025}
+      \field{volume}{283}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{111121}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.knosys.2023.111121
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\yasbr\\Zotero\\storage\\T45B4H6H\\Gao et al. - 2024 - A review of graph-based multi-agent pathfinding solvers From classical to beyond classical.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\B6EI7R9B\\S0950705123008717.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/S0950705123008717
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/S0950705123008717
+      \endverb
+      \keyw{Collision avoidance,Multi-agent pathfinding,Multi-agent systems,Scheduling and coordination,working on it}
+    \endentry
+    \entry{gomezSolvingSumofCostsMultiAgent2020}{article}{}
+      \name{author}{3}{}{%
+        {{hash=0f7dc226af9914d8f723c778920d527a}{%
+           family={Gómez},
+           familyi={G\bibinitperiod},
+           given={Rodrigo\bibnamedelima N.},
+           giveni={R\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=0ca2a8f05328559f821cbfaf9a5abed2}{%
+           family={Hernández},
+           familyi={H\bibinitperiod},
+           given={Carlos},
+           giveni={C\bibinitperiod}}}%
+        {{hash=db411a92fe3d432622c854cc7b8368e5}{%
+           family={Baier},
+           familyi={B\bibinitperiod},
+           given={Jorge\bibnamedelima A.},
+           giveni={J\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{190206fa7eaafed89a309d88ee3e0e80}
+      \strng{fullhash}{190206fa7eaafed89a309d88ee3e0e80}
+      \strng{bibnamehash}{190206fa7eaafed89a309d88ee3e0e80}
+      \strng{authorbibnamehash}{190206fa7eaafed89a309d88ee3e0e80}
+      \strng{authornamehash}{190206fa7eaafed89a309d88ee3e0e80}
+      \strng{authorfullhash}{190206fa7eaafed89a309d88ee3e0e80}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Solving a Multi-Agent Pathfinding (MAPF) problem involves finding non-conflicting paths that lead a number of agents to their goal location. In the sum-of-costs variant of MAPF, one is also required to minimize the total number of moves performed by agents before stopping at the goal. Not surprisingly, since MAPF is combinatorial, a number of compilations to Satisfiability solving (SAT) and Answer Set Programming (ASP) exist. In this paper, we propose the first family of compilations to ASP that solve sum-of-costs MAPF over 4-connected grids. Unlike existing compilations to ASP that we are aware of, our encoding is the first that, after grounding, produces a number of clauses that is linear on the number of agents. In addition, the representation of the optimization objective is also carefully written, such that its size after grounding does not depend on the size of the grid. In our experimental evaluation, we show that our approach outperforms search- and SAT-based sum-of-costs MAPF solvers when grids are congested with agents.}
+      \field{day}{3}
+      \field{issn}{2374-3468}
+      \field{issue}{06}
+      \field{journaltitle}{Proceedings of the AAAI Conference on Artificial Intelligence}
+      \field{langid}{english}
+      \field{month}{4}
+      \field{number}{06}
+      \field{title}{Solving {{Sum-of-Costs Multi-Agent Pathfinding}} with {{Answer-Set Programming}}}
+      \field{urlday}{6}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{volume}{34}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{9867\bibrangedash 9874}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1609/aaai.v34i06.6540
+      \endverb
+      \verb{urlraw}
+      \verb https://ojs.aaai.org/index.php/AAAI/article/view/6540
+      \endverb
+      \verb{url}
+      \verb https://ojs.aaai.org/index.php/AAAI/article/view/6540
+      \endverb
+    \endentry
+    \entry{hartFormalBasisHeuristic1968}{article}{}
+      \name{author}{3}{}{%
+        {{hash=a9ce6ce2ae6a0f1ac64e4efe810d622c}{%
+           family={Hart},
+           familyi={H\bibinitperiod},
+           given={Peter\bibnamedelima E.},
+           giveni={P\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=91c95ed3e3f572f27346b1131492bb8b}{%
+           family={Nilsson},
+           familyi={N\bibinitperiod},
+           given={Nils\bibnamedelima J.},
+           giveni={N\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=253a4de6b29f96e30136e368e9af44d0}{%
+           family={Raphael},
+           familyi={R\bibinitperiod},
+           given={Bertram},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{9a03bc90212dd8a91661d34cb6ae8c15}
+      \strng{fullhash}{9a03bc90212dd8a91661d34cb6ae8c15}
+      \strng{bibnamehash}{9a03bc90212dd8a91661d34cb6ae8c15}
+      \strng{authorbibnamehash}{9a03bc90212dd8a91661d34cb6ae8c15}
+      \strng{authornamehash}{9a03bc90212dd8a91661d34cb6ae8c15}
+      \strng{authorfullhash}{9a03bc90212dd8a91661d34cb6ae8c15}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Although the problem of determining the minimum cost path through a graph arises naturally in a number of interesting applications, there has been no underlying theory to guide the development of efficient search procedures. Moreover, there is no adequate conceptual framework within which the various ad hoc search strategies proposed to date can be compared. This paper describes how heuristic information from the problem domain can be incorporated into a formal mathematical theory of graph searching and demonstrates an optimality property of a class of search strategies.}
+      \field{issn}{2168-2887}
+      \field{journaltitle}{IEEE Transactions on Systems Science and Cybernetics}
+      \field{month}{7}
+      \field{number}{2}
+      \field{title}{A {{Formal Basis}} for the {{Heuristic Determination}} of {{Minimum Cost Paths}}}
+      \field{urlday}{23}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{volume}{4}
+      \field{year}{1968}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{100\bibrangedash 107}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/TSSC.1968.300136
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\XE8FIDRI\Hart et al. - 1968 - A Formal Basis for the Heuristic Determination of Minimum Cost Paths.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/document/4082128
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/document/4082128
+      \endverb
+      \keyw{Automatic control,Automatic programming,Chemical technology,Costs,Functional programming,Gradient methods,Instruction sets,Mathematical programming,Minimax techniques,Minimization methods}
+    \endentry
+    \entry{liEECBSBoundedSuboptimalSearch2021}{online}{}
+      \name{author}{3}{}{%
+        {{hash=3e8ee84b5cf0f6c7813e54088700ce0f}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Jiaoyang},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ada2bd2ed73aaf93e3abd6ba1c9ee47f}{%
+           family={Ruml},
+           familyi={R\bibinitperiod},
+           given={Wheeler},
+           giveni={W\bibinitperiod}}}%
+        {{hash=6e0da33fcadd327da8ebc74eea9cafe2}{%
+           family={Koenig},
+           familyi={K\bibinitperiod},
+           given={Sven},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{7fab4dbf8e594f105ee7d81a68661769}
+      \strng{fullhash}{7fab4dbf8e594f105ee7d81a68661769}
+      \strng{bibnamehash}{7fab4dbf8e594f105ee7d81a68661769}
+      \strng{authorbibnamehash}{7fab4dbf8e594f105ee7d81a68661769}
+      \strng{authornamehash}{7fab4dbf8e594f105ee7d81a68661769}
+      \strng{authorfullhash}{7fab4dbf8e594f105ee7d81a68661769}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Multi-Agent Path Finding (MAPF), i.e., finding collision-free paths for multiple robots, is important for many applications where small runtimes are necessary, including the kind of automated warehouses operated by Amazon. CBS is a leading two-level search algorithm for solving MAPF optimally. ECBS is a bounded-suboptimal variant of CBS that uses focal search to speed up CBS by sacrificing optimality and instead guaranteeing that the costs of its solutions are within a given factor of optimal. In this paper, we study how to decrease its runtime even further using inadmissible heuristics. Motivated by Explicit Estimation Search (EES), we propose Explicit Estimation CBS (EECBS), a new bounded-suboptimal variant of CBS, that uses online learning to obtain inadmissible estimates of the cost of the solution of each high-level node and uses EES to choose which high-level node to expand next. We also investigate recent improvements of CBS and adapt them to EECBS. We find that EECBS with the improvements runs significantly faster than the state-of-the-art bounded-suboptimal MAPF algorithms ECBS, BCP-7, and eMDD-SAT on a variety of MAPF instances. We hope that the scalability of EECBS enables additional applications for bounded-suboptimal MAPF algorithms.}
+      \field{day}{12}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{3}
+      \field{pubstate}{prepublished}
+      \field{shorttitle}{{{EECBS}}}
+      \field{title}{{{EECBS}}: {{A Bounded-Suboptimal Search}} for {{Multi-Agent Path Finding}}}
+      \field{urlday}{6}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.2010.01367
+      \endverb
+      \verb{eprint}
+      \verb 2010.01367
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\yasbr\\Zotero\\storage\\H946BWM3\\Li et al. - 2021 - EECBS A Bounded-Suboptimal Search for Multi-Agent Path Finding.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\GDT7YUXI\\2010.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2010.01367
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2010.01367
+      \endverb
+      \keyw{Computer Science - Artificial Intelligence,Computer Science - Multiagent Systems,Computer Science - Robotics}
+    \endentry
+    \entry{liAnytimeMultiAgentPath2021}{inproceedings}{}
+      \name{author}{5}{}{%
+        {{hash=3e8ee84b5cf0f6c7813e54088700ce0f}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Jiaoyang},
+           giveni={J\bibinitperiod}}}%
+        {{hash=03bd7d5826bc7b1c11f8759ff9a0573c}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Zhe},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=4b8559ef3d0cbaccff4d887de13d1143}{%
+           family={Harabor},
+           familyi={H\bibinitperiod},
+           given={Daniel},
+           giveni={D\bibinitperiod}}}%
+        {{hash=763c041036682c7c20675dab8c437fb0}{%
+           family={Stuckey},
+           familyi={S\bibinitperiod},
+           given={Peter\bibnamedelima J.},
+           giveni={P\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=6e0da33fcadd327da8ebc74eea9cafe2}{%
+           family={Koenig},
+           familyi={K\bibinitperiod},
+           given={Sven},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{f42f1d46ecc43a144818f19d6c2e7ac3}
+      \strng{fullhash}{b7ec7cfb30e31f7bcc32181b077d907b}
+      \strng{bibnamehash}{f42f1d46ecc43a144818f19d6c2e7ac3}
+      \strng{authorbibnamehash}{f42f1d46ecc43a144818f19d6c2e7ac3}
+      \strng{authornamehash}{f42f1d46ecc43a144818f19d6c2e7ac3}
+      \strng{authorfullhash}{b7ec7cfb30e31f7bcc32181b077d907b}
+      \field{extraname}{1}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Electronic proceedings of IJCAI 2021}
+      \field{day}{9}
+      \field{eventtitle}{Twenty-{{Ninth International Joint Conference}} on {{Artificial Intelligence}}}
+      \field{issn}{1045-0823}
+      \field{langid}{english}
+      \field{month}{8}
+      \field{title}{Anytime {{Multi-Agent Path Finding}} via {{Large Neighborhood Search}}}
+      \field{urlday}{26}
+      \field{urlmonth}{5}
+      \field{urlyear}{2025}
+      \field{volume}{4}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{4127\bibrangedash 4135}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.24963/ijcai.2021/568
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\VPBNNYXP\Li et al. - 2021 - Anytime Multi-Agent Path Finding via Large Neighborhood Search.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.ijcai.org/proceedings/2021/568
+      \endverb
+      \verb{url}
+      \verb https://www.ijcai.org/proceedings/2021/568
+      \endverb
+      \keyw{done}
+    \endentry
+    \entry{liScalableRailPlanning2021a}{article}{}
+      \name{author}{8}{}{%
+        {{hash=3e8ee84b5cf0f6c7813e54088700ce0f}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Jiaoyang},
+           giveni={J\bibinitperiod}}}%
+        {{hash=03bd7d5826bc7b1c11f8759ff9a0573c}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Zhe},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=9e6af3ce4c5063ff98977528f367e685}{%
+           family={Zheng},
+           familyi={Z\bibinitperiod},
+           given={Yi},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=592140365bc3595d2fd3f6861b92ebeb}{%
+           family={Chan},
+           familyi={C\bibinitperiod},
+           given={Shao-Hung},
+           giveni={S\bibinithyphendelim H\bibinitperiod}}}%
+        {{hash=4b8559ef3d0cbaccff4d887de13d1143}{%
+           family={Harabor},
+           familyi={H\bibinitperiod},
+           given={Daniel},
+           giveni={D\bibinitperiod}}}%
+        {{hash=763c041036682c7c20675dab8c437fb0}{%
+           family={Stuckey},
+           familyi={S\bibinitperiod},
+           given={Peter\bibnamedelima J.},
+           giveni={P\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=bd18c879f9e29c587d042f725f23e5cb}{%
+           family={Ma},
+           familyi={M\bibinitperiod},
+           given={Hang},
+           giveni={H\bibinitperiod}}}%
+        {{hash=6e0da33fcadd327da8ebc74eea9cafe2}{%
+           family={Koenig},
+           familyi={K\bibinitperiod},
+           given={Sven},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{f42f1d46ecc43a144818f19d6c2e7ac3}
+      \strng{fullhash}{3f3e912b7a3602b4fca0e5d9fe9941f1}
+      \strng{bibnamehash}{f42f1d46ecc43a144818f19d6c2e7ac3}
+      \strng{authorbibnamehash}{f42f1d46ecc43a144818f19d6c2e7ac3}
+      \strng{authornamehash}{f42f1d46ecc43a144818f19d6c2e7ac3}
+      \strng{authorfullhash}{3f3e912b7a3602b4fca0e5d9fe9941f1}
+      \field{extraname}{2}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Multi-Agent Path Finding (MAPF) is the combinatorial problem of finding collision-free paths for multiple agents on a graph. This paper describes MAPF-based software for solving train planning and replanning problems on large-scale rail networks under uncertainty. The software recently won the 2020 Flatland Challenge, a NeurIPS competition trying to determine how to efficiently manage dense traffic on rail networks. The software incorporates many state-of-the-art MAPF or, in general, optimization technologies, such as prioritized planning, large neighborhood search, safe interval path planning, minimum communication policies, parallel computing, and simulated annealing. It can plan collision-free paths for thousands of trains within a few minutes and deliver deadlock-free actions in real-time during execution.}
+      \field{day}{17}
+      \field{issn}{2334-0843}
+      \field{journaltitle}{Proceedings of the International Conference on Automated Planning and Scheduling}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{shorttitle}{Scalable {{Rail Planning}} and {{Replanning}}}
+      \field{title}{Scalable {{Rail Planning}} and {{Replanning}}: {{Winning}} the 2020 {{Flatland Challenge}}}
+      \field{urlday}{6}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{volume}{31}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{477\bibrangedash 485}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1609/icaps.v31i1.15994
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\7Z5HYSZB\Li et al. - 2021 - Scalable Rail Planning and Replanning Winning the 2020 Flatland Challenge.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ojs.aaai.org/index.php/ICAPS/article/view/15994
+      \endverb
+      \verb{url}
+      \verb https://ojs.aaai.org/index.php/ICAPS/article/view/15994
+      \endverb
+      \keyw{Engineering Issues In Using Planning And Scheduling Techniques}
+    \endentry
+    \entry{lifschitzWhatAnswerSet}{article}{}
+      \name{author}{1}{}{%
+        {{hash=3f9f7c9937297077325233d345cf9c91}{%
+           family={Lifschitz},
+           familyi={L\bibinitperiod},
+           given={Vladimir},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{3f9f7c9937297077325233d345cf9c91}
+      \strng{fullhash}{3f9f7c9937297077325233d345cf9c91}
+      \strng{bibnamehash}{3f9f7c9937297077325233d345cf9c91}
+      \strng{authorbibnamehash}{3f9f7c9937297077325233d345cf9c91}
+      \strng{authornamehash}{3f9f7c9937297077325233d345cf9c91}
+      \strng{authorfullhash}{3f9f7c9937297077325233d345cf9c91}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Answer set programming (ASP) is a form of declarative programming oriented towards difficult search problems. As an outgrowth of research on the use of nonmonotonic reasoning in knowledge representation, it is particularly useful in knowledge-intensive applications. ASP programs consist of rules that look like Prolog rules, but the computational mechanisms used in ASP are different: they are based on the ideas that have led to the creation of fast satisfiability solvers for propositional logic.}
+      \field{langid}{english}
+      \field{title}{What {{Is Answer Set Programming}}?}
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\JM6BK5WQ\Lifschitz - What Is Answer Set Programming.pdf
+      \endverb
+    \endentry
+    \entry{mandiDecisionFocusedLearningFoundations2024}{article}{}
+      \name{author}{7}{}{%
+        {{hash=585cbabbe51e265ae378d05f9ca866ac}{%
+           family={Mandi},
+           familyi={M\bibinitperiod},
+           given={Jayanta},
+           giveni={J\bibinitperiod}}}%
+        {{hash=1e5be91f028b4a84198991171b3c22ea}{%
+           family={Kotary},
+           familyi={K\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod}}}%
+        {{hash=a1646d5239c2e234838dd07e1656d41c}{%
+           family={Berden},
+           familyi={B\bibinitperiod},
+           given={Senne},
+           giveni={S\bibinitperiod}}}%
+        {{hash=d0364ca58c188eeea2a901261aa68690}{%
+           family={Mulamba},
+           familyi={M\bibinitperiod},
+           given={Maxime},
+           giveni={M\bibinitperiod}}}%
+        {{hash=3044e9941e7e88e7099111067c684961}{%
+           family={Bucarey},
+           familyi={B\bibinitperiod},
+           given={Victor},
+           giveni={V\bibinitperiod}}}%
+        {{hash=2a9ad3a0307f4d7e4e3a864aa91a28ef}{%
+           family={Guns},
+           familyi={G\bibinitperiod},
+           given={Tias},
+           giveni={T\bibinitperiod}}}%
+        {{hash=d8094523ec4b781111936d02a59b093c}{%
+           family={Fioretto},
+           familyi={F\bibinitperiod},
+           given={Ferdinando},
+           giveni={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{d92d458f62289bc759d9aaea8a3e46ad}
+      \strng{fullhash}{3645d444144521e485546644da6771f2}
+      \strng{bibnamehash}{d92d458f62289bc759d9aaea8a3e46ad}
+      \strng{authorbibnamehash}{d92d458f62289bc759d9aaea8a3e46ad}
+      \strng{authornamehash}{d92d458f62289bc759d9aaea8a3e46ad}
+      \strng{authorfullhash}{3645d444144521e485546644da6771f2}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Decision-focused learning (DFL) is an emerging paradigm that integrates machine learning (ML) and constrained optimization to enhance decision quality by training ML models in an end-to-end system. This approach shows significant potential to revolutionize combinatorial decision-making in real-world applications that operate under uncertainty, where estimating unknown parameters within decision models is a major challenge. This paper presents a comprehensive review of DFL, providing an in-depth analysis of both gradient-based and gradient-free techniques used to combine ML and constrained optimization. It evaluates the strengths and limitations of these techniques and includes an extensive empirical evaluation of eleven methods across seven problems. The survey also offers insights into recent advancements and future research directions in DFL.}
+      \field{day}{31}
+      \field{issn}{1076-9757}
+      \field{journaltitle}{Journal of Artificial Intelligence Research}
+      \field{langid}{english}
+      \field{month}{8}
+      \field{shorttitle}{Decision-{{Focused Learning}}}
+      \field{title}{Decision-{{Focused Learning}}: {{Foundations}}, {{State}} of the {{Art}}, {{Benchmark}} and {{Future Opportunities}}}
+      \field{urlday}{26}
+      \field{urlmonth}{5}
+      \field{urlyear}{2025}
+      \field{volume}{80}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1623\bibrangedash 1701}
+      \range{pages}{79}
+      \verb{doi}
+      \verb 10.1613/jair.1.15320
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\VVDEVV46\Mandi et al. - 2024 - Decision-Focused Learning Foundations, State of the Art, Benchmark and Future Opportunities.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.jair.org/index.php/jair/article/view/15320
+      \endverb
+      \verb{url}
+      \verb https://www.jair.org/index.php/jair/article/view/15320
+      \endverb
+      \keyw{Constraint Programming,Decision making under uncertainty,done,Machine Learining}
+    \endentry
+    \entry{sharonConflictbasedSearchOptimal2015}{article}{}
+      \name{author}{4}{}{%
+        {{hash=d3f7f507c65e0df69895e0fcc44ec820}{%
+           family={Sharon},
+           familyi={S\bibinitperiod},
+           given={Guni},
+           giveni={G\bibinitperiod}}}%
+        {{hash=28a17dd42adfbe88290bb3d370d53070}{%
+           family={Stern},
+           familyi={S\bibinitperiod},
+           given={Roni},
+           giveni={R\bibinitperiod}}}%
+        {{hash=090820c15422fa559364ad660e9cecbd}{%
+           family={Felner},
+           familyi={F\bibinitperiod},
+           given={Ariel},
+           giveni={A\bibinitperiod}}}%
+        {{hash=e088625a70e86d25de784a18261647cd}{%
+           family={Sturtevant},
+           familyi={S\bibinitperiod},
+           given={Nathan\bibnamedelima R.},
+           giveni={N\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \strng{namehash}{6fc246b54310616a4211552c45d976e2}
+      \strng{fullhash}{9004f04355b321a04159df087bb03b2d}
+      \strng{bibnamehash}{6fc246b54310616a4211552c45d976e2}
+      \strng{authorbibnamehash}{6fc246b54310616a4211552c45d976e2}
+      \strng{authornamehash}{6fc246b54310616a4211552c45d976e2}
+      \strng{authorfullhash}{9004f04355b321a04159df087bb03b2d}
+      \field{extraname}{1}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In the multi-agent pathfinding problem (MAPF) we are given a set of agents each with respective start and goal positions. The task is to find paths for all agents while avoiding collisions. Most previous work on solving this problem optimally has treated the individual agents as a single ‘joint agent’ and then applied single-agent search variants of the A* algorithm. In this paper we present the Conflict Based Search (CBS) a new optimal multi-agent pathfinding algorithm. CBS is a two-level algorithm that does not convert the problem into the single ‘joint agent’ model. At the high level, a search is performed on a Conflict Tree (CT) which is a tree based on conflicts between individual agents. Each node in the CT represents a set of constraints on the motion of the agents. At the low level, fast single-agent searches are performed to satisfy the constraints imposed by the high level CT node. In many cases this two-level formulation enables CBS to examine fewer states than A* while still maintaining optimality. We analyze CBS and show its benefits and drawbacks. Additionally we present the Meta-Agent CBS (MA-CBS) algorithm. MA-CBS is a generalization of CBS. Unlike basic CBS, MA-CBS is not restricted to single-agent searches at the low level. Instead, MA-CBS allows agents to be merged into small groups of joint agents. This mitigates some of the drawbacks of basic CBS and further improves performance. In fact, MA-CBS is a framework that can be built on top of any optimal and complete MAPF solver in order to enhance its performance. Experimental results on various problems show a speedup of up to an order of magnitude over previous approaches.}
+      \field{day}{1}
+      \field{issn}{0004-3702}
+      \field{journaltitle}{Artificial Intelligence}
+      \field{month}{2}
+      \field{shortjournal}{Artificial Intelligence}
+      \field{title}{Conflict-Based Search for Optimal Multi-Agent Pathfinding}
+      \field{urlday}{6}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{volume}{219}
+      \field{year}{2015}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{40\bibrangedash 66}
+      \range{pages}{27}
+      \verb{doi}
+      \verb 10.1016/j.artint.2014.11.006
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\yasbr\\Zotero\\storage\\GLWNGIWF\\Sharon et al. - 2015 - Conflict-based search for optimal multi-agent pathfinding.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\72UIZ7G2\\S0004370214001386.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/S0004370214001386
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/S0004370214001386
+      \endverb
+      \keyw{Heuristic search,Multi-agent,Pathfinding}
+    \endentry
+    \entry{sharonIncreasingCostTree2013}{article}{}
+      \name{author}{4}{}{%
+        {{hash=d3f7f507c65e0df69895e0fcc44ec820}{%
+           family={Sharon},
+           familyi={S\bibinitperiod},
+           given={Guni},
+           giveni={G\bibinitperiod}}}%
+        {{hash=28a17dd42adfbe88290bb3d370d53070}{%
+           family={Stern},
+           familyi={S\bibinitperiod},
+           given={Roni},
+           giveni={R\bibinitperiod}}}%
+        {{hash=ae36baf662495a5514071f685f13925e}{%
+           family={Goldenberg},
+           familyi={G\bibinitperiod},
+           given={Meir},
+           giveni={M\bibinitperiod}}}%
+        {{hash=090820c15422fa559364ad660e9cecbd}{%
+           family={Felner},
+           familyi={F\bibinitperiod},
+           given={Ariel},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{6fc246b54310616a4211552c45d976e2}
+      \strng{fullhash}{1ebce2a425ff652428cf4da85cc13ae9}
+      \strng{bibnamehash}{6fc246b54310616a4211552c45d976e2}
+      \strng{authorbibnamehash}{6fc246b54310616a4211552c45d976e2}
+      \strng{authornamehash}{6fc246b54310616a4211552c45d976e2}
+      \strng{authorfullhash}{1ebce2a425ff652428cf4da85cc13ae9}
+      \field{extraname}{2}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We address the problem of optimal pathfinding for multiple agents. Given a start state and a goal state for each of the agents, the task is to find minimal paths for the different agents while avoiding collisions. Previous work on solving this problem optimally, used traditional single-agent search variants of the A* algorithm. We present a novel formalization for this problem which includes a search tree called the increasing cost tree (ICT) and a corresponding search algorithm, called the increasing cost tree search (ICTS) that finds optimal solutions. ICTS is a two-level search algorithm. The high-level phase of ICTS searches the increasing cost tree for a set of costs (cost per agent). The low-level phase of ICTS searches for a valid path for every agent that is constrained to have the same cost as given by the high-level phase. We analyze this new formalization, compare it to the A* search formalization and provide the pros and cons of each. Following, we show how the unique formalization of ICTS allows even further pruning of the state space by grouping small sets of agents and identifying unsolvable combinations of costs. Experimental results on various domains show the benefits and limitations of our new approach. A speedup of up to 3 orders of magnitude was obtained in some cases.}
+      \field{day}{1}
+      \field{issn}{0004-3702}
+      \field{journaltitle}{Artificial Intelligence}
+      \field{month}{2}
+      \field{shortjournal}{Artificial Intelligence}
+      \field{title}{The Increasing Cost Tree Search for Optimal Multi-Agent Pathfinding}
+      \field{urlday}{6}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{volume}{195}
+      \field{year}{2013}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{470\bibrangedash 495}
+      \range{pages}{26}
+      \verb{doi}
+      \verb 10.1016/j.artint.2012.11.006
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\yasbr\\Zotero\\storage\\UBQP4JSX\\Sharon et al. - 2013 - The increasing cost tree search for optimal multi-agent pathfinding.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\LL3XQILR\\S0004370212001543.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/S0004370212001543
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/S0004370212001543
+      \endverb
+      \keyw{Heuristic search,Multi-agent pathfinding}
+    \endentry
+    \entry{shenTrackingProgressMultiAgent2023}{online}{}
+      \name{author}{5}{}{%
+        {{hash=81820930bf011a6f0edabfc5b7b71dc1}{%
+           family={Shen},
+           familyi={S\bibinitperiod},
+           given={Bojie},
+           giveni={B\bibinitperiod}}}%
+        {{hash=03bd7d5826bc7b1c11f8759ff9a0573c}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Zhe},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=8d1894a8c08f11104d4da0db295f0e9c}{%
+           family={Cheema},
+           familyi={C\bibinitperiod},
+           given={Muhammad\bibnamedelima Aamir},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=2576edb75d723da5bfadacf38f8c59d9}{%
+           family={Harabor},
+           familyi={H\bibinitperiod},
+           given={Daniel\bibnamedelima D.},
+           giveni={D\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=763c041036682c7c20675dab8c437fb0}{%
+           family={Stuckey},
+           familyi={S\bibinitperiod},
+           given={Peter\bibnamedelima J.},
+           giveni={P\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \strng{namehash}{4832659881d37079593ba890e7b3fddd}
+      \strng{fullhash}{8c9ace6d8b848fa4d0ffe8835ad56555}
+      \strng{bibnamehash}{4832659881d37079593ba890e7b3fddd}
+      \strng{authorbibnamehash}{4832659881d37079593ba890e7b3fddd}
+      \strng{authornamehash}{4832659881d37079593ba890e7b3fddd}
+      \strng{authorfullhash}{8c9ace6d8b848fa4d0ffe8835ad56555}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Multi-Agent Path Finding (MAPF) is an important core problem for many new and emerging industrial applications. Many works appear on this topic each year, and a large number of substantial advancements and performance improvements have been reported. Yet measuring overall progress in MAPF is difficult: there are many potential competitors, and the computational burden for comprehensive experimentation is prohibitively large. Moreover, detailed data from past experimentation is usually unavailable. In this work, we introduce a set of methodological and visualisation tools which can help the community establish clear indicators for state-of-the-art MAPF performance and which can facilitate large-scale comparisons between MAPF solvers. Our objectives are to lower the barrier of entry for new researchers and to further promote the study of MAPF, since progress in the area and the main challenges are made much clearer.}
+      \field{day}{15}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{5}
+      \field{pubstate}{prepublished}
+      \field{title}{Tracking {{Progress}} in {{Multi-Agent Path Finding}}}
+      \field{urlday}{26}
+      \field{urlmonth}{5}
+      \field{urlyear}{2025}
+      \field{year}{2023}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.2305.08446
+      \endverb
+      \verb{eprint}
+      \verb 2305.08446
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\yasbr\\Zotero\\storage\\6ZEJSW7H\\Shen et al. - 2023 - Tracking Progress in Multi-Agent Path Finding.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\8YNL5VEL\\2305.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2305.08446
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2305.08446
+      \endverb
+      \keyw{Computer Science - Artificial Intelligence,Computer Science - Robotics,done}
+    \endentry
+    \entry{silverCooperativePathfinding2005}{article}{}
+      \name{author}{1}{}{%
+        {{hash=89dbd30410c2085cd059f32c57d4593e}{%
+           family={Silver},
+           familyi={S\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{89dbd30410c2085cd059f32c57d4593e}
+      \strng{fullhash}{89dbd30410c2085cd059f32c57d4593e}
+      \strng{bibnamehash}{89dbd30410c2085cd059f32c57d4593e}
+      \strng{authorbibnamehash}{89dbd30410c2085cd059f32c57d4593e}
+      \strng{authornamehash}{89dbd30410c2085cd059f32c57d4593e}
+      \strng{authorfullhash}{89dbd30410c2085cd059f32c57d4593e}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Cooperative Pathfinding is a multi-agent path planning problem where agents must find non-colliding routes to separate destinations, given full information about the routes of other agents. This paper presents three new algorithms for efficiently solving this problem, suitable for use in Real-Time Strategy games and other real-time environments. The algorithms are decoupled approaches that break down the problem into a series of single-agent searches. Cooperative A* (CA*) searches space-time for a non-colliding route. Hierarchical Cooperative A* (HCA*) uses an abstract heuristic to boost performance. Finally, Windowed Hierarchical Cooperative A* (WHCA*) limits the space-time search depth to a dynamic window, spreading computation over the duration of the route. The algorithms are applied to a series of challenging, maze-like environments, and compared to A* with Local Repair (the current video-games industry standard). The results show that the new algorithms, especially WHCA*, are robust and efficient solutions to the Cooperative Pathfinding problem, finding more successful routes and following better paths than Local Repair A*}
+      \field{issn}{2334-0924}
+      \field{issue}{1}
+      \field{journaltitle}{Proceedings of the AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment}
+      \field{langid}{english}
+      \field{number}{1}
+      \field{title}{Cooperative {{Pathfinding}}}
+      \field{urlday}{26}
+      \field{urlmonth}{5}
+      \field{urlyear}{2025}
+      \field{volume}{1}
+      \field{year}{2005}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{117\bibrangedash 122}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1609/aiide.v1i1.18726
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\42GR65CA\Silver - 2005 - Cooperative Pathfinding.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ojs.aaai.org/index.php/AIIDE/article/view/18726
+      \endverb
+      \verb{url}
+      \verb https://ojs.aaai.org/index.php/AIIDE/article/view/18726
+      \endverb
+      \keyw{done}
+    \endentry
+    \entry{sternMultiAgentPathfindingDefinitions2019}{article}{}
+      \name{author}{12}{}{%
+        {{hash=28a17dd42adfbe88290bb3d370d53070}{%
+           family={Stern},
+           familyi={S\bibinitperiod},
+           given={Roni},
+           giveni={R\bibinitperiod}}}%
+        {{hash=c558657d1b7e2d26630dbf4adfbf0684}{%
+           family={Sturtevant},
+           familyi={S\bibinitperiod},
+           given={Nathan},
+           giveni={N\bibinitperiod}}}%
+        {{hash=090820c15422fa559364ad660e9cecbd}{%
+           family={Felner},
+           familyi={F\bibinitperiod},
+           given={Ariel},
+           giveni={A\bibinitperiod}}}%
+        {{hash=6e0da33fcadd327da8ebc74eea9cafe2}{%
+           family={Koenig},
+           familyi={K\bibinitperiod},
+           given={Sven},
+           giveni={S\bibinitperiod}}}%
+        {{hash=bd18c879f9e29c587d042f725f23e5cb}{%
+           family={Ma},
+           familyi={M\bibinitperiod},
+           given={Hang},
+           giveni={H\bibinitperiod}}}%
+        {{hash=03986118cbfb19cbf21a3a0b658edbd4}{%
+           family={Walker},
+           familyi={W\bibinitperiod},
+           given={Thayne},
+           giveni={T\bibinitperiod}}}%
+        {{hash=3e8ee84b5cf0f6c7813e54088700ce0f}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Jiaoyang},
+           giveni={J\bibinitperiod}}}%
+        {{hash=5243814e91385f8aefa08d68b7df7419}{%
+           family={Atzmon},
+           familyi={A\bibinitperiod},
+           given={Dor},
+           giveni={D\bibinitperiod}}}%
+        {{hash=0c95e714680d33d0c807a3640affbf33}{%
+           family={Cohen},
+           familyi={C\bibinitperiod},
+           given={Liron},
+           giveni={L\bibinitperiod}}}%
+        {{hash=1152ba4ccd01d3a20263e6099b50049c}{%
+           family={Kumar},
+           familyi={K\bibinitperiod},
+           given={T.\bibnamedelimi K.},
+           giveni={T\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=e6545d71065fe4c837471d968ca39e8d}{%
+           family={Barták},
+           familyi={B\bibinitperiod},
+           given={Roman},
+           giveni={R\bibinitperiod}}}%
+        {{hash=bb44e6c9dce3dc2638b86e8e9c1e43ac}{%
+           family={Boyarski},
+           familyi={B\bibinitperiod},
+           given={Eli},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{f6c7ea9acfcd32bc8690135d12a012c8}
+      \strng{fullhash}{bf3a8301176b4a591272d650f8b7f309}
+      \strng{bibnamehash}{f6c7ea9acfcd32bc8690135d12a012c8}
+      \strng{authorbibnamehash}{f6c7ea9acfcd32bc8690135d12a012c8}
+      \strng{authornamehash}{f6c7ea9acfcd32bc8690135d12a012c8}
+      \strng{authorfullhash}{bf3a8301176b4a591272d650f8b7f309}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{The multi-agent pathfinding problem (MAPF) is the fundamental problem of planning paths for multiple agents, where the key constraint is that the agents will be able to follow these paths concurrently without colliding with each other. Applications of MAPF include automated warehouses, autonomous vehicles, and robotics. Research on MAPF has been flourishing in the past couple of years. Different MAPF research papers assume different sets of assumptions, e.g., whether agents can traverse the same road at the same time, and have different objective functions, e.g., minimize makespan or sum of agents' actions costs. These assumptions and objectives are sometimes implicitly assumed or described informally. This makes it difficult for establishing appropriate baselines for comparison in research papers, as well as making it difficult for practitioners to find the papers relevant to their concrete application. This paper aims to fill this gap and facilitate future research and practitioners by providing a unifying terminology for describing the common MAPF assumptions and objectives. In addition, we also provide pointers to two MAPF benchmarks. In particular, we introduce a new grid-based benchmark for MAPF, and demonstrate experimentally that it poses a challenge to contemporary MAPF algorithms.}
+      \field{issn}{2832-9163}
+      \field{issue}{1}
+      \field{journaltitle}{Proceedings of the International Symposium on Combinatorial Search}
+      \field{langid}{english}
+      \field{number}{1}
+      \field{shorttitle}{Multi-{{Agent Pathfinding}}}
+      \field{title}{Multi-{{Agent Pathfinding}}: {{Definitions}}, {{Variants}}, and {{Benchmarks}}}
+      \field{urlday}{26}
+      \field{urlmonth}{5}
+      \field{urlyear}{2025}
+      \field{volume}{10}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{151\bibrangedash 158}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1609/socs.v10i1.18510
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\8VG87S5R\Stern et al. - 2019 - Multi-Agent Pathfinding Definitions, Variants, and Benchmarks.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ojs.aaai.org/index.php/SOCS/article/view/18510
+      \endverb
+      \verb{url}
+      \verb https://ojs.aaai.org/index.php/SOCS/article/view/18510
+      \endverb
+      \keyw{done,PRE}
+    \endentry
+    \entry{surynekEfficientSATApproach2016}{incollection}{}
+      \name{author}{4}{}{%
+        {{hash=45a5a017084496240354bb7436117aa4}{%
+           family={Surynek},
+           familyi={S\bibinitperiod},
+           given={Pavel},
+           giveni={P\bibinitperiod}}}%
+        {{hash=090820c15422fa559364ad660e9cecbd}{%
+           family={Felner},
+           familyi={F\bibinitperiod},
+           given={Ariel},
+           giveni={A\bibinitperiod}}}%
+        {{hash=28a17dd42adfbe88290bb3d370d53070}{%
+           family={Stern},
+           familyi={S\bibinitperiod},
+           given={Roni},
+           giveni={R\bibinitperiod}}}%
+        {{hash=bb44e6c9dce3dc2638b86e8e9c1e43ac}{%
+           family={Boyarski},
+           familyi={B\bibinitperiod},
+           given={Eli},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IOS Press}%
+      }
+      \strng{namehash}{797b191fbe94386dcc262eed3f79c096}
+      \strng{fullhash}{4162c0fe12cf3b34b65738f23210c906}
+      \strng{bibnamehash}{797b191fbe94386dcc262eed3f79c096}
+      \strng{authorbibnamehash}{797b191fbe94386dcc262eed3f79c096}
+      \strng{authornamehash}{797b191fbe94386dcc262eed3f79c096}
+      \strng{authorfullhash}{4162c0fe12cf3b34b65738f23210c906}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{{{ECAI}} 2016}
+      \field{langid}{english}
+      \field{title}{Efficient {{SAT Approach}} to {{Multi-Agent Path Finding Under}} the {{Sum}} of {{Costs Objective}}}
+      \field{urlday}{6}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2016}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{810\bibrangedash 818}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.3233/978-1-61499-672-9-810
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\yasbr\\Zotero\\storage\\HIUWBHVG\\Surynek et al. - 2016 - Efficient SAT Approach to Multi-Agent Path Finding Under the Sum of Costs Objective.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\GILISXWU\\978-1-61499-672-9-810.html
+      \endverb
+      \verb{urlraw}
+      \verb https://ebooks.iospress.nl/doi/10.3233/978-1-61499-672-9-810
+      \endverb
+      \verb{url}
+      \verb https://ebooks.iospress.nl/doi/10.3233/978-1-61499-672-9-810
+      \endverb
+    \endentry
+    \entry{yuStructureIntractabilityOptimal2013}{article}{}
+      \name{author}{2}{}{%
+        {{hash=2c5d237b2098acc8dbd645c9e8fb0aa3}{%
+           family={Yu},
+           familyi={Y\bibinitperiod},
+           given={Jingjin},
+           giveni={J\bibinitperiod}}}%
+        {{hash=b140d7d226c499775f6beaf4d9186cde}{%
+           family={LaValle},
+           familyi={L\bibinitperiod},
+           given={Steven},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{5d0e389bd6f499ca9ad9929c72c1aadc}
+      \strng{fullhash}{5d0e389bd6f499ca9ad9929c72c1aadc}
+      \strng{bibnamehash}{5d0e389bd6f499ca9ad9929c72c1aadc}
+      \strng{authorbibnamehash}{5d0e389bd6f499ca9ad9929c72c1aadc}
+      \strng{authornamehash}{5d0e389bd6f499ca9ad9929c72c1aadc}
+      \strng{authorfullhash}{5d0e389bd6f499ca9ad9929c72c1aadc}
+      \field{extraname}{1}
+      \field{sortinit}{Y}
+      \field{sortinithash}{fd67ad5a9ef0f7456bdd9aab10fe1495}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper, we study the structure and computational complexity of optimal multi-robot path planning problems on graphs. Our results encompass three formulations of the discrete multi-robot path planning problem, including a variant that allows synchronous rotations of robots along fully occupied, disjoint cycles on the graph. Allowing rotation of robots provides a more natural model for multi-robot path planning because robots can communicate.Our optimality objectives are to minimize the total arrival time, the makespan (last arrival time), and the total distance. On the structure side, we show that, in general, these objectives demonstrate a pairwise Pareto optimal structure and cannot be simultaneously optimized. On the computational complexity side, we extend previous work and show that, regardless of the underlying multi-robot path planning problem, these objectives are all intractable to compute. In particular, our NP-hardness proof for the time optimal versions, based on a minimal and direct reduction from the 3-satisfiability problem, shows that these problems remain NP-hard even when there are only two groups of robots (i.e. robots within each group are interchangeable).}
+      \field{day}{29}
+      \field{issn}{2374-3468}
+      \field{issue}{1}
+      \field{journaltitle}{Proceedings of the AAAI Conference on Artificial Intelligence}
+      \field{langid}{english}
+      \field{month}{6}
+      \field{number}{1}
+      \field{title}{Structure and {{Intractability}} of {{Optimal Multi-Robot Path Planning}} on {{Graphs}}}
+      \field{urlday}{6}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{volume}{27}
+      \field{year}{2013}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1443\bibrangedash 1449}
+      \range{pages}{7}
+      \verb{doi}
+      \verb 10.1609/aaai.v27i1.8541
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\I7TKWCWH\Yu and LaValle - 2013 - Structure and Intractability of Optimal Multi-Robot Path Planning on Graphs.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ojs.aaai.org/index.php/AAAI/article/view/8541
+      \endverb
+      \verb{url}
+      \verb https://ojs.aaai.org/index.php/AAAI/article/view/8541
+      \endverb
+      \keyw{NP-hardness}
+    \endentry
+    \entry{yuOptimalMultirobotPath2016}{article}{}
+      \name{author}{2}{}{%
+        {{hash=2c5d237b2098acc8dbd645c9e8fb0aa3}{%
+           family={Yu},
+           familyi={Y\bibinitperiod},
+           given={Jingjin},
+           giveni={J\bibinitperiod}}}%
+        {{hash=10b09a560dbab6229987301f9a193d77}{%
+           family={LaValle},
+           familyi={L\bibinitperiod},
+           given={Steven\bibnamedelima M.},
+           giveni={S\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{209e478e31d6e73cdc63f3458ddedd97}
+      \strng{fullhash}{209e478e31d6e73cdc63f3458ddedd97}
+      \strng{bibnamehash}{209e478e31d6e73cdc63f3458ddedd97}
+      \strng{authorbibnamehash}{209e478e31d6e73cdc63f3458ddedd97}
+      \strng{authornamehash}{209e478e31d6e73cdc63f3458ddedd97}
+      \strng{authorfullhash}{209e478e31d6e73cdc63f3458ddedd97}
+      \field{extraname}{2}
+      \field{sortinit}{Y}
+      \field{sortinithash}{fd67ad5a9ef0f7456bdd9aab10fe1495}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{We study optimal multirobot path planning on graphs (MPP) over four minimization objectives: the makespan (last arrival time), the maximum (single-robot traveled) distance, the total arrival time, and the total distance. Having established previously that these objectives are distinct and NP-hard to optimize, in this paper, we focus on efficient algorithmic solutions for solving these optimal MPP problems. Toward this goal, we first establish a one-to-one solution mapping between MPP and a special type of multiflow network. Based on this equivalence and integer linear programming (ILP), we design novel and complete algorithms for optimizing over each of the four objectives. In particular, our exact algorithm for computing optimal makespan solutions is a first that is capable of solving extremely challenging problems with robot-vertex ratios as high as 100\%. Then, we further improve the computational performance of these exact algorithms through the introduction of principled heuristics, at the expense of slight optimality loss. The combination of ILP model based algorithms and the heuristics proves to be highly effective, allowing the computation of 1.x-optimal solutions for problems containing hundreds of robots, densely populated in the environment, often in just seconds.}
+      \field{issn}{1941-0468}
+      \field{journaltitle}{IEEE Transactions on Robotics}
+      \field{month}{10}
+      \field{number}{5}
+      \field{shorttitle}{Optimal {{Multirobot Path Planning}} on {{Graphs}}}
+      \field{title}{Optimal {{Multirobot Path Planning}} on {{Graphs}}: {{Complete Algorithms}} and {{Effective Heuristics}}}
+      \field{urlday}{6}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{volume}{32}
+      \field{year}{2016}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1163\bibrangedash 1177}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.1109/TRO.2016.2593448
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\ZXQQFECI\Yu and LaValle - 2016 - Optimal Multirobot Path Planning on Graphs Complete Algorithms and Effective Heuristics.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/7539623
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/7539623
+      \endverb
+      \keyw{Algorithm design and analysis,Collision avoidance,Games,Heuristic algorithms,Path planning,Robot kinematics}
+    \endentry
+    \entry{zhangGuidanceGraphOptimization2024}{inproceedings}{}
+      \name{author}{5}{}{%
+        {{hash=a442658eb75ebe4d9d10264263190850}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Yulun},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=d78211c50a244e86728a00933d466003}{%
+           family={Jiang},
+           familyi={J\bibinitperiod},
+           given={He},
+           giveni={H\bibinitperiod}}}%
+        {{hash=f2e59930534d733699377d77d453ed9c}{%
+           family={Bhatt},
+           familyi={B\bibinitperiod},
+           given={Varun},
+           giveni={V\bibinitperiod}}}%
+        {{hash=2583c1a0115814748f265c81c137b4fe}{%
+           family={Nikolaidis},
+           familyi={N\bibinitperiod},
+           given={Stefanos},
+           giveni={S\bibinitperiod}}}%
+        {{hash=3e8ee84b5cf0f6c7813e54088700ce0f}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Jiaoyang},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{1a33c68bd6caec2e08aa42e69ea1d7ff}
+      \strng{fullhash}{2cf4d58ad7438042bba3ffb5749a0c2d}
+      \strng{bibnamehash}{1a33c68bd6caec2e08aa42e69ea1d7ff}
+      \strng{authorbibnamehash}{1a33c68bd6caec2e08aa42e69ea1d7ff}
+      \strng{authornamehash}{1a33c68bd6caec2e08aa42e69ea1d7ff}
+      \strng{authorfullhash}{2cf4d58ad7438042bba3ffb5749a0c2d}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Electronic proceedings of IJCAI 2024}
+      \field{day}{1}
+      \field{eventtitle}{Thirty-{{Third International Joint Conference}} on {{Artificial Intelligence}}}
+      \field{issn}{1045-0823}
+      \field{langid}{english}
+      \field{month}{8}
+      \field{title}{Guidance {{Graph Optimization}} for {{Lifelong Multi-Agent Path Finding}}}
+      \field{urlday}{30}
+      \field{urlmonth}{5}
+      \field{urlyear}{2025}
+      \field{volume}{1}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{311\bibrangedash 320}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.24963/ijcai.2024/35
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\AW54NXUX\Zhang et al. - 2024 - Guidance Graph Optimization for Lifelong Multi-Agent Path Finding.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.ijcai.org/proceedings/2024/35
+      \endverb
+      \verb{url}
+      \verb https://www.ijcai.org/proceedings/2024/35
+      \endverb
+      \keyw{done}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
