@@ -74,18 +74,18 @@ function index_to_coords_gdalle(v)
     return tuple[end][v]
 end
 
-function distance_to_closest_obstacle_gdalle(mapf, edge)
+function distance_to_closest_obstacle_gdalle(mapf, edge, tuple)
     obstacles = [v for v in collect(vertices(mapf.graph)) if degree(mapf.graph, v) == 0]
     min_dist = Inf
     for o in obstacles
-        vertex_v = index_to_coords_gdalle(dst(edge))
-        vertex_t = index_to_coords_gdalle(o)
+        vertex_v = tuple[end][dst(edge)]
+        vertex_t = tuple[end][o]
         dist = sqrt((vertex_v[1] - vertex_t[1])^2 + (vertex_v[2] - vertex_t[2])^2)
         if dist < min_dist
             min_dist = dist
         end
     end
-    vertex_v = index_to_coords_gdalle(dst(edge))
+    vertex_v = tuple[end][dst(edge)]
     dist_border_list = [
         vertex_v[1], vertex_v[2], 32 - vertex_v[1] + 1, 32 - vertex_v[2] + 1
     ]
@@ -134,11 +134,11 @@ function distance_to_closest_agent(instance::MAPF_Instance, edge)
     return min_dist
 end
 
-function distance_to_closest_agent_gdalle(mapf, edge)
+function distance_to_closest_agent_gdalle(mapf, edge, tuple)
     min_dist = Inf
     for g in mapf.departures
-        vertex_v = index_to_coords_gdalle(dst(edge))
-        vertex_t = index_to_coords_gdalle(g)
+        vertex_v = tuple[end][dst(edge)]
+        vertex_t = tuple[end][g]
         dist = sqrt((vertex_v[1] - vertex_t[1])^2 + (vertex_v[2] - vertex_t[2])^2)
         if dist < min_dist
             min_dist = dist
@@ -158,11 +158,11 @@ function distance_to_all_agents(instance::MAPF_Instance, edge)
     return sum_dists
 end
 
-function distance_to_all_agents_gdalle(mapf, edge)
+function distance_to_all_agents_gdalle(mapf, edge, tuple)
     sum_dists = 0
     for g in mapf.departures
-        vertex_v = index_to_coords_gdalle(dst(edge))
-        vertex_t = index_to_coords_gdalle(g)
+        vertex_v = tuple[end][dst(edge)]
+        vertex_t = tuple[end][g]
         dist = sqrt((vertex_v[1] - vertex_t[1])^2 + (vertex_v[2] - vertex_t[2])^2)
         sum_dists += dist
     end
@@ -182,11 +182,11 @@ function number_of_agents_close(instance::MAPF_Instance, edge)
     return c
 end
 
-function number_of_agents_close_gdalle(mapf, edge)
+function number_of_agents_close_gdalle(mapf, edge, tuple)
     c = 0
     for g in mapf.departures
-        vertex_v = index_to_coords_gdalle(dst(edge))
-        vertex_t = index_to_coords_gdalle(g)
+        vertex_v = tuple[end][dst(edge)]
+        vertex_t = tuple[end][g]
         dist = sqrt((vertex_v[1] - vertex_t[1])^2 + (vertex_v[2] - vertex_t[2])^2)
         if dist < sqrt(32)
             c += 1

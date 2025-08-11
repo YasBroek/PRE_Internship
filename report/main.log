@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.8.7)  8 AUG 2025 17:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.8.7)  11 AUG 2025 16:39
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1190,12 +1190,8 @@ Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'french'.
- (./main.aux
-(./Sections/0.1-Abstracts.aux) (./Sections/0.2-Acknowledgments.aux)
-(./Sections/1-Introduction.aux) (./Sections/2-Literature_Review.aux)
-(./Sections/3-Methodology.aux) (./Sections/4-Results.aux)
-(./Sections/5-Discussion.aux) (./Sections/6-Conclusion.aux)
-(./Sections/A-Apendix.aux))
+
+No file main.aux.
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 147.
@@ -1218,7 +1214,6 @@ LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 147.
 LaTeX Font Info:    ... okay on input line 147.
 LaTeX Info: Redefining \degres on input line 147.
 LaTeX Info: Redefining \up on input line 147.
-
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -1295,8 +1290,6 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 147.
 LaTeX Info: Redefining \pageref on input line 147.
 LaTeX Info: Redefining \nameref on input line 147.
-
-(./main.out) (./main.out)
 \@outlinefile=\write7
 \openout7 = `main.out'.
 
@@ -1322,13 +1315,13 @@ Package biblatex Info: ... file 'main.bbl' found.
  (./main.bbl)
 Package biblatex Info: Reference section=0 on input line 147.
 Package biblatex Info: Reference segment=0 on input line 147.
-<Images/logo_ensta_new2.png, id=159, 912.91063pt x 573.64313pt>
+<Images/logo_ensta_new2.png, id=7, 912.91063pt x 573.64313pt>
 File: Images/logo_ensta_new2.png Graphic file (type png)
 <use Images/logo_ensta_new2.png>
 Package pdftex.def Info: Images/logo_ensta_new2.png  used on input line 161.
 (pdftex.def)             Requested size: 146.69553pt x 92.18567pt.
-<Images/csm_logo-UniversiteGustaveEiffel_b8b8bb3ba7.png, id=161, 1284.8pt x 963
-.6pt>
+<Images/csm_logo-UniversiteGustaveEiffel_b8b8bb3ba7.png, id=9, 1284.8pt x 963.6
+pt>
 File: Images/csm_logo-UniversiteGustaveEiffel_b8b8bb3ba7.png Graphic file (type
  png)
 <use Images/csm_logo-UniversiteGustaveEiffel_b8b8bb3ba7.png>
@@ -1367,14 +1360,14 @@ ng> <./Images/csm_logo-UniversiteGustaveEiffel_b8b8bb3ba7.png>] [2] [3]
 
 
 
-] (./main.toc)
+]
 \tf@toc=\write8
 \openout8 = `main.toc'.
 
  [6
 
 
-] (./main.lof)
+]
 \tf@lof=\write9
 \openout9 = `main.lof'.
 
@@ -1392,181 +1385,218 @@ ng> <./Images/csm_logo-UniversiteGustaveEiffel_b8b8bb3ba7.png>] [2] [3]
 
 
 ] [10] [11] [12] [13]
-<Images/diff.png, id=352, 354.123pt x 229.45724pt>
+<Images/diff.png, id=151, 354.123pt x 229.45724pt>
 File: Images/diff.png Graphic file (type png)
 <use Images/diff.png>
 Package pdftex.def Info: Images/diff.png  used on input line 158.
 (pdftex.def)             Requested size: 227.62204pt x 147.49284pt.
-
-
-LaTeX Warning: Citation 'blondelLearningFenchelYoungLosses' on page 14 undefine
-d on input line 189.
-
-[14 <./Images/diff.png>]
-
-LaTeX Warning: Citation 'wangWherePathsCollide2025' on page 15 undefined on inp
-ut line 204.
-
-
-LaTeX Warning: Citation 'andreychukMAPFGPTImitationLearning2025' on page 15 und
-efined on input line 208.
-
-)
-Overfull \hbox (85.93135pt too wide) in paragraph at lines 208--242
-[]\T1/cmr/m/n/10.95 Another pa-per that ap-plies ML to the MAPF prob-lem is [[]
-],
- []
-
-[15]
+ [14 <./Images/diff.png>]) [15]
 \openout2 = `Sections/3-Methodology.aux'.
 
  (./Sections/3-Methodology.tex
-<Images/pipeline draft.png, id=368, 555.2745pt x 281.853pt>
+
+LaTeX Warning: Reference `fig:pipeline-draft' on page 16 undefined on input lin
+e 5.
+
+<Images/pipeline draft.png, id=177, 555.2745pt x 281.853pt>
 File: Images/pipeline draft.png Graphic file (type png)
 <use Images/pipeline draft.png>
 Package pdftex.def Info: Images/pipeline draft.png  used on input line 9.
 (pdftex.def)             Requested size: 227.62204pt x 115.53897pt.
- [16
+[16
 
 
 
  <./Images/pipeline draft.png>]
-<Images/TEG.png, id=376, 488.42474pt x 275.8305pt>
+
+LaTeX Warning: Reference `TEG' on page 17 undefined on input line 38.
+
+<Images/TEG.png, id=189, 488.42474pt x 275.8305pt>
 File: Images/TEG.png Graphic file (type png)
 <use Images/TEG.png>
 Package pdftex.def Info: Images/TEG.png  used on input line 42.
 (pdftex.def)             Requested size: 227.62204pt x 128.54605pt.
- [17 <./Images/TEG.png>]
-
-LaTeX Warning: Citation 'zhangLearningPriorityOrdering2022' on page 18 undefine
-d on input line 59.
-
-[18]
-
-LaTeX Warning: Citation 'Centrality2025' on page 19 undefined on input line 81.
-
-
-[19]
-<Images/x_original.png, id=407, 388.45125pt x 392.667pt>
+[17 <./Images/TEG.png>] [18] [19]
+<Images/x_original.png, id=229, 388.45125pt x 392.667pt>
 File: Images/x_original.png Graphic file (type png)
 <use Images/x_original.png>
 Package pdftex.def Info: Images/x_original.png  used on input line 149.
 (pdftex.def)             Requested size: 136.5746pt x 138.05864pt.
-<Images/abs_x.png, id=408, 389.65575pt x 389.65575pt>
+<Images/abs_x.png, id=230, 389.65575pt x 389.65575pt>
 File: Images/abs_x.png Graphic file (type png)
 <use Images/abs_x.png>
 Package pdftex.def Info: Images/abs_x.png  used on input line 155.
 (pdftex.def)             Requested size: 136.5746pt x 136.57776pt.
-<Images/sigmoid_x.png, id=409, 389.65575pt x 389.0535pt>
+<Images/sigmoid_x.png, id=231, 389.65575pt x 389.0535pt>
 File: Images/sigmoid_x.png Graphic file (type png)
 <use Images/sigmoid_x.png>
 Package pdftex.def Info: Images/sigmoid_x.png  used on input line 161.
 (pdftex.def)             Requested size: 136.5746pt x 136.36665pt.
-<Images/relu_x.png, id=410, 388.45125pt x 390.258pt>
+<Images/relu_x.png, id=232, 388.45125pt x 390.258pt>
 File: Images/relu_x.png Graphic file (type png)
 <use Images/relu_x.png>
 Package pdftex.def Info: Images/relu_x.png  used on input line 169.
 (pdftex.def)             Requested size: 136.5746pt x 137.21164pt.
-<Images/softplus_x.png, id=411, 388.45125pt x 389.65575pt>
+<Images/softplus_x.png, id=233, 388.45125pt x 389.65575pt>
 File: Images/softplus_x.png Graphic file (type png)
 <use Images/softplus_x.png>
 Package pdftex.def Info: Images/softplus_x.png  used on input line 175.
 (pdftex.def)             Requested size: 136.5746pt x 136.9999pt.
  [20] [21 <./Images/x_original.png> <./Images/abs_x.png> <./Images/sigmoid_x.pn
-g> <./Images/relu_x.png> <./Images/softplus_x.png>]
-
-LaTeX Warning: Citation 'Flux.jl-2018' on page 22 undefined on input line 195.
-
-
-LaTeX Warning: Citation 'dalleLearningCombinatorialOptimization2022' on page 22
- undefined on input line 195.
-
-
-LaTeX Warning: Citation 'optimisersjl' on page 22 undefined on input line 195.
-
-) [22]
+g> <./Images/relu_x.png> <./Images/softplus_x.png>]) [22]
 \openout2 = `Sections/4-Results.aux'.
 
  (./Sections/4-Results.tex
-<Images/impact_vs_agents_features.png, id=442, 602.25pt x 376.40625pt>
+
+LaTeX Warning: Reference `features_test' on page 23 undefined on input line 11.
+
+
+
+LaTeX Warning: Reference `tab:features_parameters' on page 23 undefined on inpu
+t line 11.
+
+
+LaTeX Warning: Reference `features_test' on page 23 undefined on input line 50.
+
+
+
+LaTeX Warning: Reference `fig:graphic_features' on page 23 undefined on input l
+ine 52.
+
+<Images/impact_vs_agents_features.png, id=270, 602.25pt x 376.40625pt>
 File: Images/impact_vs_agents_features.png Graphic file (type png)
 <use Images/impact_vs_agents_features.png>
 Package pdftex.def Info: Images/impact_vs_agents_features.png  used on input li
 ne 56.
 (pdftex.def)             Requested size: 227.62204pt x 142.26622pt.
- [23
+
+LaTeX Warning: Reference `tab:GLM_performances' on page 23 undefined on input l
+ine 65.
+
+[23
 
 
 
 ]
-<Images/grad.png, id=455, 602.25pt x 376.40625pt>
-File: Images/grad.png Graphic file (type png)
-<use Images/grad.png>
-Package pdftex.def Info: Images/grad.png  used on input line 121.
-(pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
-<Images/loss.png, id=456, 602.25pt x 376.40625pt>
-File: Images/loss.png Graphic file (type png)
-<use Images/loss.png>
-Package pdftex.def Info: Images/loss.png  used on input line 127.
-(pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
-<Images/training_cost.png, id=457, 602.25pt x 376.40625pt>
-File: Images/training_cost.png Graphic file (type png)
-<use Images/training_cost.png>
-Package pdftex.def Info: Images/training_cost.png  used on input line 135.
-(pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
-<Images/test_cost.png, id=458, 602.25pt x 376.40625pt>
-File: Images/test_cost.png Graphic file (type png)
-<use Images/test_cost.png>
-Package pdftex.def Info: Images/test_cost.png  used on input line 141.
-(pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
-<Images/impact_vs_agents.png, id=461, 602.25pt x 376.40625pt>
-File: Images/impact_vs_agents.png Graphic file (type png)
-<use Images/impact_vs_agents.png>
-Package pdftex.def Info: Images/impact_vs_agents.png  used on input line 157.
-(pdftex.def)             Requested size: 227.62204pt x 142.26622pt.
- [24 <./Images/impact_vs_agents_features.png>]
-<Images/room-32-32-4.png, id=471, 492.03825pt x 492.6405pt>
-File: Images/room-32-32-4.png Graphic file (type png)
-<use Images/room-32-32-4.png>
-Package pdftex.def Info: Images/room-32-32-4.png  used on input line 168.
-(pdftex.def)             Requested size: 210.55107pt x 210.80896pt.
-<Images/visualization_weights.png, id=472, 458.9145pt x 449.88075pt>
-File: Images/visualization_weights.png Graphic file (type png)
-<use Images/visualization_weights.png>
-Package pdftex.def Info: Images/visualization_weights.png  used on input line 1
-74.
-(pdftex.def)             Requested size: 227.62204pt x 223.1413pt.
 
-Overfull \hbox (9.7709pt too wide) in paragraph at lines 167--178
+LaTeX Warning: Reference `tab:GLM_performances' on page 24 undefined on input l
+ine 88.
+
+
+LaTeX Warning: Reference `tab:params' on page 24 undefined on input line 90.
+
+
+Overfull \hbox (25.74101pt too wide) in paragraph at lines 95--111
+ [][] 
+ []
+
+
+LaTeX Warning: Reference `fig:loss_graph' on page 24 undefined on input line 11
+3.
+
+
+LaTeX Warning: Reference `tab:features_parameters' on page 24 undefined on inpu
+t line 115.
+
+
+LaTeX Warning: Reference `fig:loss_graph' on page 24 undefined on input line 11
+7.
+
+<Images/grad_new.png, id=279, 602.25pt x 376.40625pt>
+File: Images/grad_new.png Graphic file (type png)
+<use Images/grad_new.png>
+Package pdftex.def Info: Images/grad_new.png  used on input line 123.
+(pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
+<Images/loss_new.png, id=280, 602.25pt x 376.40625pt>
+File: Images/loss_new.png Graphic file (type png)
+<use Images/loss_new.png>
+Package pdftex.def Info: Images/loss_new.png  used on input line 129.
+(pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
+<Images/train_new.png, id=281, 602.25pt x 376.40625pt>
+File: Images/train_new.png Graphic file (type png)
+<use Images/train_new.png>
+Package pdftex.def Info: Images/train_new.png  used on input line 137.
+(pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
+<Images/test_new.png, id=282, 602.25pt x 376.40625pt>
+File: Images/test_new.png Graphic file (type png)
+<use Images/test_new.png>
+Package pdftex.def Info: Images/test_new.png  used on input line 143.
+(pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
+<Images/perf_agents.png, id=283, 451.6875pt x 338.76563pt>
+File: Images/perf_agents.png Graphic file (type png)
+<use Images/perf_agents.png>
+Package pdftex.def Info: Images/perf_agents.png  used on input line 155.
+(pdftex.def)             Requested size: 204.85844pt x 153.64752pt.
+<Images/perf_id.png, id=284, 451.6875pt x 338.76563pt>
+File: Images/perf_id.png Graphic file (type png)
+<use Images/perf_id.png>
+Package pdftex.def Info: Images/perf_id.png  used on input line 161.
+(pdftex.def)             Requested size: 204.85844pt x 153.64752pt.
+
+LaTeX Warning: Reference `fig:loss_graph' on page 24 undefined on input line 17
+0.
+
+
+LaTeX Warning: Reference `fig:graphic_map' on page 24 undefined on input line 1
+72.
+
+
+LaTeX Warning: Reference `fig:heatmap' on page 24 undefined on input line 177.
+
+[24 <./Images/impact_vs_agents_features.png>]
+<Images/original_grid.png, id=293, 602.25pt x 602.25pt>
+File: Images/original_grid.png Graphic file (type png)
+<use Images/original_grid.png>
+Package pdftex.def Info: Images/original_grid.png  used on input line 181.
+(pdftex.def)             Requested size: 210.55107pt x 210.55173pt.
+<Images/heatmap_weights.png, id=294, 602.25pt x 602.25pt>
+File: Images/heatmap_weights.png Graphic file (type png)
+<use Images/heatmap_weights.png>
+Package pdftex.def Info: Images/heatmap_weights.png  used on input line 187.
+(pdftex.def)             Requested size: 227.62204pt x 227.62596pt.
+
+Overfull \hbox (9.7709pt too wide) in paragraph at lines 180--191
 [][]   [] 
  []
 
-) [25 <./Images/grad.png> <./Images/loss.png> <./Images/training_cost.png> <./I
-mages/test_cost.png>] [26 <./Images/impact_vs_agents.png> <./Images/room-32-32-
-4.png> <./Images/visualization_weights.png>]
+
+LaTeX Warning: Reference `fig:heatmap' on page 25 undefined on input line 196.
+
+) [25 <./Images/grad_new.png> <./Images/loss_new.png> <./Images/train_new.png> 
+<./Images/test_new.png>] [26 <./Images/perf_agents.png> <./Images/perf_id.png> 
+<./Images/original_grid.png> <./Images/heatmap_weights.png>]
 \openout2 = `Sections/5-Discussion.aux'.
 
- (./Sections/5-Discussion.tex
-<Images/grad1025.png, id=490, 602.25pt x 376.40625pt>
+
+(./Sections/5-Discussion.tex
+<Images/grad1025.png, id=316, 602.25pt x 376.40625pt>
 File: Images/grad1025.png Graphic file (type png)
 <use Images/grad1025.png>
 Package pdftex.def Info: Images/grad1025.png  used on input line 22.
 (pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
-<Images/loss1025.png, id=491, 602.25pt x 376.40625pt>
+<Images/loss1025.png, id=317, 602.25pt x 376.40625pt>
 File: Images/loss1025.png Graphic file (type png)
 <use Images/loss1025.png>
 Package pdftex.def Info: Images/loss1025.png  used on input line 28.
 (pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
-<Images/train1025.png, id=492, 602.25pt x 376.40625pt>
+<Images/train1025.png, id=318, 602.25pt x 376.40625pt>
 File: Images/train1025.png Graphic file (type png)
 <use Images/train1025.png>
 Package pdftex.def Info: Images/train1025.png  used on input line 36.
 (pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
-<Images/test1025.png, id=493, 602.25pt x 376.40625pt>
+<Images/test1025.png, id=319, 602.25pt x 376.40625pt>
 File: Images/test1025.png Graphic file (type png)
 <use Images/test1025.png>
 Package pdftex.def Info: Images/test1025.png  used on input line 42.
 (pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
+
+
+LaTeX Warning: Reference `fig:loss_graph_1025' on page 27 undefined on input li
+ne 51.
+
+
+LaTeX Warning: Reference `fig:loss_graph' on page 27 undefined on input line 51
+.
 
 [27
 
@@ -1574,22 +1604,26 @@ Package pdftex.def Info: Images/test1025.png  used on input line 42.
 
  <./Images/grad1025.png> <./Images/loss1025.png> <./Images/train1025.png> <./Im
 ages/test1025.png>]
-<Images/grad_h.png, id=509, 602.25pt x 376.40625pt>
+
+LaTeX Warning: Reference `fig:loss_graph_h' on page 28 undefined on input line 
+71.
+
+<Images/grad_h.png, id=335, 602.25pt x 376.40625pt>
 File: Images/grad_h.png Graphic file (type png)
 <use Images/grad_h.png>
 Package pdftex.def Info: Images/grad_h.png  used on input line 76.
 (pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
-<Images/loss_h.png, id=510, 602.25pt x 376.40625pt>
+<Images/loss_h.png, id=336, 602.25pt x 376.40625pt>
 File: Images/loss_h.png Graphic file (type png)
 <use Images/loss_h.png>
 Package pdftex.def Info: Images/loss_h.png  used on input line 82.
 (pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
-<Images/train_h.png, id=511, 602.25pt x 376.40625pt>
+<Images/train_h.png, id=337, 602.25pt x 376.40625pt>
 File: Images/train_h.png Graphic file (type png)
 <use Images/train_h.png>
 Package pdftex.def Info: Images/train_h.png  used on input line 90.
 (pdftex.def)             Requested size: 136.5746pt x 85.35973pt.
-<Images/test_h.png, id=512, 602.25pt x 376.40625pt>
+<Images/test_h.png, id=338, 602.25pt x 376.40625pt>
 File: Images/test_h.png Graphic file (type png)
 <use Images/test_h.png>
 Package pdftex.def Info: Images/test_h.png  used on input line 96.
@@ -1608,27 +1642,41 @@ LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 2
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
-) [30
+)
+Overfull \hbox (9.7719pt too wide) in paragraph at lines 248--248
+[]\T1/cmr/m/n/12 Anton An-dr-ey-chuk et al. ^^S   MAPF-GPT: Im-i-ta-tion Learn-
+ing for Multi-Agent Pathfind-
+ []
+
+[30
 
 
-] [31] [32
-
-]
+] [31] [32]
 \openout2 = `Sections/A-Apendix.aux'.
 
+ (./Sections/A-Apendix.tex) [33
 
-(./Sections/A-Apendix.tex) [33
 
-] (./main.aux (./Sections/0.1-Abstracts.aux)
-(./Sections/0.2-Acknowledgments.aux) (./Sections/1-Introduction.aux)
-(./Sections/2-Literature_Review.aux) (./Sections/3-Methodology.aux)
-(./Sections/4-Results.aux) (./Sections/5-Discussion.aux)
-(./Sections/6-Conclusion.aux) (./Sections/A-Apendix.aux))
+] (./main.aux
+(./Sections/0.1-Abstracts.aux) (./Sections/0.2-Acknowledgments.aux)
+(./Sections/1-Introduction.aux) (./Sections/2-Literature_Review.aux)
+(./Sections/3-Methodology.aux) (./Sections/4-Results.aux)
+(./Sections/5-Discussion.aux) (./Sections/6-Conclusion.aux)
+(./Sections/A-Apendix.aux))
 
 LaTeX Warning: There were undefined references.
 
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 350F9BDF173A4C8A6B947904D7F960BA;6873.
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  350F9BDF173A4C8A6B947904D7F960BA;6873.
 
 Package biblatex Warning: Please (re)run Biber on the file:
 (biblatex)                main
@@ -1639,13 +1687,13 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 37652 strings out of 478287
- 723883 string characters out of 5849290
- 1576646 words of memory out of 5000000
- 55042 multiletter control sequences out of 15000+600000
+ 37625 strings out of 478287
+ 724465 string characters out of 5849290
+ 1549196 words of memory out of 5000000
+ 55034 multiletter control sequences out of 15000+600000
  489867 words of font info for 74 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 88i,15n,91p,1803b,3087s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 88i,15n,91p,1985b,2074s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/
@@ -1670,10 +1718,10 @@ fb></usr/share/texmf/fonts/type1/public/cm-super/sfbx2488.pfb></usr/share/texmf
 cm-super/sfrm1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pf
 b></usr/share/texmf/fonts/type1/public/cm-super/sfti1200.pfb></usr/share/texmf/
 fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on main.pdf (33 pages, 1784388 bytes).
+Output written on main.pdf (33 pages, 1961901 bytes).
 PDF statistics:
- 748 PDF objects out of 1000 (max. 8388607)
- 600 compressed objects within 6 object streams
- 139 named destinations out of 1000 (max. 500000)
- 447 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 603 PDF objects out of 1000 (max. 8388607)
+ 454 compressed objects within 5 object streams
+ 147 named destinations out of 1000 (max. 500000)
+ 148 words of extra memory for PDF output out of 10000 (max. 10000000)
 

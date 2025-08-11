@@ -92,17 +92,19 @@ Different sets of input parameters for the training model were also tested and a
 \begin{table}[!ht]
     \centering
     \caption{Input parameters tested}
-    \begin{tabular}{|c|c|c|}
+    \begin{tabular}{|c|c|c|c|c|}
         \hline
-        Parameter & Values tested & Value with best performance \\
+        Parameter & Values tested & Train cost ratio & Test cost ratio & (Train + Test) cost ratio \\
         \hline
-        $\epsilon$ & \makecell{0.1 \\ 0.01 \\ 0.001} & 0.1 \\
+        $\epsilon$ & \makecell{0.1 \\ \textbf{0.01} \\ 0.001} & \makecell{0.968 \\ \textbf{0.968} \\ 0.974} & \makecell{0.992 \\ \textbf{0.999} \\ 0.999} & \makecell{1.959 \\ \textbf{1.967} \\ 1.973} \\
         \hline
-        $\alpha$ & \makecell{0.1 \\ 0.01 \\ 0.001} & 0.01 \\
+        $\alpha$ & \makecell{0.1 \\ 0.01 \\ 0.001 \\ \textbf{0.0001}} & \makecell{0.935 \\ 1.062 \\ 1.165 \\ \textbf{0.968}} & \makecell{1.046 \\ 1.058 \\ 1.034 \\ \textbf{0.992}} & \makecell{1.981 \\ 2.120 \\ 2.200 \\ \textbf{1.959}} \\
         \hline
-        $M$ & \makecell{1 \\ 5 \\ 10 \\ 20} & 20 \\
+        $M$ & \makecell{\textbf{2} \\ 5 \\ 10 \\ 20} & \makecell{\textbf{0.968} \\ 0.984 \\ 0.984 \\ 0.962} & \makecell{\textbf{0.992} \\ 0.998 \\ 0.997 \\ 1.015} & \makecell{\textbf{1.959} \\ 1.982 \\ 1.981 \\ 1.977}\\
         \hline
-        Epochs & \makecell{10 \\ 50 \\ 100 \\ 200 \\ 500} & 100 \\
+        Epochs & \makecell{100 \\ 200 \\ 500 \\ \textbf{1000}} & \makecell{0.982 \\ 0.991 \\ 0.968 \\ \textbf{0.968}} & \makecell{0.992 \\ 1.038 \\ 1.005 \\ \textbf{0.992}} & \makecell{1.974 \\ 2.029 \\ 1.972 \\ \textbf{1.959}} \\
+        \hline
+        Train set size & \makecell{\textbf{1} \\ 5 \\ 10 \\ 25} & \makecell{\textbf{0.968} \\ 1.067 \\ 0.995 \\ 0.983} & \makecell{\textbf{0.992} \\ 1.011 \\ 1.067 \\ 1.006} & \makecell{\textbf{1.959} \\ 2.078 \\ 2.063 \\ 1.989}\\
         \hline
     \end{tabular}
     \label{tab:params}
@@ -118,13 +120,13 @@ Figure \ref{fig:loss_graph} shows statistics obtained during the training proces
 \begin{figure}[!ht]
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/grad.png}
+        \includegraphics[width=\textwidth]{Images/grad_new.png}
         \caption{Gradient of loss over time}
         \label{fig:grad_loss}
     \end{subfigure}
     \hspace{0.01\textwidth}
     \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/loss.png}
+        \includegraphics[width=\textwidth]{Images/loss_new.png}
         \caption{Loss over time}
         \label{fig:loss}
     \end{subfigure}
@@ -132,13 +134,13 @@ Figure \ref{fig:loss_graph} shows statistics obtained during the training proces
     \vspace{0.5cm}
 
     \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/training_cost.png}
+        \includegraphics[width=\textwidth]{Images/train_new.png}
         \caption{Training cost over time}
         \label{fig:training_cost}
     \end{subfigure}
     \hspace{0.01\textwidth}
     \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/test_cost.png}
+        \includegraphics[width=\textwidth]{Images/test_new.png}
         \caption{Test cost over time}
         \label{fig:test_cost}
     \end{subfigure}
@@ -147,17 +149,28 @@ Figure \ref{fig:loss_graph} shows statistics obtained during the training proces
     \label{fig:loss_graph}
 \end{figure}
 
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/perf_agents.png}
+        \caption{Performance vs Number of agents}
+        \label{fig:perf_agents}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/perf_id.png}
+        \caption{Performance vs Type ID}
+        \label{fig:perf_id}
+    \end{subfigure}
+    
+    \caption{Performance on test set}
+    \label{fig:perf}
+\end{figure}
+
 The information presented in Figure \ref{fig:loss_graph} shows that the final path costs for both the training and test scenarios actually increased as the model's loss decreased, indicating that, the more the model learned, the worst its impact on the final cost.
 
 Figure \ref{fig:graphic_map} also shows the behavior of the Cost Ratio according to the number of agents
 considered when testing.
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.5\linewidth]{Images/impact_vs_agents.png}
-    \caption{Cost Ratio on test set according to total number of agents}
-    \label{fig:graphic_map}
-\end{figure}
 
 Once again, it is observed that the training model's influence over the cost value tends to grow according to the number of agents considered in the instance, which is to be expected as the number of conflicts impacts directly on the training process.
 
@@ -165,13 +178,13 @@ To allow a more accurate visualization an analysis of the training process' outp
 
 \begin{figure}[!ht]
     \begin{subfigure}[b]{0.5\textwidth}
-        \includegraphics[width=0.925\textwidth]{Images/room-32-32-4.png}
+        \includegraphics[width=0.925\textwidth]{Images/original_grid.png}
         \caption{Original map}
         \label{fig:original_map}
     \end{subfigure}
     \hspace{0.01\textwidth}
     \begin{subfigure}[b]{0.5\textwidth}
-        \includegraphics[width=\textwidth]{Images/visualization_weights.png}
+        \includegraphics[width=\textwidth]{Images/heatmap_weights.png}
         \caption{Weights heatmap}
         \label{fig:heatmap}
     \end{subfigure}

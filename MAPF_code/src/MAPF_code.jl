@@ -25,6 +25,7 @@ using CUDA
 using Zygote
 using ColorSchemes
 using MultiAgentPathFinding: NoConflictFreePathError
+using StableRNGs
 
 include("structs.jl")
 include("TEG_methods.jl")

@@ -3,11 +3,23 @@ using MultiAgentPathFinding: replace_weights, vectorize_weights
 using SimpleWeightedGraphs
 using StableRNGs
 using UnicodePlots
-using Graphs
-
+using InferOpt
+using Zygote
+using Revise
+using MAPF_code
 using SparseArrays
 using LinearAlgebra
 using Statistics
+
+function my_sum_of_costs(Solution, mapf)
+    cost = 0
+    for path in Solution.paths
+        for v in 1:(length(path) - 1)
+            cost += mapf.graph.weights[path[v], path[v + 1]]
+        end
+    end
+    return cost
+end
 
 function count_edge_visits(solution::Solution, mapf::MAPF)
     visits = similar(mapf.graph.weights, Int)
@@ -23,96 +35,128 @@ function count_edge_visits(solution::Solution, mapf::MAPF)
     return vectorize_weights(SimpleWeightedGraph(visits))
 end
 
+function maximizer(minus_theta; mapf)
+    theta = -minus_theta  # independent_dijkstra is a *minimizer*
+    theta_projected = max.(theta, 1e-3)  # ensure positive weights
+    new_graph = replace_weights(mapf.graph, theta_projected)
+    new_mapf = MAPF(
+        new_graph,
+        mapf.departures,
+        mapf.arrivals;
+        vertex_conflicts=mapf.vertex_conflicts,
+        edge_conflicts=mapf.edge_conflicts,
+    )
+    solution_indep = independent_dijkstra(new_mapf)
+    y = count_edge_visits(solution_indep, mapf)
+    return y
+end
+
 grid = Bool[
-    1 0 1
-    1 0 1
-    1 0 0
-    1 0 1
-    1 0 1
+    1 0 1 1 1
+    1 0 0 0 1
+    1 0 1 0 1
+    1 0 0 0 1
+    1 0 1 1 1
+    1 0 1 1 1
 ]
-x1 = (1, 2)
-x2 = (4, 2)
-y1 = (5, 2)
-y2 = (2, 2)
+x1 = (5, 2)
+x2 = (2, 3)
+y1 = (1, 2)
+y2 = (6, 2)
 departure_coords = [x1, y1]
 arrival_coords = [x2, y2]
 mapf = MAPF(grid, departure_coords, arrival_coords; allow_diagonal_moves=false)
 _, coord_to_vertex, vertex_to_coord = parse_benchmark_map(grid; allow_diagonal_moves=false)
 
-instance = "room-32-32-4"
-scen_type = "even"
-instance_list = []
-best_solutions_list = []
+cooperative_astar(mapf, collect(1:2))
 
-i = 0
-for type_id in 1:25
-    agents = 60
-    scen = BenchmarkScenario(; instance, scen_type, type_id, agents)
-    bench_mapf = MAPF(scen; allow_diagonal_moves=false)
-    got_it = false
-    while !got_it
-        try
-            cooperative_astar(bench_mapf, collect(1:agents))
-            got_it = true
-        catch e
-            agents = agents - 1
-            scen = BenchmarkScenario(; instance, scen_type, type_id, agents)
-            bench_mapf = MAPF(scen; allow_diagonal_moves=false)
-        end
-    end
-    benchmark_solution_best = Solution(scen)
-    push!(instance_list, bench_mapf)
-    push!(best_solutions_list, benchmark_solution_best)
-    i += 1
-    println(i)
-end
-
-optimal_solution = Solution([[1, 2, 3, 6, 3, 4], [5, 4, 4, 3, 2, 1]])
+optimal_solution = Solution([[5, 4, 8, 11, 10, 9, 7], [1, 2, 3, 4, 5, 6]])  # by accident
 y_opt = count_edge_visits(optimal_solution, mapf)
 
 nb_samples = 10
 ε = 1e-1
 learning_rate = 1e-2
 
-theta = vectorize_weights(mapf.graph)
+layer = PerturbedAdditive(maximizer; ε, nb_samples, seed=0, rng=StableRNG(0), threaded=true)
+loss = FenchelYoungLoss(layer)
+
+minus_theta = -vectorize_weights(mapf.graph)
 losses = Float64[]
-rng = StableRNG(0)
 
 for epoch in 1:200
     @info "epoch $epoch"
     yield()
-    for (index, instance) in enumerate(instance_list)
-        mapf = instance
-        y_opt = count_edge_visits(best_solutions_list[index], mapf)
 
-        y_and_l_perturbed = map(1:nb_samples) do _
-            theta_perturbed = theta + ε .* randn(rng, length(theta))  # don't bother with multiplicative
-            theta_perturbed_projected = max.(theta_perturbed, 1e-3)
-            graph_perturbed = replace_weights(mapf.graph, theta_perturbed_projected)
-            mapf_perturbed = MAPF(
-                graph_perturbed,
-                mapf.departures,
-                mapf.arrivals;
-                vertex_conflicts=mapf.vertex_conflicts,
-                edge_conflicts=mapf.edge_conflicts,
-            )
-            solution_indep = independent_dijkstra(mapf_perturbed)
-            y = count_edge_visits(solution_indep, mapf_perturbed)
-            l = dot(theta_perturbed_projected, y)
-            return y, l
-        end
-        y_avg = mean(first.(y_and_l_perturbed))
-        l_avg = mean(last.(y_and_l_perturbed))
+    l, grads = Zygote.withgradient(mt -> loss(mt, y_opt; mapf), minus_theta)
+    grad = grads[1]
 
-        grad = y_avg - y_opt
-        theta -= learning_rate * grad
-        theta = max.(theta, 1e-3)
-
-        push!(losses, l_avg)
-    end
+    minus_theta -= learning_rate * grad
+    minus_theta = min.(minus_theta, -1e-3)
+    push!(losses, l)
 end
 
-histogram(theta)
 lineplot(eachindex(losses), losses)
 
-@info theta
+sum_of_costs(cooperative_astar(mapf, collect(1:2)), mapf)
+theta = -minus_theta  # independent_dijkstra is a *minimizer*
+theta_projected = max.(theta, 1e-3)  # ensure positive weights
+new_graph = replace_weights(mapf.graph, theta_projected)
+new_mapf = MAPF(
+    new_graph,
+    mapf.departures,
+    mapf.arrivals;
+    vertex_conflicts=mapf.vertex_conflicts,
+    edge_conflicts=mapf.edge_conflicts,
+)
+sum_of_costs(cooperative_astar(new_mapf, collect(1:2)), mapf)
+
+weight_grid = fill(NaN, 6, 5)
+
+actual_weights = -minus_theta
+edge_list = collect(Graphs.edges(mapf.graph))
+weights_vertices = [Vector{Float64}() for _ in 1:nv(mapf.graph)]
+for (edge_idx, e) in enumerate(edge_list)
+    dst_vertex = dst(e)
+    push!(weights_vertices[dst_vertex], actual_weights[edge_idx])
+end
+mean_weights_vertices = [isempty(w) ? NaN : maximum(w) for w in weights_vertices]
+
+for v in Graphs.vertices(mapf.graph)
+    coords = vertex_to_coord[v]
+    weight_grid[Int(coords[1]), Int(coords[2])] = mean_weights_vertices[v]
+end
+
+fig = Figure(; resolution=(800, 800))
+ax = Axis(fig[1, 1]; aspect=DataAspect(), title="Learned Edge Weights")
+
+hm = heatmap!(ax, weight_grid'; colormap=:plasma, nan_color=:black)
+
+Colorbar(fig[1, 2], hm; label="Edge Weight")
+fig
+
+using CairoMakie, Colors
+
+fig = Figure(; resolution=(800, 800))
+ax = Axis(fig[1, 1]; aspect=DataAspect(), title="Grid Original")
+
+# Inverter valores para 1=preto e 0=branco
+hm = heatmap!(ax, Float64.(grid'); colormap=[RGB(1, 1, 1), RGB(0, 0, 0)])
+
+scatter!(
+    ax,
+    [s[2] for s in departure_coords],
+    [s[1] for s in departure_coords];
+    color=colors[3:4],
+    marker=[:star4, :utriangle],
+    markersize=40,
+)
+
+scatter!(
+    ax,
+    [s[2] for s in arrival_coords],
+    [s[1] for s in arrival_coords];
+    color=colors[1:2],
+    marker=[:star4, :utriangle],
+    markersize=40,
+)
+fig

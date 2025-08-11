@@ -40,6 +40,8 @@ end
 
 function extract_features_gdalle(mapf)
     edge_list = collect(edges(mapf.graph))
+    grid = read_benchmark_map("room-32-32-4")
+    tuple = parse_benchmark_map(grid)
     features = zeros(Float64, ne(mapf.graph), 8)
     paths = Solution_to_paths(independent_dijkstra(mapf), mapf)
     conflicts = conflict_identifier_gdalle(mapf, paths)
@@ -48,10 +50,12 @@ function extract_features_gdalle(mapf)
         features[edge, 2] = degree(mapf.graph, dst(edge_list[edge]))  # degree-based feature
         features[edge, 3] = harmonic_centrality(mapf, edge_list[edge]) # closeness to all other vertices
         features[edge, 4] = step_counter(paths, edge_list[edge]) # number of paths going through edge
-        features[edge, 5] = distance_to_closest_obstacle_gdalle(mapf, edge_list[edge])
-        features[edge, 6] = distance_to_all_agents_gdalle(mapf, edge_list[edge])
-        features[edge, 7] = distance_to_closest_agent_gdalle(mapf, edge_list[edge])
-        features[edge, 8] = number_of_agents_close_gdalle(mapf, edge_list[edge])
+        features[edge, 5] = distance_to_closest_obstacle_gdalle(
+            mapf, edge_list[edge], tuple
+        )
+        features[edge, 6] = distance_to_all_agents_gdalle(mapf, edge_list[edge], tuple)
+        features[edge, 7] = distance_to_closest_agent_gdalle(mapf, edge_list[edge], tuple)
+        features[edge, 8] = number_of_agents_close_gdalle(mapf, edge_list[edge], tuple)
     end
     max_list = Vector{Float64}(undef, 8)
     for j in 1:8
@@ -339,6 +343,36 @@ function training_weights(
     return weights_list, losses
 end
 
+function maximizer_weights_gdalle(minus_theta; mapf)
+    theta = -minus_theta
+    theta_projected = max.(theta, 1e-3)
+    new_graph = adapt_weights(mapf, theta_projected)
+    new_mapf = MAPF(
+        new_graph.graph,
+        mapf.departures,
+        mapf.arrivals;
+        vertex_conflicts=mapf.vertex_conflicts,
+        edge_conflicts=mapf.edge_conflicts,
+    )
+    solution_indep = independent_dijkstra(new_mapf)
+    y = count_edge_visits(solution_indep, mapf)
+    return y
+end
+
+function count_edge_visits(solution::Solution, mapf::MAPF)
+    visits = similar(mapf.graph.weights, Int)
+    visits.nzval .= 0
+    for path in solution.paths
+        for t in 1:(length(path) - 1)
+            visits[path[t], path[t + 1]] += 1
+            if path[t] != path[t + 1]
+                visits[path[t + 1], path[t]] += 1
+            end
+        end
+    end
+    return MultiAgentPathFinding.vectorize_weights(SimpleWeightedGraph(visits))
+end
+
 function training_weights_gdalle(
     instance_list,
     benchmarkSols,
@@ -348,13 +382,10 @@ function training_weights_gdalle(
     num_epochs::Int,
     test_instance,
 )
-    weights_list = rand(ne(instance_list[1].graph))
+    weights_list = -MultiAgentPathFinding.vectorize_weights(instance_list[1].graph)
     y_best_found_solution = []
     for (index, instance) in enumerate(instance_list)
-        push!(
-            y_best_found_solution,
-            path_to_binary_vector_gdalle(instance, benchmarkSols[index]),
-        )
+        push!(y_best_found_solution, count_edge_visits(benchmarkSols[index], instance))
     end
     opt = Flux.Adam(α)
     opt_state = Flux.setup(opt, weights_list)
@@ -368,33 +399,32 @@ function training_weights_gdalle(
     @showprogress for epoch in 1:num_epochs
         total_loss = 0.0
         total_grad = 0.0
-        for (index, instance) in enumerate(instance_list)
+        for (index, mapf) in enumerate(instance_list)
             y_target = y_best_found_solution[index]
-            oracle =
-                θ -> path_to_binary_vector_gdalle(
-                    instance,
-                    independent_dijkstra(adapt_weights(deepcopy(instance), collect(θ))),
-                )
-            layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
+            layer = PerturbedAdditive(
+                maximizer_weights_gdalle;
+                ε=ϵ,
+                nb_samples=M,
+                seed=0,
+                rng=StableRNG(0),
+                threaded=true,
+            )
             loss = FenchelYoungLoss(layer)
-            grads = Zygote.gradient(weights_list) do w
-                loss(w, y_target)
-            end
+            l, grads = Zygote.withgradient(mt -> loss(mt, y_target; mapf), weights_list)
             yield()
 
-            Flux.update!(opt_state, weights_list, grads[1])
-            weights_list = softplus.(weights_list)
-            current_loss = loss(weights_list, y_target)
-            total_loss += current_loss
-            grad_norm = compute_gradient_norm(grads[1])
-            total_grad += grad_norm
+            weights_list -= α * grads[1]
+            weights_list = min.(weights_list, -1e-3)
+
+            total_loss += l
+            total_grad += mean(grads[1])
         end
         avg_loss = total_loss / length(instance_list)
         avg_grad = total_grad / length(instance_list)
 
-        if epoch % 20 == 0
-            weighted_instance_train = adapt_weights(instance_list[1], weights_list)
-            weighted_instance_test = adapt_weights(test_instance, weights_list)
+        if epoch % 20 == 1
+            weighted_instance_train = adapt_weights(instance_list[1], -weights_list)
+            weighted_instance_test = adapt_weights(test_instance, -weights_list)
 
             path_cost_train = sum_of_costs(
                 cooperative_astar(
@@ -410,7 +440,6 @@ function training_weights_gdalle(
             )
             push!(training_cost, path_cost_train)
             push!(test_cost, path_cost_test)
-            println(weights_list)
         end
 
         push!(losses, avg_loss)
@@ -446,6 +475,9 @@ function training_weights_gdalle(
 
     lines!(ax4, [20 * i for i in 1:length(test_cost)], test_cost; color=:red, linewidth=2)
     display(fig4)
+    println("train cost: $(training_cost[end] / training_cost[1])")
+    println("test cost: $(test_cost[end] / test_cost[1])")
+    println((training_cost[end] / training_cost[1]) + (test_cost[end] / test_cost[1]))
     return weights_list, losses
 end
 
@@ -539,7 +571,6 @@ end
 
 function training_gdalle(
     instance_list,
-    features_list,
     benchmarkSols,
     ϵ::Float64,
     M::Int,
@@ -548,13 +579,12 @@ function training_gdalle(
     test_instance,
 )
     y_best_found_solution = []
+    features_list = []
     @showprogress "first loop" for (index, instance) in enumerate(instance_list)
-        push!(
-            y_best_found_solution,
-            path_to_binary_vector_gdalle(instance, benchmarkSols[index]),
-        )
+        push!(features_list, extract_features_gdalle(instance))
+        push!(y_best_found_solution, count_edge_visits(benchmarkSols[index], instance))
     end
-    model = Chain(Dense(size(features_list[1], 2) => 1), softplus)
+    model = Chain(Dense(size(features_list[1], 2) => 1), x -> min.(x, -1e-3))
     opt = Flux.Adam(α)
     opt_state = Flux.setup(opt, model)
 
@@ -570,20 +600,19 @@ function training_gdalle(
         for (index, instance) in enumerate(instance_list)
             x_input = features_list[index]'
             y_target = y_best_found_solution[index]
-            oracle =
-                θ -> path_to_binary_vector_gdalle(
-                    instance,
-                    cooperative_astar(
-                        adapt_weights(deepcopy(instance), collect(θ)),
-                        collect(1:length(instance.departures)),
-                    ),
-                )
-            layer = PerturbedMultiplicative(oracle; ε=ϵ, nb_samples=M)
+            layer = PerturbedAdditive(
+                maximizer_weights_gdalle;
+                ε=ϵ,
+                nb_samples=M,
+                seed=0,
+                rng=StableRNG(0),
+                threaded=true,
+            )
             loss = FenchelYoungLoss(layer)
             grads = Zygote.gradient(model) do m
                 θ = m(x_input)
                 θ_vec = vec(θ')
-                loss(θ_vec, y_target)
+                loss(θ_vec, y_target; mapf=instance)
             end
             yield()
 
@@ -596,7 +625,7 @@ function training_gdalle(
 
             θ_current = model(x_input)
             θ_vec_current = vec(θ_current')
-            current_loss = loss(θ_vec_current, y_target)
+            current_loss = loss(θ_vec_current, y_target; mapf=instance)
             total_loss += current_loss
             grad_norm = compute_gradient_norm(grads[1])
             total_grad += grad_norm
@@ -608,7 +637,7 @@ function training_gdalle(
             θ_current_train = model(x_input_train)
             θ_vec_current_train = vec(θ_current_train')
             weighted_instance_train = adapt_weights(
-                instance_list[1], collect(θ_vec_current_train)
+                instance_list[1], collect(-θ_vec_current_train)
             )
             features_test = extract_features_gdalle(test_instance)
 
@@ -616,7 +645,7 @@ function training_gdalle(
             θ_current_test = model(x_input_test)
             θ_vec_current_test = vec(θ_current_test')
             weighted_instance_test = adapt_weights(
-                test_instance, collect(θ_vec_current_test)
+                test_instance, collect(-θ_vec_current_test)
             )
 
             path_cost_train = sum_of_costs(
@@ -724,4 +753,18 @@ function solve_with_trained_model(model, instance)
     mapf = MAPF(weighted_instance.graph, instance.starts, instance.goals)
 
     return prioritized_planning_v2(weighted_instance)
+end
+
+function apply_prediction(instance, weights_list)
+    old_path_cost = sum_of_costs(
+        cooperative_astar(instance, collect(1:length(instance.departures))), instance
+    )
+    weighted_instance = adapt_weights(instance, -weights_list)
+
+    new_path_cost = sum_of_costs(
+        cooperative_astar(weighted_instance, collect(1:length(instance.departures))),
+        instance,
+    )
+
+    return (new_path_cost / old_path_cost)
 end

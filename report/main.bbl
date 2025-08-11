@@ -19,6 +19,70 @@
 
 \refsection{0}
   \datalist[entry]{nty/global//global/global}
+    \entry{andreychukMAPFGPTImitationLearning2025}{article}{}
+      \name{author}{4}{}{%
+        {{hash=7d9de19b1cf67514571c1459957692d3}{%
+           family={Andreychuk},
+           familyi={A\bibinitperiod},
+           given={Anton},
+           giveni={A\bibinitperiod}}}%
+        {{hash=094f3931264c59558e2c312c1e352bec}{%
+           family={Yakovlev},
+           familyi={Y\bibinitperiod},
+           given={Konstantin},
+           giveni={K\bibinitperiod}}}%
+        {{hash=4b5f5a0364a5d2f11cf74b022ee184bd}{%
+           family={Panov},
+           familyi={P\bibinitperiod},
+           given={Aleksandr},
+           giveni={A\bibinitperiod}}}%
+        {{hash=4c5e68d6e36d0ed2ce9e816d2902f02a}{%
+           family={Skrynnik},
+           familyi={S\bibinitperiod},
+           given={Alexey},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{eb8901cbad3871916abacc86297090b6}
+      \strng{fullhash}{3beafa5815ca25ac10f7ab4c838297ec}
+      \strng{bibnamehash}{eb8901cbad3871916abacc86297090b6}
+      \strng{authorbibnamehash}{eb8901cbad3871916abacc86297090b6}
+      \strng{authornamehash}{eb8901cbad3871916abacc86297090b6}
+      \strng{authorfullhash}{3beafa5815ca25ac10f7ab4c838297ec}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Multi-agent pathfinding (MAPF) is a problem that generally requires finding collision-free paths for multiple agents in a shared environment. Solving MAPF optimally, even under restrictive assumptions, is NP-hard, yet efficient solutions for this problem are critical for numerous applications, such as automated warehouses and transportation systems. Recently, learning-based approaches to MAPF have gained attention, particularly those leveraging deep reinforcement learning. Typically, such learning-based MAPF solvers are augmented with additional components like single-agent planning or communication. Orthogonally, in this work we rely solely on imitation learning that leverages a large dataset of expert MAPF solutions and transformer-based neural network to create a foundation model for MAPF called MAPF-GPT. The latter is capable of generating actions without additional heuristics or communication. MAPF-GPT demonstrates zero-shot learning abilities when solving the MAPF problems that are not present in the training dataset. We show that MAPF-GPT notably outperforms the current best-performing learnable MAPF solvers on a diverse range of problem instances and is computationally efficient during inference.}
+      \field{day}{11}
+      \field{issn}{2374-3468}
+      \field{journaltitle}{Proceedings of the AAAI Conference on Artificial Intelligence}
+      \field{langid}{english}
+      \field{month}{4}
+      \field{number}{22}
+      \field{shorttitle}{{{MAPF-GPT}}}
+      \field{title}{{{MAPF-GPT}}: {{Imitation Learning}} for {{Multi-Agent Pathfinding}} at {{Scale}}}
+      \field{urlday}{8}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{volume}{39}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{23126\bibrangedash 23134}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1609/aaai.v39i22.34477
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\NGM6VGY8\Andreychuk et al. - 2025 - MAPF-GPT Imitation Learning for Multi-Agent Pathfinding at Scale.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ojs.aaai.org/index.php/AAAI/article/view/34477
+      \endverb
+      \verb{url}
+      \verb https://ojs.aaai.org/index.php/AAAI/article/view/34477
+      \endverb
+    \endentry
     \entry{berthetLearningDifferentiablePertubed2020}{inproceedings}{}
       \name{author}{6}{}{%
         {{hash=a5a45875c180d5136325798b472b95d8}{%
@@ -87,6 +151,41 @@
       \verb https://proceedings.neurips.cc/paper_files/paper/2020/hash/6bb56208f672af0dd65451f869fedfd9-Abstract.html
       \endverb
     \endentry
+    \entry{blondelLearningFenchelYoungLosses}{article}{}
+      \name{author}{3}{}{%
+        {{hash=d3b6c8582cea4e8b6576137b6a72cadc}{%
+           family={Blondel},
+           familyi={B\bibinitperiod},
+           given={Mathieu},
+           giveni={M\bibinitperiod}}}%
+        {{hash=d118d1e0be44acd0e761fcd0c3b254a1}{%
+           family={Martins},
+           familyi={M\bibinitperiod},
+           given={Andre\bibnamedelimb F\bibnamedelima T},
+           giveni={A\bibinitperiod\bibinitdelim F\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+        {{hash=7fb1184b4b06404ea26547130860771e}{%
+           family={Niculae},
+           familyi={N\bibinitperiod},
+           given={Vlad},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{fa872f44798ef59f516ead60d34df91f}
+      \strng{fullhash}{fa872f44798ef59f516ead60d34df91f}
+      \strng{bibnamehash}{fa872f44798ef59f516ead60d34df91f}
+      \strng{authorbibnamehash}{fa872f44798ef59f516ead60d34df91f}
+      \strng{authornamehash}{fa872f44798ef59f516ead60d34df91f}
+      \strng{authorfullhash}{fa872f44798ef59f516ead60d34df91f}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Over the past decades, numerous loss functions have been been proposed for a variety of supervised learning tasks, including regression, classification, ranking, and more generally structured prediction. Understanding the core principles and theoretical properties underpinning these losses is key to choose the right loss for the right problem, as well as to create new losses which combine their strengths. In this paper, we introduce Fenchel-Young losses, a generic way to construct a convex loss function for a regularized prediction function. We provide an in-depth study of their properties in a very broad setting, covering all the aforementioned supervised learning tasks, and revealing new connections between sparsity, generalized entropies, and separation margins. We show that Fenchel-Young losses unify many well-known loss functions and allow to create useful new ones easily. Finally, we derive efficient predictive and training algorithms, making Fenchel-Young losses appealing both in theory and practice.}
+      \field{langid}{english}
+      \field{title}{Learning with {{Fenchel-Young Losses}}}
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\W7Q5KBDH\Blondel et al. - Learning with Fenchel-Young Losses.pdf
+      \endverb
+    \endentry
     \entry{buckleyFastMotionPlanning1989}{inproceedings}{}
       \name{author}{1}{}{%
         {{hash=4965f1d5594b42a10dac78b5d532308e}{%
@@ -132,6 +231,101 @@
       \endverb
       \keyw{Electronic equipment testing,Magnetic levitation,Motion planning,Orbital robotics,Parallel robots,Polynomials,Radio access networks,Robotic assembly}
     \endentry
+    \entry{Centrality2025}{inreference}{}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In graph theory and network analysis, indicators of centrality assign numbers or rankings to nodes within a graph corresponding to their network position. Applications include identifying the most influential person(s) in a social network, key infrastructure nodes in the Internet or urban networks, super-spreaders of disease, and brain networks. Centrality concepts were first developed in social network analysis, and many of the terms used to measure centrality reflect their sociological origin.}
+      \field{annotation}{Page Version ID: 1279935815}
+      \field{booktitle}{Wikipedia}
+      \field{day}{11}
+      \field{hour}{13}
+      \field{langid}{english}
+      \field{minute}{9}
+      \field{month}{3}
+      \field{second}{27}
+      \field{timezone}{Z}
+      \field{title}{Centrality}
+      \field{urlday}{7}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\C5I867UE\index.html
+      \endverb
+      \verb{urlraw}
+      \verb https://en.wikipedia.org/w/index.php?title=Centrality&oldid=1279935815
+      \endverb
+      \verb{url}
+      \verb https://en.wikipedia.org/w/index.php?title=Centrality&oldid=1279935815
+      \endverb
+    \endentry
+    \entry{dalleLearningCombinatorialOptimization2022}{online}{}
+      \name{author}{4}{}{%
+        {{hash=60103447b9b1a1b2ec5ec1dce544de7b}{%
+           family={Dalle},
+           familyi={D\bibinitperiod},
+           given={Guillaume},
+           giveni={G\bibinitperiod}}}%
+        {{hash=46c7c5a657119bca2abfff237666608e}{%
+           family={Baty},
+           familyi={B\bibinitperiod},
+           given={Léo},
+           giveni={L\bibinitperiod}}}%
+        {{hash=36aa93199c1ed2a26288593aee2ea2c9}{%
+           family={Bouvier},
+           familyi={B\bibinitperiod},
+           given={Louis},
+           giveni={L\bibinitperiod}}}%
+        {{hash=9ec2e5924beaa8edeadb718f9d55ea1c}{%
+           family={Parmentier},
+           familyi={P\bibinitperiod},
+           given={Axel},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{ad826d89d81147e328d7168df9f48840}
+      \strng{fullhash}{5f54f4ccbdba1f87076fdadccbacac56}
+      \strng{bibnamehash}{ad826d89d81147e328d7168df9f48840}
+      \strng{authorbibnamehash}{ad826d89d81147e328d7168df9f48840}
+      \strng{authornamehash}{ad826d89d81147e328d7168df9f48840}
+      \strng{authorfullhash}{5f54f4ccbdba1f87076fdadccbacac56}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Combinatorial optimization (CO) layers in machine learning (ML) pipelines are a powerful tool to tackle data-driven decision tasks, but they come with two main challenges. First, the solution of a CO problem often behaves as a piecewise constant function of its objective parameters. Given that ML pipelines are typically trained using stochastic gradient descent, the absence of slope information is very detrimental. Second, standard ML losses do not work well in combinatorial settings. A growing body of research addresses these challenges through diverse methods. Unfortunately, the lack of well-maintained implementations slows down the adoption of CO layers. In this paper, building upon previous works, we introduce a probabilistic perspective on CO layers, which lends itself naturally to approximate differentiation and the construction of structured losses. We recover many approaches from the literature as special cases, and we also derive new ones. Based on this unifying perspective, we present InferOpt.jl, an open-source Julia package that 1) allows turning any CO oracle with a linear objective into a differentiable layer, and 2) defines adequate losses to train pipelines containing such layers. Our library works with arbitrary optimization algorithms, and it is fully compatible with Julia's ML ecosystem. We demonstrate its abilities using a pathfinding problem on video game maps as guiding example, as well as three other applications from operations research.}
+      \field{day}{3}
+      \field{eprintclass}{stat}
+      \field{eprinttype}{arXiv}
+      \field{month}{12}
+      \field{pubstate}{prepublished}
+      \field{shorttitle}{Learning with {{Combinatorial Optimization Layers}}}
+      \field{title}{Learning with {{Combinatorial Optimization Layers}}: A {{Probabilistic Approach}}}
+      \field{urlday}{5}
+      \field{urlmonth}{6}
+      \field{urlyear}{2025}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.2207.13513
+      \endverb
+      \verb{eprint}
+      \verb 2207.13513
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\yasbr\\Zotero\\storage\\LV5QYR6F\\Dalle et al. - 2022 - Learning with Combinatorial Optimization Layers a Probabilistic Approach.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\KDFMBAZD\\2207.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2207.13513
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2207.13513
+      \endverb
+      \keyw{Computer Science - Machine Learning,Mathematics - Optimization and Control,Statistics - Machine Learning}
+    \endentry
     \entry{dijkstraNoteTwoProblems1959}{article}{}
       \name{author}{1}{}{%
         {{hash=fa6182769b69c9f7b1559f8430d88929}{%
@@ -176,6 +370,35 @@
       \verb https://doi.org/10.1007/BF01386390
       \endverb
       \keyw{done,Search In Robotics}
+    \endentry
+    \entry{optimisersjl}{online}{}
+      \name{author}{1}{}{%
+        {{hash=6b2eb39f66d2aeb9460dd28c94bda268}{%
+           family={{FluxML}},
+           familyi={F\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{6b2eb39f66d2aeb9460dd28c94bda268}
+      \strng{fullhash}{6b2eb39f66d2aeb9460dd28c94bda268}
+      \strng{bibnamehash}{6b2eb39f66d2aeb9460dd28c94bda268}
+      \strng{authorbibnamehash}{6b2eb39f66d2aeb9460dd28c94bda268}
+      \strng{authornamehash}{6b2eb39f66d2aeb9460dd28c94bda268}
+      \strng{authorfullhash}{6b2eb39f66d2aeb9460dd28c94bda268}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Accessed: 2025-08-08}
+      \field{title}{Optimisers.jl}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://github.com/FluxML/Optimisers.jl
+      \endverb
+      \verb{url}
+      \verb https://github.com/FluxML/Optimisers.jl
+      \endverb
     \endentry
     \entry{gaoReviewGraphbasedMultiagent2024}{article}{}
       \name{author}{6}{}{%
@@ -363,6 +586,79 @@
       \verb https://ieeexplore.ieee.org/document/4082128
       \endverb
       \keyw{Automatic control,Automatic programming,Chemical technology,Costs,Functional programming,Gradient methods,Instruction sets,Mathematical programming,Minimax techniques,Minimization methods}
+    \endentry
+    \entry{Flux.jl-2018}{article}{}
+      \name{author}{9}{}{%
+        {{hash=69c02a169ebe2a2dc8025efb413e9160}{%
+           family={Innes},
+           familyi={I\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+        {{hash=a2e32ef37daec4a48b2fb1805efc61e5}{%
+           family={Saba},
+           familyi={S\bibinitperiod},
+           given={Elliot},
+           giveni={E\bibinitperiod}}}%
+        {{hash=396a970eabcf6403208f4fa48b43c589}{%
+           family={Fischer},
+           familyi={F\bibinitperiod},
+           given={Keno},
+           giveni={K\bibinitperiod}}}%
+        {{hash=70580be8871a2d242a8426259989e9a9}{%
+           family={Gandhi},
+           familyi={G\bibinitperiod},
+           given={Dhairya},
+           giveni={D\bibinitperiod}}}%
+        {{hash=4d25e754cb86b84cea710111d19d068f}{%
+           family={Rudilosso},
+           familyi={R\bibinitperiod},
+           given={Marco\bibnamedelima Concetto},
+           giveni={M\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=fadd062110f7664a9ec6fcadf0cddec4}{%
+           family={Joy},
+           familyi={J\bibinitperiod},
+           given={Neethu\bibnamedelima Mariya},
+           giveni={N\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=66cc3e81d0437f8fcef4bb3cb3294bc5}{%
+           family={Karmali},
+           familyi={K\bibinitperiod},
+           given={Tejan},
+           giveni={T\bibinitperiod}}}%
+        {{hash=134a81db66d28409c28b746b1a92d9c3}{%
+           family={Pal},
+           familyi={P\bibinitperiod},
+           given={Avik},
+           giveni={A\bibinitperiod}}}%
+        {{hash=537754dc48ed809d4a549ab2357be643}{%
+           family={Shah},
+           familyi={S\bibinitperiod},
+           given={Viral},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{a845088876f399a3107d1cde41e43a3f}
+      \strng{fullhash}{8a803ba272ec399beefe6667deb0aada}
+      \strng{bibnamehash}{a845088876f399a3107d1cde41e43a3f}
+      \strng{authorbibnamehash}{a845088876f399a3107d1cde41e43a3f}
+      \strng{authornamehash}{a845088876f399a3107d1cde41e43a3f}
+      \strng{authorfullhash}{8a803ba272ec399beefe6667deb0aada}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arXiv}
+      \field{journaltitle}{CoRR}
+      \field{title}{Fashionable Modelling with Flux}
+      \field{volume}{abs/1811.01457}
+      \field{year}{2018}
+      \verb{eprint}
+      \verb 1811.01457
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/1811.01457
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/1811.01457
+      \endverb
     \endentry
     \entry{liEECBSBoundedSuboptimalSearch2021}{online}{}
       \name{author}{3}{}{%
@@ -1089,6 +1385,85 @@
       \verb https://ebooks.iospress.nl/doi/10.3233/978-1-61499-672-9-810
       \endverb
     \endentry
+    \entry{wangWherePathsCollide2025}{online}{}
+      \name{author}{7}{}{%
+        {{hash=f013fcf33845adeeed5181e782e2f576}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Shiyue},
+           giveni={S\bibinitperiod}}}%
+        {{hash=d9f4c73d37da9be322d93b41cbc6c493}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Haozheng},
+           giveni={H\bibinitperiod}}}%
+        {{hash=a56af66ec399fd8ca9e5ccca445915ad}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Yuhan},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=e0be5e883a34d1af7458231c6aa001f2}{%
+           family={Lin},
+           familyi={L\bibinitperiod},
+           given={Jingran},
+           giveni={J\bibinitperiod}}}%
+        {{hash=e49d2ff0da6425e15b759f25933454a0}{%
+           family={Lu},
+           familyi={L\bibinitperiod},
+           given={Changhong},
+           giveni={C\bibinitperiod}}}%
+        {{hash=51c990b7d096ce2090300c4dca7ebe46}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Xiangfeng},
+           giveni={X\bibinitperiod}}}%
+        {{hash=f61d280d0ccef8b64bf5fae966ddbe55}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Wenhao},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{a638c493a7395ae799c164ea85cdc56a}
+      \strng{fullhash}{73803e610815a1bc70fb584b55ae59fa}
+      \strng{bibnamehash}{a638c493a7395ae799c164ea85cdc56a}
+      \strng{authorbibnamehash}{a638c493a7395ae799c164ea85cdc56a}
+      \strng{authornamehash}{a638c493a7395ae799c164ea85cdc56a}
+      \strng{authorfullhash}{73803e610815a1bc70fb584b55ae59fa}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Multi-Agent Path Finding (MAPF) is a fundamental problem in artificial intelligence and robotics, requiring the computation of collision-free paths for multiple agents navigating from their start locations to designated goals. As autonomous systems become increasingly prevalent in warehouses, urban transportation, and other complex environments, MAPF has evolved from a theoretical challenge to a critical enabler of real-world multi-robot coordination. This comprehensive survey bridges the long-standing divide between classical algorithmic approaches and emerging learning-based methods in MAPF research. We present a unified framework that encompasses search-based methods (including Conflict-Based Search, Priority-Based Search, and Large Neighborhood Search), compilation-based approaches (SAT, SMT, CSP, ASP, and MIP formulations), and data-driven techniques (reinforcement learning, supervised learning, and hybrid strategies). Through systematic analysis of experimental practices across 200+ papers, we uncover significant disparities in evaluation methodologies, with classical methods typically tested on larger-scale instances (up to 200 by 200 grids with 1000+ agents) compared to learning-based approaches (predominantly 10-100 agents). We provide a comprehensive taxonomy of evaluation metrics, environment types, and baseline selections, highlighting the need for standardized benchmarking protocols. Finally, we outline promising future directions including mixed-motive MAPF with game-theoretic considerations, language-grounded planning with large language models, and neural solver architectures that combine the rigor of classical methods with the flexibility of deep learning. This survey serves as both a comprehensive reference for researchers and a practical guide for deploying MAPF solutions in increasingly complex real-world applications.}
+      \field{day}{31}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{7}
+      \field{pubstate}{prepublished}
+      \field{shorttitle}{Where {{Paths Collide}}}
+      \field{title}{Where {{Paths Collide}}: {{A Comprehensive Survey}} of {{Classic}} and {{Learning-Based Multi-Agent Pathfinding}}}
+      \field{urlday}{7}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.2505.19219
+      \endverb
+      \verb{eprint}
+      \verb 2505.19219
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\yasbr\\Zotero\\storage\\QCAGVI7Y\\Wang et al. - 2025 - Where Paths Collide A Comprehensive Survey of Classic and Learning-Based Multi-Agent Pathfinding.pdf;C\:\\Users\\yasbr\\Zotero\\storage\\7EXUY9FW\\2505.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2505.19219
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2505.19219
+      \endverb
+      \keyw{Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Computer Science - Multiagent Systems,Mathematics - Combinatorics}
+    \endentry
     \entry{yuStructureIntractabilityOptimal2013}{article}{}
       \name{author}{2}{}{%
         {{hash=2c5d237b2098acc8dbd645c9e8fb0aa3}{%
@@ -1199,7 +1574,78 @@
       \endverb
       \keyw{Algorithm design and analysis,Collision avoidance,Games,Heuristic algorithms,Path planning,Robot kinematics}
     \endentry
-    \entry{zhangGuidanceGraphOptimization2024}{inproceedings}{}
+    \entry{zhangLearningPriorityOrdering2022}{article}{}
+      \name{author}{5}{}{%
+        {{hash=5e27ee3a689c0589f67371851445ece1}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Shuyang},
+           giveni={S\bibinitperiod}}}%
+        {{hash=3e8ee84b5cf0f6c7813e54088700ce0f}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Jiaoyang},
+           giveni={J\bibinitperiod}}}%
+        {{hash=f8236e95ead0b5c86d17c4616e1e7e25}{%
+           family={Huang},
+           familyi={H\bibinitperiod},
+           given={Taoan},
+           giveni={T\bibinitperiod}}}%
+        {{hash=6e0da33fcadd327da8ebc74eea9cafe2}{%
+           family={Koenig},
+           familyi={K\bibinitperiod},
+           given={Sven},
+           giveni={S\bibinitperiod}}}%
+        {{hash=f59f0a4dd18946cd06c0fddbc0a44eaa}{%
+           family={Dilkina},
+           familyi={D\bibinitperiod},
+           given={Bistra},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{32ea8e959870780be12ed0e7ad5f8a73}
+      \strng{fullhash}{d133e8e1b4ebbd803fab2dca0fad27d9}
+      \strng{bibnamehash}{32ea8e959870780be12ed0e7ad5f8a73}
+      \strng{authorbibnamehash}{32ea8e959870780be12ed0e7ad5f8a73}
+      \strng{authornamehash}{32ea8e959870780be12ed0e7ad5f8a73}
+      \strng{authorfullhash}{d133e8e1b4ebbd803fab2dca0fad27d9}
+      \field{extraname}{1}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Prioritized Planning (PP) is a fast and popular framework for solving Multi-Agent Path Finding, but its solution quality depends heavily on the predetermined priority ordering of the agents. Current PP algorithms use either greedy policies or random assignments to determine a total priority ordering, but none of them dominates the others in terms of the success rate and solution quality (measured by the sum-of-costs). We propose a machine-learning (ML) framework to learn a good priority ordering for PP. We develop two models, namely ML-T, which is trained on a total priority ordering, and ML-P, which is trained on a partial priority ordering. We propose to boost the effectiveness of PP by further applying stochastic ranking and random restarts. The results show that our ML-guided PP algorithms outperform the existing PP algorithms in success rate, runtime, and solution quality on small maps in most cases and are competitive with them on large maps despite the difficulty of collecting training data on these maps.}
+      \field{day}{17}
+      \field{issn}{2832-9163}
+      \field{issue}{1}
+      \field{journaltitle}{Proceedings of the International Symposium on Combinatorial Search}
+      \field{langid}{english}
+      \field{month}{7}
+      \field{number}{1}
+      \field{title}{Learning a {{Priority Ordering}} for {{Prioritized Planning}} in {{Multi-Agent Path Finding}}}
+      \field{urlday}{30}
+      \field{urlmonth}{5}
+      \field{urlyear}{2025}
+      \field{volume}{15}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{208\bibrangedash 216}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1609/socs.v15i1.21769
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\XW58VU6I\Zhang et al. - 2022 - Learning a Priority Ordering for Prioritized Planning in Multi-Agent Path Finding.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ojs.aaai.org/index.php/SOCS/article/view/21769
+      \endverb
+      \verb{url}
+      \verb https://ojs.aaai.org/index.php/SOCS/article/view/21769
+      \endverb
+      \keyw{done,Search In Robotics}
+    \endentry
+    \entry{zhangGuidanceGraphOptimization2024}{article}{}
       \name{author}{5}{}{%
         {{hash=a442658eb75ebe4d9d10264263190850}{%
            family={Zhang},
@@ -1233,6 +1679,7 @@
       \strng{authorbibnamehash}{1a33c68bd6caec2e08aa42e69ea1d7ff}
       \strng{authornamehash}{1a33c68bd6caec2e08aa42e69ea1d7ff}
       \strng{authorfullhash}{2cf4d58ad7438042bba3ffb5749a0c2d}
+      \field{extraname}{2}
       \field{sortinit}{Z}
       \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
       \field{labelnamesource}{author}
