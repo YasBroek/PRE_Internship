@@ -19,70 +19,6 @@
 
 \refsection{0}
   \datalist[entry]{nty/global//global/global}
-    \entry{andreychukMAPFGPTImitationLearning2025}{article}{}
-      \name{author}{4}{}{%
-        {{hash=7d9de19b1cf67514571c1459957692d3}{%
-           family={Andreychuk},
-           familyi={A\bibinitperiod},
-           given={Anton},
-           giveni={A\bibinitperiod}}}%
-        {{hash=094f3931264c59558e2c312c1e352bec}{%
-           family={Yakovlev},
-           familyi={Y\bibinitperiod},
-           given={Konstantin},
-           giveni={K\bibinitperiod}}}%
-        {{hash=4b5f5a0364a5d2f11cf74b022ee184bd}{%
-           family={Panov},
-           familyi={P\bibinitperiod},
-           given={Aleksandr},
-           giveni={A\bibinitperiod}}}%
-        {{hash=4c5e68d6e36d0ed2ce9e816d2902f02a}{%
-           family={Skrynnik},
-           familyi={S\bibinitperiod},
-           given={Alexey},
-           giveni={A\bibinitperiod}}}%
-      }
-      \strng{namehash}{eb8901cbad3871916abacc86297090b6}
-      \strng{fullhash}{3beafa5815ca25ac10f7ab4c838297ec}
-      \strng{bibnamehash}{eb8901cbad3871916abacc86297090b6}
-      \strng{authorbibnamehash}{eb8901cbad3871916abacc86297090b6}
-      \strng{authornamehash}{eb8901cbad3871916abacc86297090b6}
-      \strng{authorfullhash}{3beafa5815ca25ac10f7ab4c838297ec}
-      \field{sortinit}{A}
-      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{shorttitle}
-      \field{abstract}{Multi-agent pathfinding (MAPF) is a problem that generally requires finding collision-free paths for multiple agents in a shared environment. Solving MAPF optimally, even under restrictive assumptions, is NP-hard, yet efficient solutions for this problem are critical for numerous applications, such as automated warehouses and transportation systems. Recently, learning-based approaches to MAPF have gained attention, particularly those leveraging deep reinforcement learning. Typically, such learning-based MAPF solvers are augmented with additional components like single-agent planning or communication. Orthogonally, in this work we rely solely on imitation learning that leverages a large dataset of expert MAPF solutions and transformer-based neural network to create a foundation model for MAPF called MAPF-GPT. The latter is capable of generating actions without additional heuristics or communication. MAPF-GPT demonstrates zero-shot learning abilities when solving the MAPF problems that are not present in the training dataset. We show that MAPF-GPT notably outperforms the current best-performing learnable MAPF solvers on a diverse range of problem instances and is computationally efficient during inference.}
-      \field{day}{11}
-      \field{issn}{2374-3468}
-      \field{journaltitle}{Proceedings of the AAAI Conference on Artificial Intelligence}
-      \field{langid}{english}
-      \field{month}{4}
-      \field{number}{22}
-      \field{shorttitle}{{{MAPF-GPT}}}
-      \field{title}{{{MAPF-GPT}}: {{Imitation Learning}} for {{Multi-Agent Pathfinding}} at {{Scale}}}
-      \field{urlday}{8}
-      \field{urlmonth}{8}
-      \field{urlyear}{2025}
-      \field{volume}{39}
-      \field{year}{2025}
-      \field{dateera}{ce}
-      \field{urldateera}{ce}
-      \field{pages}{23126\bibrangedash 23134}
-      \range{pages}{9}
-      \verb{doi}
-      \verb 10.1609/aaai.v39i22.34477
-      \endverb
-      \verb{file}
-      \verb C:\Users\yasbr\Zotero\storage\NGM6VGY8\Andreychuk et al. - 2025 - MAPF-GPT Imitation Learning for Multi-Agent Pathfinding at Scale.pdf
-      \endverb
-      \verb{urlraw}
-      \verb https://ojs.aaai.org/index.php/AAAI/article/view/34477
-      \endverb
-      \verb{url}
-      \verb https://ojs.aaai.org/index.php/AAAI/article/view/34477
-      \endverb
-    \endentry
     \entry{berthetLearningDifferentiablePertubed2020}{inproceedings}{}
       \name{author}{6}{}{%
         {{hash=a5a45875c180d5136325798b472b95d8}{%
@@ -326,6 +262,60 @@
       \endverb
       \keyw{Computer Science - Machine Learning,Mathematics - Optimization and Control,Statistics - Machine Learning}
     \endentry
+    \entry{danischMakiejlFlexibleHighperformance2021}{article}{}
+      \name{author}{2}{}{%
+        {{hash=01fd131225b7b642c7ca3a0603243666}{%
+           family={Danisch},
+           familyi={D\bibinitperiod},
+           given={Simon},
+           giveni={S\bibinitperiod}}}%
+        {{hash=96f9490e5f32f43c19fbb032144753b8}{%
+           family={Krumbiegel},
+           familyi={K\bibinitperiod},
+           given={Julius},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{f6d95f3c1777a31283dc47ff63875801}
+      \strng{fullhash}{f6d95f3c1777a31283dc47ff63875801}
+      \strng{bibnamehash}{f6d95f3c1777a31283dc47ff63875801}
+      \strng{authorbibnamehash}{f6d95f3c1777a31283dc47ff63875801}
+      \strng{authornamehash}{f6d95f3c1777a31283dc47ff63875801}
+      \strng{authorfullhash}{f6d95f3c1777a31283dc47ff63875801}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Danisch et al., (2021). Makie.jl: Flexible high-performance data visualization for Julia. Journal of Open Source Software, 6(65), 3349, https://doi.org/10.21105/joss.03349}
+      \field{day}{1}
+      \field{issn}{2475-9066}
+      \field{journaltitle}{Journal of Open Source Software}
+      \field{langid}{english}
+      \field{month}{9}
+      \field{number}{65}
+      \field{shorttitle}{Makie.Jl}
+      \field{title}{Makie.Jl: {{Flexible}} High-Performance Data Visualization for {{Julia}}}
+      \field{urlday}{16}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{volume}{6}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{3349}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.21105/joss.03349
+      \endverb
+      \verb{file}
+      \verb C:\Users\yasbr\Zotero\storage\7G57E685\Danisch and Krumbiegel - 2021 - Makie.jl Flexible high-performance data visualization for Julia.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://joss.theoj.org/papers/10.21105/joss.03349
+      \endverb
+      \verb{url}
+      \verb https://joss.theoj.org/papers/10.21105/joss.03349
+      \endverb
+    \endentry
     \entry{dijkstraNoteTwoProblems1959}{article}{}
       \name{author}{1}{}{%
         {{hash=fa6182769b69c9f7b1559f8430d88929}{%
@@ -370,6 +360,58 @@
       \verb https://doi.org/10.1007/BF01386390
       \endverb
       \keyw{done,Search In Robotics}
+    \endentry
+    \entry{Graphs2021}{misc}{}
+      \name{author}{6}{}{%
+        {{hash=1d30a8595a636bf14fcd181b6822212d}{%
+           family={Fairbanks},
+           familyi={F\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod}}}%
+        {{hash=145e91a29c8cef5733e25e9bf3810db6}{%
+           family={Besançon},
+           familyi={B\bibinitperiod},
+           given={Mathieu},
+           giveni={M\bibinitperiod}}}%
+        {{hash=23e648d46c17f5dd1d7d82db93d2a81e}{%
+           family={Simon},
+           familyi={S\bibinitperiod},
+           given={Schölly},
+           giveni={S\bibinitperiod}}}%
+        {{hash=be20c25c36e22aee998ae7d9c6101046}{%
+           family={Hoffiman},
+           familyi={H\bibinitperiod},
+           given={Júlio},
+           giveni={J\bibinitperiod}}}%
+        {{hash=df18de09176e25e0595b07a7ec10e31b}{%
+           family={Eubank},
+           familyi={E\bibinitperiod},
+           given={Nick},
+           giveni={N\bibinitperiod}}}%
+        {{hash=bca7c93f55e669f71c4ff95e68ac9538}{%
+           family={Karpinski},
+           familyi={K\bibinitperiod},
+           given={Stefan},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{385ecca80dc1205dd8d9627c781d7b1f}
+      \strng{fullhash}{74bfb5a9ecbf126c98ede4232cccb178}
+      \strng{bibnamehash}{385ecca80dc1205dd8d9627c781d7b1f}
+      \strng{authorbibnamehash}{385ecca80dc1205dd8d9627c781d7b1f}
+      \strng{authornamehash}{385ecca80dc1205dd8d9627c781d7b1f}
+      \strng{authorfullhash}{74bfb5a9ecbf126c98ede4232cccb178}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{JuliaGraphs/Graphs.jl: an optimized graphs package for the Julia programming language}
+      \field{year}{2021}
+      \verb{urlraw}
+      \verb https://github.com/JuliaGraphs/Graphs.jl/
+      \endverb
+      \verb{url}
+      \verb https://github.com/JuliaGraphs/Graphs.jl/
+      \endverb
     \endentry
     \entry{optimisersjl}{online}{}
       \name{author}{1}{}{%
@@ -659,6 +701,37 @@
       \verb{url}
       \verb https://arxiv.org/abs/1811.01457
       \endverb
+    \endentry
+    \entry{unicodeplotsjl}{misc}{}
+      \name{author}{3}{}{%
+        {{hash=10de45b783baafb3626755c02e2796b0}{%
+           family={Kromberg},
+           familyi={K\bibinitperiod},
+           given={Morten},
+           giveni={M\bibinitperiod}}}%
+        {{hash=2f8ed7fafd3c1784a3be4da8eb3d106a}{%
+           family={…},
+           familyi={…\bibinitperiod}}}%
+        {{hash=1e6b6dcb4f45e931a154211ca3cb97a7}{%
+           family={colaboradores},
+           familyi={c\bibinitperiod},
+           prefix={outros},
+           prefixi={o\bibinitperiod}}}%
+      }
+      \strng{namehash}{6e5a7896f2fccb175e3980aff7999a15}
+      \strng{fullhash}{6e5a7896f2fccb175e3980aff7999a15}
+      \strng{bibnamehash}{6e5a7896f2fccb175e3980aff7999a15}
+      \strng{authorbibnamehash}{6e5a7896f2fccb175e3980aff7999a15}
+      \strng{authornamehash}{6e5a7896f2fccb175e3980aff7999a15}
+      \strng{authorfullhash}{6e5a7896f2fccb175e3980aff7999a15}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://github.com/JuliaPlots/UnicodePlots.jl}}
+      \field{note}{Julia package for terminal plotting, versão versão_exata_usada}
+      \field{title}{UnicodePlots.jl}
+      \field{year}{2025}
     \endentry
     \entry{liEECBSBoundedSuboptimalSearch2021}{online}{}
       \name{author}{3}{}{%

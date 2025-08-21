@@ -12,6 +12,7 @@ instance_list = []
 best_solutions_list = []
 
 i = 0
+agents_list = []
 for type_id in 1:25
     agents = 60
     scen = BenchmarkScenario(; instance, scen_type, type_id, agents)
@@ -27,13 +28,15 @@ for type_id in 1:25
             bench_mapf = MAPF(scen; allow_diagonal_moves=false)
         end
     end
-    benchmark_solution_best = Solution(scen)
+    benchmark_solution_best = MultiAgentPathFinding.Solution(scen)
     push!(instance_list, bench_mapf)
     push!(best_solutions_list, benchmark_solution_best)
+    push!(agents_list, agents)
     i += 1
     println(i)
 end
-
+@info agents_list
+test_list = []
 test_instance = "room-32-32-4"
 test_scen_type = "random"
 test_type_id = 1
@@ -42,9 +45,12 @@ test_scen = BenchmarkScenario(;
     instance, scen_type=test_scen_type, type_id=test_type_id, agents=test_agents
 )
 test_bench_mapf = MAPF(test_scen; allow_diagonal_moves=false)
+test_list
 
-weight_list, losses = MAPF_code.training_weights_gdalle(
-    [instance_list[1]], [best_solutions_list[1]], 0.01, 2, 0.0001, 1001, test_bench_mapf
+push!(test_list, test_bench_mapf)
+
+weight_list, losses, val = MAPF_code.training_weights_gdalle(
+    [instance_list[1]], [best_solutions_list[1]], 0.01, 2, 0.0001, 1000, test_list
 )
 
 cost_ratios = []
@@ -94,3 +100,39 @@ scatter!(ax2, x2, y; color=:blue, markersize=8, strokewidth=0.5)
 
 fig1
 fig2
+
+test_instance = "room-32-32-4"
+test_scen_type = "random"
+test_type_id = 8
+agents = 86
+mapf = MAPF(
+    BenchmarkScenario(;
+        instance=test_instance, scen_type=test_scen_type, type_id=test_type_id, agents
+    ),
+)
+cooperative_astar(mapf)
+test_list1 = []
+for test_agents in 1:86
+    test_scen = BenchmarkScenario(;
+        instance, scen_type=test_scen_type, type_id=test_type_id, agents=test_agents
+    )
+    test_bench_mapf = MAPF(test_scen; allow_diagonal_moves=false)
+
+    push!(test_list1, test_bench_mapf)
+end
+
+weight_list, losses, val = MAPF_code.training_weights_gdalle(
+    [instance_list[1]], [best_solutions_list[1]], 0.1, 2, 0.0001, 100, test_list1
+)
+
+fig1 = Figure(; resolution=(800, 500))
+
+ax1 = Axis(
+    fig1[1, 1];
+    xlabel="Number of agents",
+    ylabel="Cost Ratio",
+    title="Cost Ratio vs Number of agents",
+)
+
+lines!(ax1, 1:86, val; color=:blue, linewidth=2)
+display(fig1)

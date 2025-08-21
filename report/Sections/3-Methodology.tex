@@ -2,18 +2,20 @@
 
 The pipeline of this study consists of elaborating a Machine Learning model capable of predicting imaginary edge weights to guide the path-finding algorithms into computing better solutions, with lower overall path costs.
 
-For that, we construct a ML algorithm $\phi_w$ to predict modified edge weights $\theta$, which will then be used by a path-finding algorithm to compute a solution path. The representation of the pipeline is represented by Figure \ref{fig:pipeline-draft}.
+Our proposal improves upon the Guidance Graph optimization study mentioned in the previous sections as we aim to reach better parameters by leveraging derivative information, applying a gradient descent method.
+
+For that, we construct an ML algorithm $\phi_w$ to predict modified edge weights $\theta$, which will then be used by a path-finding algorithm to compute a solution path. The representation of the pipeline is represented by Figure \ref{fig:draft-pipeline}.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{Images/pipeline draft.png}
-    \caption{Caption}
-    \label{fig:pipeline-draft}
+    \includegraphics[width=0.9\linewidth]{Images/pipeline draft.png}
+    \caption{Draft of the pipeline developed in this study}
+    \label{fig:draft-pipeline}
 \end{figure}
 
-The training procedure is based on minimizing the final cost of the optimization objective, using a supervised learning method, learning from imitation of already existing best found solutions to determined instances.
+The training procedure is based on minimizing a training loss (a Fenchel-Young loss), using a supervised learning method, learning from imitation of already existing best found solutions to determined instances.
 
-The use of a ML model based on Gradient Descent, with a loss aimed directly at optimizing the objective function of the constrained Integer Linear Program that represents MAPF, is something that hasn't yet been tested in the MAPF literature, thus constituting the pipeline of this present study.
+The use of a ML model based on Fenchel-Young Loss, with a loss constructed based on optimizing the objective function of the constrained Integer Linear Program that represents MAPF, is something that hasn't yet been tested in the MAPF literature to the best of our knowledge, thus constituting the pipeline of this present study.
 
 \subsection{PathFinding Algorithms}
 Several pathfinding algorithms were elaborated by earlier studies as alternatives for solutions to the MAPF problem, as mentioned before. The ones that based this study of Decision-Focused learning application for Multi-Agent Path Finding were mainly two: Independent Shortest Paths and Prioritized Planning.
@@ -29,7 +31,9 @@ This step also allows us to analyze the structure of the problem and identify co
 
 The Prioritized Planning approach is designed to calculate actual paths and their associated costs after training by ordering agents according to a pre-determined heuristic before path calculation.
 
-In the developed code, agents are sorted based on a Start-and-Goal Conflict heuristic, inspired by \cite{buckleyFastMotionPlanning1989}. The heuristic elaborated downplays agents whose goal positions are more likely to overlap with other agents' paths (which is determined using ISP), forcing these agents to be planned last.
+Throughout the development of this study, a code was developed for applying the Prioritized Planning algorithm to the MAPF instances.
+
+In the developed code, agents are sorted based on a Start-and-Goal Conflict heuristic, taken from \cite{buckleyFastMotionPlanning1989}. The heuristic elaborated downplays agents whose goal positions are more likely to overlap with other agents' paths (which is determined using ISP), forcing these agents to be planned last.
 
 Planning proceeds sequentially: the highest-priority agent retains its shortest path, while each subsequent agent plans its path to avoid space-time conflicts with all higher-priority agents. This is achieved by treating the already planned paths as dynamic obstacles within a space-time representation of the environment.
 
@@ -46,7 +50,7 @@ The most accurate and effective function developed utilized a \textbf{Time-Expan
 
 For this new graph representation, vertex index conversion is achieved through the formula:
 
-\[ v_{TEG} = (t-1) \times n + v_{original} \tag{10} \]
+\[ v_{TEG} = (t-1) \times n + v_{original} \tag{12} \]
 
 where $ v_{TEG} $ denotes the vertex index on the Time-Expanded Graph, $ t $ is the current time step, $ n $ is the total number of vertices in the original graph, and $ v_{original} $ is the corresponding vertex from the original graph.
 
@@ -54,11 +58,13 @@ In our implementation, Time-Expanded Graphs also accept lists of vertices and ed
 
 With the introduction of this new graph type, the function for executing Prioritized Planning initially orders agents hierarchically and creates an initial TEG with an arbitrary duration $ T $ (sufficiently long to prevent unnecessary calculations, yet not excessively so). It then calculates paths for each agent, adding all new edges and vertices from those paths into the removal lists, adapting the TEG accordingly, and continues this process until all agents are planned. If an agent reaches its destination before $ T $, it remains there until the end; if $ T $ is insufficient for an agent to reach its target, it is extended, and all previously planned agents remain at their positions until the end.
 
-This prioritized re-planning approach effectively eliminates collisions and offers a more feasible solution set compared to naive, uncoordinated planning. Furthermore, the process is computationally efficient and scalable for moderate agent counts (up to 30 agents on maps constituting grids with a maximum size of 128x128 cells).
+This prioritized re-planning approach effectively eliminates collisions and offers a more practical solution set compared to naive, uncoordinated planning. In the code developed during this study, for the instance it was tested in ("room-32-32-4" from the Tracking MAPF platform presented on future sections of this report), the process is able to plan paths for any number of agent counts, taking up to 1 hour to compute (in its testing phase, using the map room-32-32-4 from the Tracking MAPF website \cite{shenTrackingProgressMultiAgent2023}, the function computed paths for 100 agents in 58 minutes).
 
 While the current implementation employs a fixed heuristic ordering, this structure is compatible with future enhancements, such as learned priority orderings, as proposed in recent research \cite{zhangLearningPriorityOrdering2022}. These could be integrated into a differentiable pipeline or through offline training on representative MAPF instances.
 
 The technical specifics of the ordering heuristic and re-planning mechanism are detailed in Annex Y.
+
+Although a function was manually developed for computing paths with PP during the study, the final training process actually applied a function imported from an outside package MultiAgentPathfinding.jl \cite{dalleLearningCombinatorialOptimization2022}, due to low efficiency of the developed code and limited time to further improve it. This function doesn't apply any ordering heuristics, planning paths for agents according tho their original order (from agent $a_1$ to $a_m$).
 
 \subsection{Training Procedure}
 
@@ -66,41 +72,46 @@ The technical specifics of the ordering heuristic and re-planning mechanism are 
 Two different approaches for constructing the training model were explored in this study:
 \begin{enumerate}
     \item \textbf{Learning through feature attribution}:  In this approach, a set of hand-crafted features was defined for each edge in a MAPF instance graph. The features were encoded in a matrix representation and used as input to train a model to predict a weight for each edge based on its attributed features. This method provides a structured way to incorporate domain knowledge into the learning process and offers interpretability, as it enables the analysis of how individual features influence the resulting edge weights.
-    \item \textbf{Learning from map: } The second approach aimed to train a model to learn edge weights directly from the raw map representation, without relying on predefined features. This allows the model to capture spatial patterns and interactions implicitly, leading to less generalizable behavior, as it's restrict to learning from a single map structure, and predicting weights specific to that map. 
+    \item \textbf{Learning from map: } The second approach aimed to train a model to learn edge weights directly from the raw map representation, without relying on predefined features. This allows the model to capture spatial patterns and interactions implicitly, leading to less generalizable behavior, as it is restricted to learning from a single map structure, and predicting weights specific to that map. 
     
-    Nevertheless, it enables a direct evaluation of the impact of the learning process, as it facilitates the analysis of the final edge weights, and their comparison to what would be expected, based on a notion of the optimal paths (for simpler instances, we are able to tell if an edge should be avoided and therefore should be attributed a higher weight, and vice versa, which would be more difficult to tell from weighting different features).
+    Nevertheless, it enables a direct evaluation of the impact of the learning process, as it facilitates the analysis of the final edge weights and their comparison to what would be expected, based on a notion of the optimal paths. For simpler instances, we are able to tell if an edge should be avoided and therefore assigned a higher weight, or if it should be favored and assigned a lower weight, which would be more difficult to infer from weighting different features.    
 \end{enumerate}
 Both methods were developed using the same principles for training, their main difference being the feature attribution phase.
 
 \subsubsection{Feature Attribution}
 This step, present only on the first approach for training, consisted on defining a number of features for each edge on a MAPF instance graph, represented by a matrix $E \times F$, where $E$ is the number of edges in the graph and $F$ is the number of different features evaluated. 
+
+When choosing the features for the matrix, the main focus was to represent as well as possible all the different characteristics of instances, in different angles, gathering information from the map itself (using measures of connectivity, centrality, obstacle distancing, between others) as well as from agents' positions and their interactions with space (considering aspects such as their distance to each other as well as to obstacles, for example).
+
 The main features computed in the model were:
 \begin{enumerate}
-    \item \textbf{Tendence for conflicts:} Based on individual paths precomputed using ISP, this feature attributes higher values for edges in which most conflicts happen. It is computed by counting the number of times an edge suffers a conflict on the ISP paths, either when more than one agent pass through it at the same time, or when more than one agent reach its destine vertex at the simultaneously. Each conflict configure a value of 1, and the final value of the feature represents the sum of conflicts for each edge.
+    \item \textbf{Tendance for conflicts:} Based on individual paths precomputed using ISP, this feature attributes higher values for edges in which most conflicts happen. It is computed by counting the number of times an edge suffers a conflict on the ISP paths, either when more than one agent pass through it at the same time, or when more than one agent reach its destine vertex at the simultaneously. Each conflict configure a value of 1, and the final value of the feature represents the sum of conflicts for each edge.
     \item \textbf{Degree:} Equal to the degree of the destination vertex;
     \item \textbf{Harmonic Centrality \cite{Centrality2025}:} Measures how close the destination vertex is to all other vertices in the graph. It gives higher values to nodes that can reach others more easily. In our model, each edge gets the centrality value of its destination node, so edges leading to more "central" areas in the graph are given more importance.
     \item \textbf{Most used edges:} Also based on ISP precomputed paths, this feature is proportional to the number of times agents pass through it;
-    \item \textbf{Distance to closest obstacle:} Corresponds to distance from edge's destine vertex to its closest obstacle;
-    \item \textbf{Distance to all agents:} Proportional to the sum of distances from all agent goal spots to the edge's destine vertex;
-    \item \textbf{Distance to closest agent:} Measures distance from edge's destine vertex to closest agent goal;
-    \item \textbf{Number of agents close:} Counts number of agent goals that are located at a predetermined radius (in this context we assumed $\sqrt{w}$, $w$ being the width of the instance map) from edge's destine vertex.
+    \item \textbf{Distance to closest obstacle:} Corresponds to distance from edge's destination vertex to its closest obstacle;
+    \item \textbf{Distance to all agents:} Proportional to the sum of distances from all agent goal spots to the edge's destination vertex;
+    \item \textbf{Distance to closest agent:} Measures distance from edge's destination vertex to closest agent goal;
+    \item \textbf{Number of agents close:} Counts number of agent goals that are located at a predetermined radius (in this context we assumed $\sqrt{w}$, $w$ being the width of the instance map) from edge's destination vertex.
 \end{enumerate}
 All the computed features were then normalized (by taking the highest value of each feature and dividing every other value by it) to be treated afterwards by the training model.
 
+The magnitude of each feature depends directly on the characteristics of the instance, such as the number and distribution of agents, the map size, and the obstacle density. Agent-related features (e.g., tendency for conflicts, most used edges, distances to agents, and number of agents close) scale mainly with the number of agents and how their goals are placed in the environment, with higher values in crowded or clustered scenarios. On the other hand, graph-related features (degree, harmonic centrality, and distance to obstacles) are influenced by the map’s topology and obstacle layout, with open maps favoring larger values and constrained maps concentrating importance on central or bottleneck regions.
+
 \subsubsection{Linear Regression application}
 
-The training model for this study was initially elaborated manually, and its pseudo-code can be consulted on Appendix XXXX. It takes as inputs a list of problem instances \cite{shenTrackingProgressMultiAgent2023}, containing different scenarios, and a list containing their known optimal solutions, taken from \cite{shenTrackingProgressMultiAgent2023}, which contains all progress and best solutions found to this day for different MAPF problem instances.
+The training model for this study was initially elaborated manually. It takes as inputs a list of problem instances \cite{shenTrackingProgressMultiAgent2023}, containing different scenarios, and a list containing their known optimal solutions, taken from \cite{shenTrackingProgressMultiAgent2023}, which contains all progress and best solutions found to this day for different MAPF problem instances.
 
-The training process consists of computing the features matrix for each of the instances on the input list, and then letting the model learn the weights for each feature of each edge, through Linear Regression ($c = Xw$, where $X$ and $w$ stand for the features matrix and the predicted weights matrix, respectively), by iterating through each instance on the list, for every epoch.
+The training process consists of computing the features matrix for each of the instances on the input list, and then letting the model learn the weights for each feature of each edge, through Linear Regression ($\theta = Xw$, where $X$ and $w$ stand for the features matrix and the predicted weights matrix, respectively), by iterating through each instance on the list, for every epoch.
 
-The optimization algorithm used for this learning model was Independent Shortest Paths, compatible with the method being applied, as it is differentiable.
+The optimization algorithm used for this learning model was Independent Shortest Paths, compatible with the method being applied, as it solves a linear program (which is a prerequisite to the Fenchel-Young loss).
 
-To make Gradient Descent on weight prediction possible, Monte Carlo perturbations \cite{berthetLearningDifferentiablePertubed2020} were also applied to the weight vector as the algorithm calculated $y^*_\epsilon(\hat\theta)$ from Equation 1, allowing Fenchel Young Loss computation. 
+To make Gradient Descent on weight prediction possible, Monte Carlo perturbations \cite{berthetLearningDifferentiablePertubed2020} were also applied to the weight vector as the algorithm calculated $y^*_\epsilon(\hat\theta)$ from Equation 1, allowing Fenchel-Young Loss computation. 
 
 To make the use of the original solution outputs (paths $P=\{P_1, P_2,...,P_k\}$ constituted by lists of either graphs edges $E=\{e_1,e_2, ..., e_m\}$ or vertices $V=\{v_1, v_2,...,v_n\}$) compatible for learning equations, they where transformed into vectors using:
 
 \[
-\sum^k_{i=1}\sum_{e \in P_i}\delta_{e_j}(e), \text{  for  } j = 1,2,...,m \tag{11}
+y = \sum^k_{i=1}\sum_{e \in P_i}\delta_{e_j}(e), \text{  for  } j = 1,2,...,m \tag{13}
 \]
 
 where
@@ -110,71 +121,71 @@ where
 \begin{cases}
     1 & \text{if } e \equiv e_j \\
     0 & \text{else}
-\end{cases}
+\end{cases} \tag{14}
 \]
 
-So the new path vectors actually represented the number of times they were passed through while agents executed their respective paths.
+So the new path vectors actually represented the number of times they were passed through while agents executed their respective paths, which is consistent with the linear programming formulation once the objective function is linear in total edge usage regardless of which agent uses each edge.
 
-Equations (??) and (??) were used for calculating the loss and its gradient, and weights matrix was updaded through the following equation:
+Equations (10) and (11) were used for calculating the loss and its gradient, and weights matrix was updated through the following equation:
 
 \[
-w = w - \alpha \times f \times \nabla_w \mathcal{L}_\varepsilon(w; y) \tag{12}
-\],
+w = w - \alpha \times X^{T} \times \nabla_{\theta} \mathcal{L}_\varepsilon(\theta; y), \tag{15}
+\]
 
-$\alpha$ representing the learning rate and $f$ the features matrix.
+where $\alpha$ represents the learning rate and $X$ the features matrix.
 
 \subsubsection{Generalized linear model}
 
-In this study, an alternative approach to directly applying standard linear regression for learning weights was explored: the constitution of a generalized linear model. This involved repeating the overall structure of the training model but replacing the traditional linear regression computation with various non-linear transformations applied to the predicted weights, $\hat{\theta}$. The primary motivation for these alternative transformations was to avoid negative weights, which are not supported by Dijkstra's algorithm for shortest path calculations (as edge costs must be non-negative for its proper functioning).
+In this study, an alternative approach to directly applying standard linear regression for learning weights was explored: the constitution of a generalized linear model. This involved repeating the overall structure of the training model but replacing the traditional linear regression computation with various non-linear transformations applied to obtain the predicted weights, $\hat{\theta}$. The primary motivation for these alternative transformations was to avoid negative weights, which are not supported by Dijkstra's algorithm for shortest path calculations (as edge costs must be positive for its proper functioning).
 
 Specifically, the following variations were investigated to ensure non-negative or appropriately scaled weights:
 
 \begin{enumerate}
     \item \textbf{abs.:} This transformation directly takes the absolute value of the predicted weights.
-    \[\hat{\theta} = |Xw| \tag{13}\]
+    \[\hat{\theta} = |Xw| \tag{16}\]
     \item \textbf{$\sigma$:} The sigmoid function squashes the raw linear output into a range between 0 and 1. This can be useful if the weights are intended to represent probabilities or normalized values.
-    \[\hat{\theta} = \frac{1}{1+e^{-Xw}} \tag{14}\]
+    \[\hat{\theta} = \frac{1}{1+e^{-Xw}} \tag{17}\]
     \item \textbf{Rectified Linear Unit (ReLU):} ReLU sets any negative input to zero, effectively ensuring non-negative weights. It is computationally efficient and widely used in neural networks.
-    \[\hat{\theta} = max(0,Xw) \tag{15}\]
+    \[\hat{\theta} = \max(0,Xw) \tag{18}\]
     \item \textbf{softplus:} The softplus function is a smooth approximation of the ReLU function. It ensures positive outputs while maintaining differentiability across its domain, which can be beneficial for gradient-based optimization.
-    \[\hat{\theta} = \ln(1+e^{Xw}) \tag{16}\]
-    \item \textbf{Projected Gradient Descent (PGD):} Instead of applying a fixed non-linear transformation, this approach incorporates the non-negativity constraint directly into the optimization process. After each gradient descent step, the weights are projected back onto the feasible set (i.e., non-negative values). This is typically done by setting any negative weights to zero. 
-    \[ \hat{\theta}_{k+1} = \text{Projection}_{\mathbb{R}_{\ge 0}}(\hat{\theta}_k - \alpha \nabla L(\hat{\theta}_k)) \tag{17} \] 
+    \[\hat{\theta} = \ln(1+e^{Xw}) \tag{19}\]
+    \item \textbf{Projected Gradient Descent (PGD):} Instead of applying a fixed non-linear transformation, this approach incorporates the non-negativity constraint directly into the optimization process. After each gradient descent step, the weights are projected back onto the feasible set (i.e., non-negative values). This is done by setting any negative weights to zero. 
+    \[ \hat{\theta}_{k+1} = \text{Projection}_{\mathbb{R}_{\ge 0}}(\hat{\theta}_k - \alpha \nabla L(\hat{\theta}_k)) \tag{20} \] 
     where $\alpha$ is the learning rate and $\text{Projection}_{\mathbb{R}{\ge 0}}(x) = \max(0, x)$. 
 \end{enumerate}
 
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/x_original.png}
+        \includegraphics[width=\textwidth]{Images/x-original.png}
         \caption{$f(x) = x$}
-        \label{fig:x_original}
+        \label{fig:x-original}
     \end{subfigure}
     \hspace{0.01\textwidth}
     \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/abs_x.png}
-        \caption{$abs(x) = |x|$}
-        \label{fig:abs_x}
+        \includegraphics[width=\textwidth]{Images/abs-x.png}
+        \caption{$\mathrm{x} = |x|$}
+        \label{fig:abs-x}
     \end{subfigure}
     \hspace{0.01\textwidth}
     \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/sigmoid_x.png}
+        \includegraphics[width=\textwidth]{Images/sigmoid-x.png}
         \caption{$\sigma(x) = \frac{1}{1+e^{-x}}$}
-        \label{fig:sigmoid_x}
+        \label{fig:sigmoid-x}
     \end{subfigure}
 
     \vspace{0.5cm}
 
     \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/relu_x.png}
+        \includegraphics[width=\textwidth]{Images/relu-x.png}
         \caption{$ReLU(x) = max(0, x)$}
-        \label{fig:relu_x}
+        \label{fig:relu-x}
     \end{subfigure}
     \hspace{0.01\textwidth}
     \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/softplus_x.png}
+        \includegraphics[width=\textwidth]{Images/softplus-x.png}
         \caption{$softplus(x) = ln(1+e^x)$}
-        \label{fig:softplus_x}
+        \label{fig:softplus-x}
     \end{subfigure}
     
     \caption{Variations of functions used for Generalized Model applied over $f(x) = x$.}
@@ -184,12 +195,18 @@ These alternative transformations help the model to avoid negative weights, whic
 
 \subsubsection{Testing}
 
-After training the model with a list of instances, it was necessary to test it with a different set of test instances to evaluate the training process, and to know if it's actually better than implementing no training process at all. 
+After training the model with a list of instances, it was necessary to test it with a different set of test instances to evaluate the training process, and to know if it is actually better than implementing no training process at all. 
 
-For us to be able to get to those conclusions, we applied the Prioritized Planning algorithm to compute paths for two different versions of each instance in a test set: the original version and another one for which the learned weights are applied (only for path computation, once the calculation of path costs always takes into account original weights). We compare the path costs obtained for the different versions to conclude on training efficiency.
+For us to be able to get to those conclusions, we applied the Prioritized Planning algorithm to compute paths for two different versions of each instance in a test set: the original version and another one for which the learned weights are applied (only for path computation, once the calculation of path costs always takes into account original weights). If both versions output a feasible path, we compare the path costs obtained for the different versions to conclude on training efficiency.
 
-In the learning pipeline, we use Independent Shortest Paths (ISP) instead of Prioritized Planning due to the requirements of gradient-based optimization. Gradient descent relies on differentiability to update the learned weights based on how they influence the final loss. However, Prioritized Planning is a discrete, non-differentiable algorithm that introduces abrupt changes in agent paths based on planning order and conflict resolution, making it incompatible with gradient descent. In contrast, ISP computes paths independently for each agent based solely on the current weights, resulting in smoother, more stable outputs with respect to small weight changes. This allows it to serve as a differentiable approximation of the planning process during training. Once the weights are learned, we evaluate their effectiveness by applying them to Prioritized Planning, which provides more realistic, conflict-free paths for assessing overall performance.
+In the learning pipeline, we use Independent Shortest Paths (ISP) instead of Prioritized Planning because ISP can be represented as a linear program, which is not the case for PP. As the Fenchel Young loss method requires the learning function to be representable as a Linear Program, ISP was chosen to be used during training. Once the weights are learned, we evaluate their effectiveness by applying them to Prioritized Planning, which provides more realistic, conflict-free paths for assessing overall performance.
 
 \subsection{Julia libraries}
 
-As the complexity of the model and its challenges developed, we opted to implement Julia packages to facilitate learning implementation. \textbf{Flux.jl} \cite{Flux.jl-2018} was used for the definition of the training model, \textbf{InferOpt.jl} \cite{dalleLearningCombinatorialOptimization2022} for loss computation and \textbf{Optimizers.jl} \cite{optimisersjl} for Gradient Descent calculation.
+As the complexity of the model and its challenges developed, we opted to implement Julia packages:
+
+Several methods from the \textbf{MultiAgentPathfinding.jl} \cite{dalleLearningCombinatorialOptimization2022} package were used for gathering data from the Tracking MAPF database as well as computing paths using the ISP and PP algorithms.
+
+To help with visualization, \textbf{Makie.jl} \cite{danischMakiejlFlexibleHighperformance2021} and \textbf{UnicodePlots} \cite{unicodeplotsjl} were applied. \textbf{Graphs.jl} \cite{Graphs2021} helped represent the instances as graphs.
+
+\textbf{Flux.jl} \cite{Flux.jl-2018} was used for the definition of the training model, \textbf{InferOpt.jl} \cite{dalleLearningCombinatorialOptimization2022} for loss computation and \textbf{Optimizers.jl} \cite{optimisersjl} for Gradient Descent calculation.

@@ -1,0 +1,45 @@
+\appendix
+\section{Tests run with different parameter values}
+\label{ap:params}
+
+\begin{table}[!ht]
+    \centering
+    \caption{Input parameters tested - Training through feature attribution}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        Parameter & Values tested & Cost Ratio on Validation Set & Best Value \\
+        \hline
+        $\epsilon$ & \makecell{\textbf{1.0} \\ 0.1 \\ 0.01 \\ 0.001} & \makecell{\textbf{0.994} \\ 1.008 \\ 1.010 \\ 1.010} & 1.0 \\
+        \hline
+        $\alpha$ & \makecell{0.1 \\ 0.01 \\ 0.001 \\ \textbf{0.0001}} & \makecell{1.008 \\ 0.998 \\ 1.008 \\ \textbf{0.994}} & 0.0001 \\
+        \hline
+        $M$ & \makecell{\textbf{2} \\ 5 \\ 10} & \makecell{\textbf{0.994} \\ 0.995 \\ 0.994} & 2 \\
+        \hline
+        Train set size (per map) & \makecell{1 \\ \textbf{3} \\ 5 \\ 10} & \makecell{0.994 \\ 0.994 \\ 0.996 \\ 0.994} & 10 \\
+        \hline
+    \end{tabular}
+    \label{tab:params-features}
+\end{table}
+
+\begin{table}[!ht]
+    \centering
+    \caption{Input parameters tested - Training directly from map}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        Parameter & Values tested & Cost Ratio on Validation Set & Best Value for parameter\\
+        \hline
+        $\epsilon$ & \makecell{1.0 \\ \textbf{0.1} \\ 0.01 \\ 0.001} & \makecell{0.979 \\ \textbf{0.946} \\ 0.952 \\ 0.955} & 0.1 \\
+        \hline
+        $\alpha$ & \makecell{0.1 \\ 0.01 \\ 0.001 \\ \textbf{0.0001}} & \makecell{1.315 \\ 1.160 \\ 1.061 \\ \textbf{0.946}} & 0.0001 \\
+        \hline
+        $M$ & \makecell{\textbf{2} \\ 5 \\ 10} & \makecell{\textbf{0.946} \\ 0.957 \\ error} & 2 \\
+        \hline
+        Epochs & \makecell{\textbf{100} \\ 200 \\ 500 \\ 1000 \\ 2000 \\ 10000} & \makecell{\textbf{0.946} \\ 0.948 \\ 0.948 \\ 0.950 \\ 0.955 \\ 1.069} & 1000 \\
+        \hline
+        Train set size & \makecell{\textbf{1} \\ 5 \\ 10 \\ 25} & \makecell{\textbf{0.946} \\ 0.952 \\ 0.946 \\ 0.971} & 1 \\
+        \hline
+    \end{tabular}
+    \label{tab:params-map}
+\end{table}
+
+Values marked with "error" represent tests where PP was able to compute paths before the application of the learnt model, but wasn't able to do if after.

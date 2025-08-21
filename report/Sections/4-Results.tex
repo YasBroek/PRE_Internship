@@ -3,194 +3,308 @@
 In our results section, we focus on analyzing the training impact over the overall calculated cost. That impact is measured, as mentioned before, by comparing path costs between the path that takes into account the learned model when computing Prioritized Planning, and the path that doesn't. In this section, when we mention "Cost Ratio" we're referring to the value obtained by
 
 \[
-\text{Cost Ratio} = \frac{\text{Path Cost (Training model + PP)}}{\text{Path Cost (PP)}} \tag{18}
+\text{Cost Ratio} = \frac{\text{Path Cost (Training model + PP)}}{\text{Path Cost (PP)}}. \tag{21}
 \]
+
+During testing, the data was divided into three different sets: the training set, used in the training process, the validation set, applied to tune the learning parameters, and the test set, which was used for displaying final results. The sets were sepparated at a scenario level, that is, each set was attributed a different group of type ids, each containing different positions for agents.
 
 \subsection{Learning through feature attribution}
 
-Table \ref{features_test} provides a comprehensive analysis of how the mean Cost Ratio varies with the number of distinct scenarios included in the training set, across different total numbers of agents (denoted as $m$). These results were derived from evaluating the trained model using the parameter configuration outlined in Table \ref{tab:features_parameters}. The number of training epochs was adjusted based on the number of scenarios, ensuring that the final loss remained sufficiently low.
+As this method aims to offer a better generalization of the learnt weights, once it is not directly related to the map itself, but to features extracted from its characteristics, the experiments for testing the training impact of learning through feature attribution used data from varied maps and numbers of agents. For instance, we tested the training model separately with two different types of training sets: One of them contained instances from different types of maps ("empty-8-8" \ref{fig:empty-8-8}, "empty-32-32" \ref{fig:empty-32-32}, "maze-32-32-2" \ref{fig:maze-32-32-2-}, "maze-32-32-4" \ref{fig:maze-32-32-4}, "random-32-32-20" \ref{fig:random-32-32-20}, "random-64-64-10" \ref{fig:random-64-64-10}, "room-32-32-4" \ref{fig:room-32-32-4}, "room-64-64-8" \ref{fig:room-64-64-8}) and the other took data only from maps most similar to one another ("room-32-32-4" and "room-64-64-8").
 
-The training set comprised randomly selected scenarios, which included both random and evenly distributed instances, with varying quantities of agents. All scenarios were related to the same map, "room-32-32-4", which was arbitrarily chosen from the "Tracking Progress in MAPF" website proposed by \cite{shenTrackingProgressMultiAgent2023}. The evaluation was conducted on a test set containing a variety of random scenarios, all associated with the same map used during training.
-
-\begin{table}[!ht]
-\begin{center}
-\caption{Cost Ratio obtained by training from feature extraction for 10, 25 and 60 agents}
-\label{features_test}
-\begin{tabular}{||c c c c c||}  
-  \hline 
-  Number of scenarios & Final loss & m = 10 & m = 25 & m = 60 \\ [0.5ex]  
-  \hline\hline 
-  25 & $6.16 \times 10^{-3}$ & 1.0664 & 1.2035 & 1.4684  \\ 
-  \hline
-  50 & $7.24 \times10^{-4}$ & 1.1200 & 1.2999 & 1.5699  \\  
-  \hline 
-  100 & $1.28 \times 10^{-4}$ & 1.1356 & 1.3008 & 1.7181  \\ 
-  \hline
-  150 & $4.17 \times 10^{-6}$ & 1.2321 & 1.3541 & 1.7880 \\
-  \hline 
-  200 & $5.02 \times 10^{-6}$ & 1.2412 & 1.4317 & 1.6962 \\ [1ex]  
-  \hline 
-\end{tabular}
-\end{center}
-\end{table}
-
-\begin{table}[!ht]
+\begin{figure}[htbp]
     \centering
-    \caption{Experimental parameters for Learning through feature attribution}
-    \begin{tabular}{|c|c|}
-    \hline
-        $\epsilon$ (Perturbation argument) & 0.001 \\
-        $M$ (Iterations for Monte Carlos sampling) & 10 \\
-        $\alpha$ (Learning rate) & 0.1 \\
-    \hline
-    \end{tabular}
-    \label{tab:features_parameters}
-\end{table}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/e88.png}
+        \caption{empty-8-8}
+        \label{fig:empty-8-8}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/e32.png}
+        \caption{empty-32-32}
+        \label{fig:empty-32-32}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/e48.png}
+        \caption{empty-48-48}
+        \label{fig:empty-48-48}
+    \end{subfigure}
 
-The analysis of the results presented in Table \ref{features_test} indicates that supplying the trained model's predictions to the Prioritized Planning algorithm led to an increase in the total cost of the problem. Notably, there is a discernible trend showing that the Cost Ratio tends to rise with the number of scenarios. This suggests that, as the model gains more experience and learns from additional scenarios, the path cost increases correspondingly.
+    \vspace{0.5cm}
 
-Figure \ref{fig:graphic_features} also shows the behavior of the Cost Ratio according to the number of agents considered when testing.
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/m322.png}
+        \caption{maze-32-32-2}
+        \label{fig:maze-32-32-2-}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/m324.png}
+        \caption{maze-32-32-4}
+        \label{fig:maze-32-32-4}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/m128.png}
+        \caption{maze-128-128-10}
+        \label{fig:maze-128-128-10}
+    \end{subfigure}
 
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.5\linewidth]{Images/impact_vs_agents_features.png}
-    \caption{Cost Ratio on test set according to total number of agents}
-    \label{fig:graphic_features}
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/r3220.png}
+        \caption{random-32-32-20}
+        \label{fig:random-32-32-20}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/r6410.png}
+        \caption{random-64-64-10}
+        \label{fig:random-64-64-10}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/r6420.png}
+        \caption{random-64-64-20}
+        \label{fig:random-64-64-20}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/r324.png}
+        \caption{room-32-32-4}
+        \label{fig:room-32-32-4}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/r648.png}
+        \caption{room-64-64-8}
+        \label{fig:room-64-64-8}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{Images/r6416.png}
+        \caption{room-64-64-16}
+        \label{fig:room-64-64-16}
+    \end{subfigure}
+    
+    \caption{Maps used during training and validation (Images taken from \cite{shenTrackingProgressMultiAgent2023})}
+    \label{fig:maps}
 \end{figure}
 
-The Figure shows that the learned model's impact over the final path cost of the problem increases with the number of agents. This behavior is to be expected, as higher numbers of agents are associated with more conflict occurrences, which are taken into account when building the features matrix.
+Various sets of parameters were tested on the training model using the set of different maps, and the results are presented in Table \ref{tab:params-features-best}. The entire table containing values for all of the parameters tested can be found in Appendix \ref{ap:params}. The number of agents for each instance corresponds to the highest value possible, to which the PP function that was being used was still able to compute paths, and may be consulted on Appendix \ref{ap:sets}. The validation set contained one instance from each map, in addition to 4 other maps, one from each family ("empty-48-48" \ref{fig:empty-48-48}, "maze-128-128-10" \ref{fig:maze-128-128-10}, "random-64-64-20" \ref{fig:random-64-64-20}, "room-64-64-16" \ref{fig:room-64-64-16}), added to validation and training sets to allow observation of the performance of the model when generalizing to other maps. In the table presented in Appendix \ref{ap:params}, Train set size (per map) indicates the quantity of instances gathered from each map for training. That is, in this case where we're training with 8 different maps, a test set of 10 per map indicates that 80 total instances were applied for training.
 
-\subsection{Learning directly from map}
-
-The different options of Generalized Linear Model functions were tested with predetermined values for the parameters and their results are shown in Table \ref{tab:GLM_performances}.
-The tests were run preferentially with higher numbers of agents, as the impact of conflict potential is higher for this learning model.
-
-\begin{table}[!ht]
-\begin{center}
-\caption{Cost Ratio results obtained for each Generalized Linear Model function}
-\label{tab:GLM_performances}
-\begin{tabular}{||c c c c||}  
-  \hline 
-  Linear model & Final loss & Cost Ratio \\ [0.5ex]  
-  \hline\hline 
-  abs & -11732.58 & 2.0366 \\  
-  \hline
-  Softplus & -9725.96 & 1.3700  \\  
-  \hline 
-  $\sigma$ & -51.91 & 1.0000  \\ 
-  \hline 
-  PGD & -11351.581 & 1.6703  \\ 
-  \hline  
-\end{tabular}
-\end{center}
-\end{table}
-
-Table \ref{tab:GLM_performances} shows that the lower Cost Ratio was obtained with Softplus, although it is still higher than 1. $\sigma$ presented a strange behavior, as the analysis of output results showed that the function didn't actually learn anything, so the final path cost rested unchanged.
-
-Different sets of input parameters for the training model were also tested and are presented in table \ref{tab:params}.
+The training set contained only instances with "even" scenario types, which means that agents' positions were evenly distributed through the map, while in the validation set agents were distributed randomly. The tests were executed using 200 epochs for learning, as loss converges before it reaches this number of epochs, as can be seen in Figure \ref{fig:loss-graph-features}, which shows the loss curve and gradient norm evolution when training with the best combination of parameters, chosen based on an average of the performance (Cost Ratio) of the trained model on each instance of the validation set.
 
 \begin{table}[!ht]
     \centering
     \caption{Input parameters tested}
     \begin{tabular}{|c|c|c|c|c|}
         \hline
-        Parameter & Values tested & Train cost ratio & Test cost ratio & (Train + Test) cost ratio \\
+        Parameter & Best Value for Parameter \\
         \hline
-        $\epsilon$ & \makecell{0.1 \\ \textbf{0.01} \\ 0.001} & \makecell{0.968 \\ \textbf{0.968} \\ 0.974} & \makecell{0.992 \\ \textbf{0.999} \\ 0.999} & \makecell{1.959 \\ \textbf{1.967} \\ 1.973} \\
+        $\epsilon$ & 1.0 \\
         \hline
-        $\alpha$ & \makecell{0.1 \\ 0.01 \\ 0.001 \\ \textbf{0.0001}} & \makecell{0.935 \\ 1.062 \\ 1.165 \\ \textbf{0.968}} & \makecell{1.046 \\ 1.058 \\ 1.034 \\ \textbf{0.992}} & \makecell{1.981 \\ 2.120 \\ 2.200 \\ \textbf{1.959}} \\
+        $\alpha$ & 0.0001 \\
         \hline
-        $M$ & \makecell{\textbf{2} \\ 5 \\ 10 \\ 20} & \makecell{\textbf{0.968} \\ 0.984 \\ 0.984 \\ 0.962} & \makecell{\textbf{0.992} \\ 0.998 \\ 0.997 \\ 1.015} & \makecell{\textbf{1.959} \\ 1.982 \\ 1.981 \\ 1.977}\\
+        $M$ & 2 \\
         \hline
-        Epochs & \makecell{100 \\ 200 \\ 500 \\ \textbf{1000}} & \makecell{0.982 \\ 0.991 \\ 0.968 \\ \textbf{0.968}} & \makecell{0.992 \\ 1.038 \\ 1.005 \\ \textbf{0.992}} & \makecell{1.974 \\ 2.029 \\ 1.972 \\ \textbf{1.959}} \\
-        \hline
-        Train set size & \makecell{\textbf{1} \\ 5 \\ 10 \\ 25} & \makecell{\textbf{0.968} \\ 1.067 \\ 0.995 \\ 0.983} & \makecell{\textbf{0.992} \\ 1.011 \\ 1.067 \\ 1.006} & \makecell{\textbf{1.959} \\ 2.078 \\ 2.063 \\ 1.989}\\
+        Train set size (per map) & 3 \\
         \hline
     \end{tabular}
-    \label{tab:params}
+    \label{tab:params-features-best}
 \end{table}
-
-The parameters' values elected as best were the ones that provided a model that, when used for computing paths, obtained the least total cost. As for the number of epochs, the value was chosen based on cost evolution, as we can notice, from Figure \ref{fig:loss_graph}d, that after some point the test cost stops changing.
-
-Given the data presented on the tables above, the rest of the tests were run using Softplus as the Generalized Linear Model, and the values presented on the right column of Table \ref{tab:features_parameters}.
-
-Figure \ref{fig:loss_graph} shows statistics obtained during the training process. For measuring training and test cost evolution, path cost was calculated for computed paths at each epoch interval, both for a selected instance from the training set and for a random test instance.
-
 
 \begin{figure}[!ht]
     \centering
-    \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/grad_new.png}
-        \caption{Gradient of loss over time}
-        \label{fig:grad_loss}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/loss-features-8-final.png}
+        \caption{Loss over time}
+        \label{fig:loss-features-8}
     \end{subfigure}
     \hspace{0.01\textwidth}
-    \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/loss_new.png}
-        \caption{Loss over time}
-        \label{fig:loss}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/grad-features-8-final.png}
+        \caption{Gradient norm over time}
+        \label{fig:grad-features-8}
+    \end{subfigure}
+    
+    \caption{Statistics of learning evolution according to the number of epochs}
+    \label{fig:loss-graph-features}
+\end{figure}
+
+The graphics show that loss decreases until it reaches convergence, indicating that the model is in fact learning new weights according to the guiding solutions that were provided.
+
+The images presented in Figure \ref{fig:perf-agents-8} contain the performance of the trained model according to the number of agents on instances from the test set. In order to analyse the behavior of generalization of the model, the graphics are related to instances with maps from the families that weren't present in the training set. Each image represents the performance of one instance (of type id = 25, and agents' positions distributed randomly through the map), ran repeatedly varying number of agents.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/perf-features-e48-final.png}
+        \caption{empty-48-48}
+        \label{fig:perf-empty-48-48}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/perf-agents-features-m128.png}
+        \caption{maze-128-128-10}
+        \label{fig:perf-maze-128-128-10}
     \end{subfigure}
 
     \vspace{0.5cm}
 
-    \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/train_new.png}
-        \caption{Training cost over time}
-        \label{fig:training_cost}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/perf-features-random-final.png}
+        \caption{random-64-64-20}
+        \label{fig:perf-random-64-64-20}
     \end{subfigure}
     \hspace{0.01\textwidth}
-    \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{Images/test_new.png}
-        \caption{Test cost over time}
-        \label{fig:test_cost}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/perf-features-room-final.png}
+        \caption{room-64-64-16}
+        \label{fig:perf-room-64-64-16}
     \end{subfigure}
     
-    \caption{Statistics of learning evolution according to the number of epochs}
-    \label{fig:loss_graph}
+    \caption{Performance according to number of agents - Learning from different map families}
+    \label{fig:perf-agents-8}
 \end{figure}
+
+The results show that for the maps "maze-128-128-10", "random-64-64-20" and "room-64-64-16" the application of the trained model to Prioritized Planning computation resulted in better paths, as the costs of the new computed paths were always lesser than or equal to original costs (as $Cost Ratio \leq 1$). We can also notice that the performance according to the number of agents can vary significantly according to the type of map, as there is no noticeable tendance of the Cost Ratio evolution as the number of agents increases, presenting a different behavior in each of the conducted experiments.
+
+Although most of the instances showed an improvement of performance after being applied the trained model, the map "empty-48-48" presented higher path costs after learning, indicating that the model is not generalizable to all different instance maps. 
+
+The parameters learnt to be best when training with 8 different maps were also the ones used to train the model only with "room" instance maps, for which the results show in Figures \ref{fig:loss-graph-room} and \ref{fig:perf-agents-features-room}.
 
 \begin{figure}[!ht]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{Images/perf_agents.png}
-        \caption{Performance vs Number of agents}
-        \label{fig:perf_agents}
+        \includegraphics[width=\textwidth]{Images/loss-nam.png}
+        \caption{Loss over time}
+        \label{fig:loss-room}
     \end{subfigure}
     \hspace{0.01\textwidth}
     \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{Images/perf_id.png}
-        \caption{Performance vs Type ID}
-        \label{fig:perf_id}
+        \includegraphics[width=\textwidth]{Images/grad-nam.png}
+        \caption{Gradient norm over time}
+        \label{fig:grad-room}
     \end{subfigure}
     
-    \caption{Performance on test set}
-    \label{fig:perf}
+    \caption{Statistics of learning evolution according to the number of epochs}
+    \label{fig:loss-graph-room}
 \end{figure}
 
-The information presented in Figure \ref{fig:loss_graph} shows that the final path costs for both the training and test scenarios actually increased as the model's loss decreased, indicating that, the more the model learned, the worst its impact on the final cost.
-
-Figure \ref{fig:graphic_map} also shows the behavior of the Cost Ratio according to the number of agents
-considered when testing.
-
-Once again, it is observed that the training model's influence over the cost value tends to grow according to the number of agents considered in the instance, which is to be expected as the number of conflicts impacts directly on the training process.
-
-To allow a more accurate visualization an analysis of the training process' output, Figure \ref{fig:heatmap} presents a heatmap of the predicted weights for a test scenario, where the black squares represent the obstacles of the map.
 
 \begin{figure}[!ht]
-    \begin{subfigure}[b]{0.5\textwidth}
-        \includegraphics[width=0.925\textwidth]{Images/original_grid.png}
-        \caption{Original map}
-        \label{fig:original_map}
-    \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}[b]{0.5\textwidth}
-        \includegraphics[width=\textwidth]{Images/heatmap_weights.png}
-        \caption{Weights heatmap}
-        \label{fig:heatmap}
-    \end{subfigure}
-    \vfill
-    \caption{Weight prediction visualization from trained model}
-    \label{fig:weight_pred}
+    \centering
+    \includegraphics[width=0.7\textwidth]{Images/perf-r-final.png}
+    \caption{Performance according to number of agents - Learning from "room" instances}
+    \label{fig:perf-agents-features-room}
 \end{figure}
 
-From the heatmap shown in Figure \ref{fig:heatmap}, it can be observed that the predicted edge weights do not follow the expected pattern. Specifically, one would reasonably expect that areas corresponding to "doors"—which typically represent traversable and frequently used paths—would have consistently higher weights compared to other regions. However, the heatmap does not reflect this behavior; high-weight values appear scattered and do not systematically align with the expected door locations. This suggests that the model may not have learned a meaningful distinction between traversable and non-traversable regions, indicating room for improvement in either the model architecture, training process, or data representation.
+Once again, loss and gradient norm evolution show the expected behaviour, similar to the previous experiment. When comparing the performance to \ref{fig:perf-empty-48-48}, we can notice a similar behavior of the Cost Ratio according to the number of agents, except that the present experiment displayed regions with a Cost Ratio higher than 1, indicating that, for this instance, the training process using maps from all families showed a better result.
+
+\subsection{Learning directly from map}
+
+The same set of experiments as the previous section were done to evaluate the parameters for training. The entire table with results can be found on Appendix \ref{ap:params}, and the best values used for the rest of the section are presented in Table \ref{tab:params-map}.
+
+This time, the training set was constructed by evaluating the highest quantity of agents possible in the scenario, to which the Prioritized Planning function, imported from MultiAgentPathfinding.jl \cite{dalleLearningCombinatorialOptimization2022}, was able to compute paths. The tests were run giving priority to higher numbers of agents because the impact of conflict potential is higher for this learning model. The validation set was composed of three instances of different type ids, containing 10, 20 and 45 agents, values that were chosen to evaluate performance over a varied agent count.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Input parameters tested}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        Parameter & Best Value for parameter \\
+        \hline
+        $\epsilon$ & 0.01 \\
+        \hline
+        $\alpha$ & 0.0001 \\
+        \hline
+        $M$ & 2 \\
+        \hline
+        Train set size & 1 \\
+        \hline
+    \end{tabular}
+    \label{tab:params-map}
+\end{table}
+
+The different options of Generalized Linear Model functions were tested with the best values, and the best behaviour was presented by Projected Gradient Descent, which will be the model used for testing.
+
+Figure \ref{fig:loss-graph} shows statistics obtained during the training process. 
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/grad-final-map.png}
+        \caption{Gradient of loss over time}
+        \label{fig:grad-loss}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/loss-final-map.png}
+        \caption{Loss over time}
+        \label{fig:loss}
+    \end{subfigure}    
+    \caption{Statistics of learning evolution according to the number of epochs - Learning from map}
+    \label{fig:loss-graph}
+\end{figure}
+
+The graphics show that the training process terminates before the loss converges, indicating that early stopping showed to be ideal for getting the best results, to avoid overfitting, considering that tests with a higher number of epochs led to a lesser performance, as can be seen in Appendix \ref{ap:params}.
+
+To evaluate the model performance according to agent count on the instances, three instances (room-32-32-4, scen type = "random") were taken from the test set and the trained model was repeatedly applied to it, increasing the number of agents to as high as possible (until the Prioritized Planing function wasn't able to compute paths anymore). The behaviour of the cost ratio according to the number of agents is presented on Figure \ref{fig:ratio-agents}. The instances picked for the test set were the ones with the highest numbers of agents possible, considering the capacity of the PP function to compute paths.
+
+The image shows that, overall, the trained model provides an improvement to the Prioritized Planning computed paths, with no noticeable pattern following the number of agents, showing that the performance behavior may vary significantly according to agents' distributions, but that for most scenarios the application of the model outputs a lower path cost.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/perf-map-8.png}
+        \caption{Type id 8, up to 86 agents}
+        \label{fig:8-86}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/perf-map-9.png}
+        \caption{Type id 9, up to 80 agents}
+        \label{fig:9-80}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/perf-map-14.png}
+        \caption{Type id 14, up to 100 agents}
+        \label{fig:14-100}
+    \end{subfigure}
+    
+    \caption{Performance according to number of agents}
+    \label{fig:ratio-agents}
+\end{figure}
+
+\subsubsection{Learning with Prioritized Planning}
+
+
+To further study the impacts of learning from a different computing algorithm (ISP) than the one used for finding final paths, we decided to also explore the effects of learning by applying PP directly in the training pipeline, even though it doesn't fulfill the LP prerequisite of Fenchel Young Losses, to study the possible effects of this configuration.
+
+The resulting graphics are shown in Figure \ref{fig:loss-graph-PP}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/grad-PP.png}
+        \caption{Gradient of loss over time}
+        \label{fig:grad-loss-PP}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/loss-PP.png}
+        \caption{Loss over time}
+        \label{fig:loss-PP}
+    \end{subfigure}    
+    \caption{Statistics of learning evolution according to the number of epochs - Learning from map}
+    \label{fig:loss-graph-PP}
+\end{figure}
+
+We can see that when training using PP directly on the pipeline, the model isn't actually learning, as loss presents a tendency to increase over time.

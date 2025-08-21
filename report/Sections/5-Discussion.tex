@@ -1,105 +1,55 @@
 \section{Discussion}
 
-The results obtained from the experiments show that the use of the training methods that were proposed when computing paths actually worsened the optimization of the model, instead of helping the Prioritized Planning process.
+From the results shown in the previous section, it is possible to see that the developed methods have the potential to help improve path computation via Prioritized Planning, and sometimes do improve the overall path cost when applied, but that it's not the case for every instance.
 
-Considering this result, different hypothesis are raised to explain the behavior observed, which will be elaborated in the following subsections:
-\begin{enumerate}
-\item \textbf{Insufficient training data}: The dataset may not have been large enough to capture the complexity of the problem.
-\item \textbf{Inappropriate training data}: The data used for learning may not have been representative of the relevant features or decision boundaries.
-\item \textbf{Lack of scenario diversity}: The training process may have lacked exposure to a sufficiently wide range of realistic scenarios.
-\item \textbf{Mismatch between training and testing algorithms}: Significant differences between the algorithms used during training and those used during evaluation may have hindered generalization.
-\end{enumerate}
+The discordant behavior presented by the "empty-48-48" instance in \ref{fig:perf-empty-48-48}, where the trained model incurred in higher path costs, may be explained by its dissimilarity to the other types of maps, as it presents no obstacles. Although other "empty" maps were present in the training set, a lot of features were based on obstacle disposition, which may have affected the performance when testing on this map. An alternative for learning for this type of map in future studies would be to ellaborate a training method with features thought specifically for this case, where no obstacles are present and the main difficulty for agents is not to have conflicts with one another.
 
-\subsection{Insufficient training data}
+The other experiments presented a good performance, obtaining Cost Ratios lesser than or equal to 1, showing that the developed models have a great potential of helping finding good solutions for the MAPF problem. Still, during this study we were able to raise some aspects that possibly limited the impact of the trained model, that can be discussed and improved in future studies.
 
-The first hypothesis to explain the results obtained from training is that not enough training data was provided for learning in the context of a rather complex problem.
+A first aspect that catches attention is the \textbf{quantity and representability of features} extracted from the instances when they are used in the training process. The complexity of the different instances of the MAPF problem may not have been entirely represented by the set of features that was developed, containing a total of only 8 features. Future studies may benefit from developing models with a more developed feature extraction, containing features that can represent information related to specific map characteristics, such as centrality, obstacle distribution, size, and obstacle density, as well as related to agents' positionings and distributions, and possible impacts of removing an edge, for example.
 
-To experiment on that hypothesis, the training model (from learning directly from map) was applied with a total of 1025 instance scenarios.
+\textbf{Scenario diversity} is another aspect that must be investigated. Although when training with features a high number of different scenarios were used on the training set, training directly from map still only learned from a limited quantity of instances, with high agent quantities. The performance of the trained model may be different when providing a more diverse set of instances as input, which is something that wasn't investigated during this study and may be an interesting experiment for future implementations.
 
-\begin{figure}[H]
-\centering
-\begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{Images/grad1025.png}
-    \caption{Gradient of loss over time}
-    \label{fig:grad_loss_1025}
-\end{subfigure}
-\hspace{0.01\textwidth}
-\begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{Images/loss1025.png}
-    \caption{Loss over time}
-    \label{fig:loss_1025}
-\end{subfigure}
+The \textbf{effect of perturbation} during the training process may also be highlighted. As we are not able to directly gather the derivatives of the Pathfinding algorithms, as neither ISP nor PP are differentiable functions, we opted to apply perturbations during the learning process, according to the Fenchel Young Loss method. The effect of the applied perturbations may have gotten in the way of learning, so the final model doesn't exactly represent what is learnt from the shortest path predictor.
 
-\vspace{0.5cm}
+A final very important consideration is that the Prioritized Planning applied for computing final paths didn't take into consideration any heuristics for ordering agents (as mentioned before, PP applied for learning was different from the one ellaborated during this study). That fact limits the possible improvements upon predicted paths.
 
-\begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{Images/train1025.png}
-    \caption{Training cost over time}
-    \label{fig:training_cost_1025}
-\end{subfigure}
-\hspace{0.01\textwidth}
-\begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{Images/test1025.png}
-    \caption{Test cost over time}
-    \label{fig:test_cost_1025}
-\end{subfigure}
+To improve the understanding of what is happening during learning, we developed a simpler instance \ref{fig:simple_instance}, in which it is possible to visually think of the best possible solution, which is different both from a solution computed with ISP \ref{fig:path_ISP} and from a solution computed with PP \ref{fig:path_PP}, all shown in Figure \ref{fig:simple_instance_fig}.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/orig_map.png}
+        \caption{Original instance}
+        \label{fig:simple_instance}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/best_map.png}
+        \caption{Best possible path}
+        \label{fig:best_path}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/ISP_map.png}
+        \caption{Path computed by ISP}
+        \label{fig:path_ISP}
+    \end{subfigure}
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Images/PP_map.png}
+        \caption{Path computed with PP}
+        \label{fig:path_PP}
+    \end{subfigure}
     
-\caption{Statistics of learning evolution according to the number of epochs - training with 1025 instances}
-\label{fig:loss_graph_1025}
+    \caption{Statistics of learning evolution according to the number of epochs}
+    \label{fig:simple_instance_fig}
 \end{figure}
 
-Analyzing the graphs presented in Figure \ref{fig:loss_graph_1025}, it is evident that the gradient stabilizes significantly faster compared to previous tests (Figure \ref{fig:loss_graph}), which were conducted with only 25 scenarios. This behavior is expected, as the current setup allows the model to iterate over more than 1000 additional scenarios within the same number of epochs. The loss follows a similar pattern as before, decreasing linearly and indicating that the model is effectively learning.
+In the instance presented in the image, the best possible option, which can be noticed with the naked eye, is that in which the blue agent takes the shortest path towards its goal, while the red one goes around the obstacle in the middle, avoiding time-space collisions. ISP proposes direct trajectories from agent departures towards their goals, which are infeasible, resulting in conflicts. Finally, PP first computes the path for the red agent, which takes the direct way, making the blue agent contour the middle obstacle, resulting in a path of higher cost.
 
-However, the training cost increases until it plateaus at a certain value and does not decrease further. Additionally, the test cost remains unstable even after 200 epochs, showing no clear tendency to decrease.
+When testing in this simple instance, we applied the learning process both based on ISP and PP computations. Training with ISP led to a decreasing and converging loss, resulting on the expected path by the end of training, while the loss increased with the number of epochs when training with PP (although the trained model was able to predict weights that led the final path computation to find the right path). This indicates that PP in fact isn't applicable to Fenchel Young Losses.
 
-The analysis of training behavior even with a large training set indicates that insufficient training data probably isn't the main issue with the learning model outputs, leaving space for the development of alternative hypothesis.
-
-\subsection{Inappropriate training data}
-
-A second hypothesis that was raised referred to the qualitative aspect of the data, questioning the appropriateness of the scenarios provided to the model.
-
-*****
-
-\subsection{Lack of scenario diversity}
-
-\subsection{Mismatch between training and testing algorithms}
-
-Finally, another potential problem that might have impacted the learning process' application results is the use of different algorithms during the learning and testing phases: The training process applies Independent Shortest Paths to learn edge weights, while Prioritized Planning is applied when computing the final paths for agents.
-
-The use of different algorithms is due to the non-differentiability of PP, rendering it inadequate for Gradient Descent, leaving ISP as a substitute for training.
-
-To experiment on that hypothesis, the ML model was trained and tested on scenarios which originally contained no conflicts, that is, instances in which agent's paths didn't collide even when computed using ISP, making the ISP solution the most similar possible to the PP solution. The results are presented in \ref{fig:loss_graph_h}.
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{Images/grad_h.png}
-    \caption{Gradient of loss over time}
-    \label{fig:grad_loss_h}
-\end{subfigure}
-\hspace{0.01\textwidth}
-\begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{Images/loss_h.png}
-    \caption{Loss over time}
-    \label{fig:loss_h}
-\end{subfigure}
-
-\vspace{0.5cm}
-
-\begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{Images/train_h.png}
-    \caption{Training cost over time}
-    \label{fig:training_cost_h}
-\end{subfigure}
-\hspace{0.01\textwidth}
-\begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{Images/test_h.png}
-    \caption{Test cost over time}
-    \label{fig:test_cost_h}
-\end{subfigure}
-    
-\caption{Statistics of learning evolution according to the number of epochs - instances with no conflicts}
-\label{fig:loss_graph_h}
-\end{figure}
-
-The Figure shows that, although the training and testing algorithms are at their most similar, training and test cost curves still tend to grow with training, indicating that might not be the actual problem with the studied method.
+The table of tests for learning directly from map, presented in \ref{ap:params}, also shows that some configurations of parameters for training led to weights for which PP wasn't able to compute paths, for instances for which paths were originally computable. This reinforces the limitations provided by the lack of prioritizing heuristics for PP, as well as the impact of using different algorithms for learning and computing final paths.

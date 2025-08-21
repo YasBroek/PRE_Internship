@@ -16,7 +16,7 @@ instance_scen_type = "even"
 num_agents = 10
 
 instance_solution = 12
-instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, num_agents)
+instance = MAPF_code.convert_to_my_struct(file_instance, instance_data, 100)
 
 path_gdalle = cooperative_astar(
     MAPF(instance.graph, instance.starts, instance.goals), collect(1:num_agents)

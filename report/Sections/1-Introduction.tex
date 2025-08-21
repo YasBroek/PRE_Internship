@@ -1,8 +1,19 @@
 \section{Introduction}
 
-Start by motivating the study: why does it matter? Theoretical appeal + practical applications.
-Then give a brief overview of the problem and solution approaches (to be extended in the lit review).
-What is missing from previous papers? What is your novel angle?
-Briefly describe your contributions.
+The Multi-Agent Path Finding (MAPF) problem consists of computing collision-free paths for multiple agents that operate within a shared environment. Each agent is assigned a start and a goal location, and the objective is to find feasible routes such that all agents reach their destinations while avoiding colliding into one another.
 
-Also describe the context of the internship: institution, tutoring, environment.
+MAPF has attracted attention in the last years due to both its theoretical complexity and its practical applications. On the theoretical side, the problem is computationally challenging, as coordinating multiple agents involves intricate combinatorial reasoning. On the practical side, MAPF has applications in a lot of domains of the real world, including the coordination of autonomous warehouse robots, air traffic and railway scheduling, multi-vehicle systems, and virtual agents in games and simulations.
+
+As a result, MAPF stands as an important topic in artificial intelligence, robotics, and operations research, bridging fundamental algorithmic challenges with real-world impact.
+
+With its increasing notoriety in the researching world, a lot of different methods have been developed for solving the MAPF problem, a problem known to be NP-hard, in the last years. The solution approaches range from solving the whole problem at the same time, which can be very computationally expensive, to separating the problem into smaller parts and analyzing one agent or conflict at a time, for example. For that, a number of different heuristics and methods have been developed.
+
+The application of Machine Learning methods to the MAPF problem is something relatively new, to which the number of studies started increasing in recent years. Although it poses an interesting strategy, the development of an ML model for this problem can be fairly complicated, as the problem of pathfinding is non-differentiable, complicating the learning process based on Gradient Descent, which needs the gradients of the function for learning.
+
+Different alternatives have been developed by researchers for training a ML model, ranging from Black Box applications to the model to learning focusing on the accuracy of the parameter predictions preceding the decision model, rather than on improving the final objective function.
+
+This present study intends to establish a Machine Learning model capable of applying Gradient Descent for training, by using techniques related to perturbations and Fenchel-Young Losses, that haven't yet been used in the context of the MAPF problem, to the extent of our knowledge. The application of these methods has the intention of allowing the model to actually learn from path prediction algorithms.
+
+In the development of this study, we propose two different training pipelines: one of them extracts features for each of the edges from the instances and predicts weights for them, while the second one is responsible for learning the edge weights directly from instances.
+
+The study was developed during a 3-month internship at Université Gustave Eiffel, in the LVMT laboratory. The study was guided by the researcher Guillaume Dalle.

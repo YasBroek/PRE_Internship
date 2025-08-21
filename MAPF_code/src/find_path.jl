@@ -1,3 +1,31 @@
+"""
+    independent_shortest_paths(instance::MAPF_Instance) 
+        -> Vector{Vector{SimpleWeightedEdge{Int64, Float64}}}
+
+Compute the **independent shortest paths** for all agents in a MAPF instance.  
+
+Each agent’s path is planned individually using the A* search algorithm, **ignoring all conflicts** 
+with other agents. This gives a baseline solution that is generally not collision-free, but can 
+serve as an initial heuristic or ordering reference for prioritized planning.
+
+# Arguments
+- `instance::MAPF_Instance`:
+    A MAPF problem instance containing:
+    - `graph`: The environment graph (undirected, weighted).
+    - `starts`: Vector of start vertices (one per agent).
+    - `goals`: Vector of goal vertices (one per agent).
+
+# Algorithm
+- For each agent:
+  1. Run `a_star` from its start to its goal on `instance.graph`.
+  2. Use uniform zero heuristic (`v -> 0.0`) → effectively Dijkstra’s algorithm.
+  3. Collect the resulting path as a sequence of `SimpleWeightedEdge`.
+
+# Returns
+- `paths::Vector{Vector{SimpleWeightedEdge{Int64,Float64}}}`:
+    A vector of paths, one per agent.  
+    Each path is the **shortest path** (ignoring other agents).
+"""
 function independent_shortest_paths(instance::MAPF_Instance)
     paths = [
         a_star(
@@ -105,6 +133,27 @@ function unite_goal(instance::MAPF_Instance, teg::TimeExpandedGraph)
     end
     return g
 end
+
+"""
+    prioritized_planning_v2(instance::MAPF_Instance) -> Vector{Vector{SimpleWeightedEdge{Int64, Float64}}}
+
+Run a prioritized planning algorithm for multi-agent pathfinding (MAPF) on a grid-like instance.  
+This function computes collision-free paths for multiple agents by planning sequentially, giving 
+higher priority to agents with fewer potential goal conflicts.
+
+# Arguments
+- `instance::MAPF_Instance`: 
+    A MAPF problem instance containing:
+    - `graph`: The environment graph (undirected, weighted).
+    - `width`: Width of the grid (must be ≤ 128).
+    - `starts`: Vector of start vertices (one per agent).
+    - `goals`: Vector of goal vertices (one per agent).
+
+# Returns
+- `paths::Vector{Vector{SimpleWeightedEdge{Int64,Float64}}}`:
+    A vector of paths, where `paths[i]` is the path for agent `i`.
+
+"""
 
 function prioritized_planning_v2(instance::MAPF_Instance)
     if instance.width > 128
@@ -260,6 +309,23 @@ function prioritized_planning_v2(instance::MAPF_Instance)
     return paths
 end
 
+"""
+    path_cost(instance::MAPF_Instance, paths::Vector{Vector{SimpleWeightedEdge}}) -> Float64
+
+Compute the **total cost** of a set of planned agent paths in a MAPF instance.  
+The cost is defined as the sum of the edge weights traversed by all agents, excluding 
+staying at the goal position.
+
+# Arguments
+- `instance::MAPF_Instance`: 
+    The MAPF problem instance containing the environment graph and goals.
+- `paths::Vector{Vector{SimpleWeightedEdge}}`: 
+    A vector of paths as produced by `prioritized_planning_v2`.
+
+# Returns
+- `total_cost::Float64`: 
+    The sum of all edge traversal costs across all agents.
+"""
 function path_cost(instance, paths)
     total_cost = 0
     for path in 1:length(paths)
@@ -287,6 +353,29 @@ function path_to_binary_matrix(instance::MAPF_Instance, paths)
     return binary_variables
 end
 
+"""
+    path_to_binary_vector(instance::MAPF_Instance, paths::Vector{Vector{SimpleWeightedEdge}}) 
+        -> SparseVector{Int}
+
+Convert a set of agent paths into a **binary edge-usage vector** representation.
+
+This function maps each edge in the graph to an index in a sparse vector.  
+For every edge traversed by an agent’s path, the corresponding entry in the vector is incremented 
+(by 1 per traversal).  
+
+Effectively, this produces a compact numerical encoding of how often each edge is used across all agents.
+
+# Arguments
+- `instance::MAPF_Instance`: 
+    A MAPF problem instance containing the environment graph.
+- `paths::Vector{Vector{SimpleWeightedEdge}}`: 
+    A vector of agent paths (e.g. produced by `prioritized_planning_v2`).
+
+# Returns
+- `binary_variables::SparseVector{Int}`:  
+    A sparse vector of length equal to the number of edges in the graph.  
+    Entry `i` represents how many times edge `i` is used across all paths.
+"""
 function path_to_binary_vector(instance, paths)
     edge_list = collect(edges(instance.graph))
     edge_to_index = Dict((src(e), dst(e)) => i for (i, e) in enumerate(edge_list))

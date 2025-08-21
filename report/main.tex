@@ -16,7 +16,7 @@
 \usepackage{xcolor}
 \usepackage{ragged2e}
 \usepackage{fancyhdr}
-\usepackage[nottoc, notlof, notlot,numbib]{tocbibind}
+\usepackage[nottoc, notlof, notlot]{tocbibind}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{hyperref}
@@ -34,7 +34,6 @@
 \usepackage{biblatex}
 \addbibresource{MAPF.bib}
 
-\usepackage{minted}
 \usepackage{csquotes}
 \setlength{\headheight}{15pt}
 \addtolength{\topmargin}{-3pt}
@@ -172,7 +171,7 @@
     \centering{\LARGE \textbf{Research Internship (PRe)}} \\
     \hfill\\
     \centering{\large \textbf{Field of Study: Machine Learning and Optimization}}\\
-    \centering{\large \textbf{Scholar Year : 2024-2025}} \\
+    \centering{\large \textbf{Scholar Year : 2024--2025}} \\
     \hfill\\
     \vfill
     \centering{\huge \textbf{A Decision-Focused Learning
@@ -244,13 +243,13 @@ or distributed in electronic format.
 \include{Sections/4-Results}
 \include{Sections/5-Discussion}
 \include{Sections/6-Conclusion}
-\printbibliography
-{
-\cleardoublepage 
-\phantomsection 
-\addcontentsline{}{section}{References}
-}
 
 \include{Sections/A-Apendix}
+\include{Sections/B-Apendix}
+
+\cleardoublepage 
+\phantomsection 
+\addcontentsline{toc}{section}{References}
+\printbibliography
 
 \end{document}

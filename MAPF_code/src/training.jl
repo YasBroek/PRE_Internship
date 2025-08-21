@@ -38,9 +38,9 @@ function extract_features(instance)
     return features
 end
 
-function extract_features_gdalle(mapf)
+function extract_features_gdalle(mapf, instance_name)
     edge_list = collect(edges(mapf.graph))
-    grid = read_benchmark_map("room-32-32-4")
+    grid = read_benchmark_map(instance_name)
     tuple = parse_benchmark_map(grid)
     features = zeros(Float64, ne(mapf.graph), 8)
     paths = Solution_to_paths(independent_dijkstra(mapf), mapf)
@@ -359,6 +359,22 @@ function maximizer_weights_gdalle(minus_theta; mapf)
     return y
 end
 
+function maximizer_weights_gdalle_PP(minus_theta; mapf)
+    theta = -minus_theta
+    theta_projected = max.(theta, 1e-3)
+    new_graph = adapt_weights(mapf, theta_projected)
+    new_mapf = MAPF(
+        new_graph.graph,
+        mapf.departures,
+        mapf.arrivals;
+        vertex_conflicts=mapf.vertex_conflicts,
+        edge_conflicts=mapf.edge_conflicts,
+    )
+    solution_indep = cooperative_astar(new_mapf, collect(1:length(mapf.arrivals)))
+    y = count_edge_visits(solution_indep, mapf)
+    return y
+end
+
 function count_edge_visits(solution::Solution, mapf::MAPF)
     visits = similar(mapf.graph.weights, Int)
     visits.nzval .= 0
@@ -374,13 +390,7 @@ function count_edge_visits(solution::Solution, mapf::MAPF)
 end
 
 function training_weights_gdalle(
-    instance_list,
-    benchmarkSols,
-    ϵ::Float64,
-    M::Int,
-    α::Float64,
-    num_epochs::Int,
-    test_instance,
+    instance_list, benchmarkSols, ϵ::Float64, M::Int, α::Float64, num_epochs::Int, test_list
 )
     weights_list = -MultiAgentPathFinding.vectorize_weights(instance_list[1].graph)
     y_best_found_solution = []
@@ -401,7 +411,7 @@ function training_weights_gdalle(
         total_grad = 0.0
         for (index, mapf) in enumerate(instance_list)
             y_target = y_best_found_solution[index]
-            layer = PerturbedAdditive(
+            layer = PerturbedMultiplicative(
                 maximizer_weights_gdalle;
                 ε=ϵ,
                 nb_samples=M,
@@ -417,39 +427,32 @@ function training_weights_gdalle(
             weights_list = min.(weights_list, -1e-3)
 
             total_loss += l
-            total_grad += mean(grads[1])
+            total_grad += norm(grads[1])
         end
         avg_loss = total_loss / length(instance_list)
         avg_grad = total_grad / length(instance_list)
-
-        if epoch % 20 == 1
-            weighted_instance_train = adapt_weights(instance_list[1], -weights_list)
-            weighted_instance_test = adapt_weights(test_instance, -weights_list)
-
-            path_cost_train = sum_of_costs(
-                cooperative_astar(
-                    weighted_instance_train, collect(1:length(instance_list[1].departures))
-                ),
-                instance_list[1],
-            )
-            path_cost_test = sum_of_costs(
-                cooperative_astar(
-                    weighted_instance_test, collect(1:length(test_instance.departures))
-                ),
-                test_instance,
-            )
-            push!(training_cost, path_cost_train)
-            push!(test_cost, path_cost_test)
-        end
 
         push!(losses, avg_loss)
         push!(grads_list, avg_grad)
         push!(epoch_list, epoch)
     end
+    val = []
+    for instance in test_list
+        old_path_cost = sum_of_costs(
+            cooperative_astar(instance, collect(1:length(instance.departures))), instance
+        )
+        weighted_instance = adapt_weights(instance, -weights_list)
+        path_cost = sum_of_costs(
+            cooperative_astar(weighted_instance, collect(1:length(instance.departures))),
+            instance,
+        )
+        push!(val, path_cost / old_path_cost)
+    end
+
+    println(mean(val))
+
     fig1 = Figure(; resolution=(800, 500))
     fig2 = Figure(; resolution=(800, 500))
-    fig3 = Figure(; resolution=(800, 500))
-    fig4 = Figure(; resolution=(800, 500))
 
     ax1 = Axis(
         fig1[1, 1]; xlabel="Epoch", ylabel="Gradient", title="Loss gradient over time"
@@ -461,24 +464,8 @@ function training_weights_gdalle(
 
     lines!(ax2, epoch_list, losses; color=:red, linewidth=2)
     display(fig2)
-    ax3 = Axis(fig3[1, 1]; xlabel="Epoch", ylabel="Cost", title="Training cost over time")
 
-    lines!(
-        ax3,
-        [20 * i for i in 1:length(training_cost)],
-        training_cost;
-        color=:red,
-        linewidth=2,
-    )
-    display(fig3)
-    ax4 = Axis(fig4[1, 1]; xlabel="Epoch", ylabel="Cost", title="Test cost over time")
-
-    lines!(ax4, [20 * i for i in 1:length(test_cost)], test_cost; color=:red, linewidth=2)
-    display(fig4)
-    println("train cost: $(training_cost[end] / training_cost[1])")
-    println("test cost: $(test_cost[end] / test_cost[1])")
-    println((training_cost[end] / training_cost[1]) + (test_cost[end] / test_cost[1]))
-    return weights_list, losses
+    return weights_list, losses, val
 end
 
 function training(
@@ -571,6 +558,142 @@ end
 
 function training_gdalle(
     instance_list,
+    instance_names,
+    benchmarkSols,
+    features_list,
+    ϵ::Float64,
+    M::Int,
+    α::Float64,
+    num_epochs::Int,
+    validation_set,
+    validation_names,
+)
+    y_best_found_solution = []
+    # features_list = []
+    @showprogress "Extracting features" for (index, instance) in enumerate(instance_list)
+        # push!(features_list, extract_features_gdalle(instance, instance_names[index]))
+        push!(y_best_found_solution, count_edge_visits(benchmarkSols[index], instance))
+    end
+
+    features_sample = features_list[1]
+    num_features_per_edge = size(features_sample, 2)
+    num_edges = size(features_sample, 1)
+
+    # Model predicts one weight per edge based on its 8 features
+    model = Chain(
+        Dense(num_features_per_edge => 32, relu),
+        Dense(32 => 16, relu),
+        Dense(16 => 1),
+        x -> min.(x, -1e-3),  # Clamp to negative values like in training_weights_gdalle
+    )
+
+    opt = Flux.Adam(α)
+    opt_state = Flux.setup(opt, model)
+
+    losses = Float64[]
+    epoch_list = []
+    grads_list = []
+
+    @showprogress for epoch in 1:num_epochs
+        total_loss = 0.0
+        total_grad = 0.0
+
+        for (index, instance) in enumerate(instance_list)
+            features = features_list[index]  # Shape: (1646, 8)
+            y_target = y_best_found_solution[index]
+
+            # Create layer with same parameters as working version
+            layer = PerturbedMultiplicative(
+                maximizer_weights_gdalle;
+                ε=ϵ,
+                nb_samples=M,
+                seed=0,
+                rng=StableRNG(0),
+                threaded=true,
+            )
+            loss_fn = FenchelYoungLoss(layer)
+
+            # Compute loss and gradients
+            l, grads = Zygote.withgradient(model) do m
+                # Apply model to all edges at once using batch processing
+                # Transpose features to get (8, 1646) for batch processing
+                features_batch = features'  # Now (8, 1646)
+                weights_batch = m(features_batch)  # Apply to all edges at once
+                θ_vec = vec(weights_batch)  # Flatten to get vector of length 1646
+                loss_fn(θ_vec, y_target; mapf=instance)
+            end
+
+            yield()
+
+            # Update model parameters
+            Flux.update!(opt_state, model, grads[1])
+
+            total_loss += l
+            if epoch % 20 == 0
+                println(grads[1])
+            end
+            total_grad += compute_gradient_norm(grads[1])
+        end
+
+        avg_loss = total_loss / length(instance_list)
+        avg_grad = total_grad / length(instance_list)
+
+        push!(losses, avg_loss)
+        push!(grads_list, avg_grad)
+        push!(epoch_list, epoch)
+    end
+
+    # Validation
+    validation_costs = Float64[]
+
+    for (index, val_instance) in enumerate(validation_set)
+        try
+            path_cost_val_original = sum_of_costs(
+                cooperative_astar(val_instance), val_instance
+            )
+            features_val = extract_features_gdalle(val_instance, validation_names[index])
+            features_batch_val = features_val'
+
+            weights_batch_val = model(features_batch_val)
+            θ_vec_current_val = vec(weights_batch_val)
+
+            weighted_instance_val = adapt_weights(val_instance, -θ_vec_current_val)
+
+            path_cost_val = sum_of_costs(
+                cooperative_astar(weighted_instance_val), val_instance
+            )
+
+            push!(validation_costs, path_cost_val / path_cost_val_original)
+
+        catch e
+            println("Error in validation instance $(index): $e")
+            push!(validation_costs, Inf)
+        end
+    end
+
+    avg_val_cost = mean(validation_costs[validation_costs .!= Inf])
+    println("Average validation cost: $(avg_val_cost)")
+    println("Validation costs: $(validation_costs)")
+
+    # Create plots (same as original)
+    fig1 = Figure(; resolution=(800, 500))
+    fig2 = Figure(; resolution=(800, 500))
+
+    ax1 = Axis(
+        fig1[1, 1]; xlabel="Epoch", ylabel="Gradient", title="Loss gradient over time"
+    )
+    lines!(ax1, epoch_list, grads_list; color=:red, linewidth=2)
+    display(fig1)
+
+    ax2 = Axis(fig2[1, 1]; xlabel="Epoch", ylabel="Loss", title="Loss over time")
+    lines!(ax2, epoch_list, losses; color=:red, linewidth=2)
+    display(fig2)
+
+    return model, losses, avg_val_cost
+end
+
+function training_PP_weights_gdalle(
+    instance_list,
     benchmarkSols,
     ϵ::Float64,
     M::Int,
@@ -578,15 +701,13 @@ function training_gdalle(
     num_epochs::Int,
     test_instance,
 )
+    weights_list = -MultiAgentPathFinding.vectorize_weights(instance_list[1].graph)
     y_best_found_solution = []
-    features_list = []
-    @showprogress "first loop" for (index, instance) in enumerate(instance_list)
-        push!(features_list, extract_features_gdalle(instance))
+    for (index, instance) in enumerate(instance_list)
         push!(y_best_found_solution, count_edge_visits(benchmarkSols[index], instance))
     end
-    model = Chain(Dense(size(features_list[1], 2) => 1), x -> min.(x, -1e-3))
     opt = Flux.Adam(α)
-    opt_state = Flux.setup(opt, model)
+    opt_state = Flux.setup(opt, weights_list)
 
     losses = Float64[]
     epoch_list = []
@@ -597,11 +718,10 @@ function training_gdalle(
     @showprogress for epoch in 1:num_epochs
         total_loss = 0.0
         total_grad = 0.0
-        for (index, instance) in enumerate(instance_list)
-            x_input = features_list[index]'
+        for (index, mapf) in enumerate(instance_list)
             y_target = y_best_found_solution[index]
             layer = PerturbedAdditive(
-                maximizer_weights_gdalle;
+                maximizer_weights_gdalle_PP;
                 ε=ϵ,
                 nb_samples=M,
                 seed=0,
@@ -609,44 +729,21 @@ function training_gdalle(
                 threaded=true,
             )
             loss = FenchelYoungLoss(layer)
-            grads = Zygote.gradient(model) do m
-                θ = m(x_input)
-                θ_vec = vec(θ')
-                loss(θ_vec, y_target; mapf=instance)
-            end
+            l, grads = Zygote.withgradient(mt -> loss(mt, y_target; mapf), weights_list)
             yield()
 
-            Flux.update!(opt_state, model, grads[1])
-            """
-            for p in Flux.params(model)
-                @. p = clamp(p, ϵ, 1.0)
-            end
-            """
+            weights_list -= α * grads[1]
+            weights_list = min.(weights_list, -1e-3)
 
-            θ_current = model(x_input)
-            θ_vec_current = vec(θ_current')
-            current_loss = loss(θ_vec_current, y_target; mapf=instance)
-            total_loss += current_loss
-            grad_norm = compute_gradient_norm(grads[1])
-            total_grad += grad_norm
+            total_loss += l
+            total_grad += mean(grads[1])
         end
         avg_loss = total_loss / length(instance_list)
         avg_grad = total_grad / length(instance_list)
-        if epoch % 20 == 0
-            x_input_train = features_list[1]'
-            θ_current_train = model(x_input_train)
-            θ_vec_current_train = vec(θ_current_train')
-            weighted_instance_train = adapt_weights(
-                instance_list[1], collect(-θ_vec_current_train)
-            )
-            features_test = extract_features_gdalle(test_instance)
 
-            x_input_test = features_test'
-            θ_current_test = model(x_input_test)
-            θ_vec_current_test = vec(θ_current_test')
-            weighted_instance_test = adapt_weights(
-                test_instance, collect(-θ_vec_current_test)
-            )
+        if epoch % 20 == 1
+            weighted_instance_train = adapt_weights(instance_list[1], -weights_list)
+            weighted_instance_test = adapt_weights(test_instance, -weights_list)
 
             path_cost_train = sum_of_costs(
                 cooperative_astar(
@@ -663,6 +760,7 @@ function training_gdalle(
             push!(training_cost, path_cost_train)
             push!(test_cost, path_cost_test)
         end
+
         push!(losses, avg_loss)
         push!(grads_list, avg_grad)
         push!(epoch_list, epoch)
@@ -696,38 +794,41 @@ function training_gdalle(
 
     lines!(ax4, [20 * i for i in 1:length(test_cost)], test_cost; color=:red, linewidth=2)
     display(fig4)
-    return model, losses
+    println("train cost: $(training_cost[end] / training_cost[1])")
+    println("test cost: $(test_cost[end] / test_cost[1])")
+    println((training_cost[end] / training_cost[1]) + (test_cost[end] / test_cost[1]))
+    return weights_list, losses
 end
 
-function compute_gradient_norm(grad)
-    total_norm = 0.0
+function compute_gradient_norm(gradient, norm_type=2)
+    """
+    Calculate the norm of gradients across all parameters.
 
-    function add_param_norm(param)
-        if param isa AbstractArray && eltype(param) <: Number
-            total_norm += sum(abs2, param)
-        end
+    Args:
+        gradient: Gradient structure with layers containing weight and bias gradients
+        norm_type: Type of norm (1, 2, or Inf). Default is 2 (L2 norm)
+
+    Returns:
+        Float: The gradient norm
+    """
+
+    # Extract all non-nothing layers
+    layers = filter(x -> x !== nothing, gradient.layers)
+
+    # Collect all gradient values into a single vector
+    all_gradients = Float32[]
+
+    for layer in layers
+        # Add weight gradients (flattened)
+        append!(all_gradients, vec(layer.weight))
+        # Add bias gradients
+        append!(all_gradients, layer.bias)
     end
 
-    function process_layer(layer_grad)
-        if layer_grad isa NamedTuple
-            for field in fieldnames(typeof(layer_grad))
-                param_grad = getfield(layer_grad, field)
-                add_param_norm(param_grad)
-            end
-        elseif layer_grad isa AbstractArray
-            add_param_norm(layer_grad)
-        end
-    end
+    # Calculate the specified norm
+    grad_norm = norm(all_gradients, norm_type)
 
-    if hasfield(typeof(grad), :layers)
-        for layer_grad in grad.layers
-            process_layer(layer_grad)
-        end
-    else
-        process_layer(grad)
-    end
-
-    return sqrt(total_norm)
+    return grad_norm
 end
 
 function fenchel_young_loss(instance, features, M, regression_weights, y_target, Z_m, ϵ)
@@ -760,6 +861,24 @@ function apply_prediction(instance, weights_list)
         cooperative_astar(instance, collect(1:length(instance.departures))), instance
     )
     weighted_instance = adapt_weights(instance, -weights_list)
+
+    new_path_cost = sum_of_costs(
+        cooperative_astar(weighted_instance, collect(1:length(instance.departures))),
+        instance,
+    )
+
+    return (new_path_cost / old_path_cost)
+end
+
+function apply_prediction_features(instance, model)
+    old_path_cost = sum_of_costs(
+        cooperative_astar(instance, collect(1:length(instance.departures))), instance
+    )
+    features = extract_features_gdalle(instance)
+    x_input = features'
+    θ_current = model(x_input)
+    θ_vec_current = vec(θ_current')
+    weighted_instance = adapt_weights(instance, collect(-θ_vec_current))
 
     new_path_cost = sum_of_costs(
         cooperative_astar(weighted_instance, collect(1:length(instance.departures))),

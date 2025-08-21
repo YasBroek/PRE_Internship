@@ -3,12 +3,15 @@
 \babel@toc {french}{}\relax 
 \babel@toc {english}{}\relax 
 \contentsline {figure}{\numberline {1}{\ignorespaces Stochastic smoothing yields a perturbed optimizer \(y_\epsilon \star \) in expectation \blx@tocontentsinit {0}\cite {berthetLearningDifferentiablePertubed2020}.\relax }}{14}{figure.caption.10}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Caption\relax }}{16}{figure.caption.11}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Time-Expanded Graph construction\relax }}{17}{figure.caption.12}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Variations of functions used for Generalized Model applied over $f(x) = x$.\relax }}{21}{figure.caption.13}%
-\contentsline {figure}{\numberline {5}{\ignorespaces Cost Ratio on test set according to total number of agents\relax }}{24}{figure.caption.16}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Statistics of learning evolution according to the number of epochs\relax }}{25}{figure.caption.19}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Performance on test set\relax }}{26}{figure.caption.20}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Weight prediction visualization from trained model\relax }}{26}{figure.caption.21}%
-\contentsline {figure}{\numberline {9}{\ignorespaces Statistics of learning evolution according to the number of epochs - training with 1025 instances\relax }}{27}{figure.caption.22}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Statistics of learning evolution according to the number of epochs - instances with no conflicts\relax }}{28}{figure.caption.23}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Draft of the pipeline developed in this study\relax }}{17}{figure.caption.11}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Time-Expanded Graph construction\relax }}{18}{figure.caption.12}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Variations of functions used for Generalized Model applied over $f(x) = x$.\relax }}{23}{figure.caption.13}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Maps used during training and validation (Images taken from \blx@tocontentsinit {0}\cite {shenTrackingProgressMultiAgent2023})\relax }}{26}{figure.caption.14}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Statistics of learning evolution according to the number of epochs\relax }}{27}{figure.caption.16}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Performance according to number of agents - Learning from different map families\relax }}{28}{figure.caption.17}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Statistics of learning evolution according to the number of epochs\relax }}{28}{figure.caption.18}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Performance according to number of agents - Learning from "room" instances\relax }}{29}{figure.caption.19}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Statistics of learning evolution according to the number of epochs - Learning from map\relax }}{29}{figure.caption.21}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Performance according to number of agents\relax }}{30}{figure.caption.22}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Statistics of learning evolution according to the number of epochs - Learning from map\relax }}{30}{figure.caption.23}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Statistics of learning evolution according to the number of epochs\relax }}{32}{figure.caption.24}%

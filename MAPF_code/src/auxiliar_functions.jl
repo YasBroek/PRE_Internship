@@ -251,3 +251,202 @@ function calculate_path_v(instance, regression_weights)
     )
     return paths_vertices
 end
+
+function edge_betweenness_centrality(mapf, edge)
+    graph = mapf.graph
+    n_vertices = nv(graph)
+    edge_betweenness = 0.0
+
+    # For all pairs of vertices
+    for s in 1:n_vertices
+        for t in (s + 1):n_vertices
+            if s != t
+                # Find all shortest paths from s to t
+                distances = dijkstra_shortest_paths(graph, s)
+
+                if distances.dists[t] < Inf
+                    # Count shortest paths that use this edge
+                    paths_through_edge = count_paths_through_edge(
+                        graph, s, t, edge, distances.dists[t]
+                    )
+                    total_shortest_paths = count_shortest_paths(
+                        graph, s, t, distances.dists[t]
+                    )
+
+                    if total_shortest_paths > 0
+                        edge_betweenness += paths_through_edge / total_shortest_paths
+                    end
+                end
+            end
+        end
+    end
+
+    # Normalize by the maximum possible betweenness
+    max_pairs = (n_vertices * (n_vertices - 1)) / 2
+    return max_pairs > 0 ? edge_betweenness / max_pairs : 0.0
+end
+
+"""
+Helper function to count shortest paths from s to t that go through a specific edge.
+"""
+function count_paths_through_edge(graph, s, t, edge, target_distance)
+    src_vertex = src(edge)
+    dst_vertex = dst(edge)
+
+    # Distance from s to edge source + edge weight + distance from edge destination to t
+    dist_s_to_src = dijkstra_shortest_paths(graph, s).dists[src_vertex]
+    dist_dst_to_t = dijkstra_shortest_paths(graph, dst_vertex).dists[t]
+
+    path_length = dist_s_to_src + 1.0 + dist_dst_to_t  # Assuming edge weight = 1
+
+    return abs(path_length - target_distance) < 1e-6 ? 1 : 0
+end
+
+"""
+Helper function to count total number of shortest paths between two vertices.
+"""
+function count_shortest_paths(graph, s, t, target_distance)
+    # For simplicity, return 1 if path exists (can be made more sophisticated)
+    return target_distance < Inf ? 1 : 0
+end
+
+"""
+Compute bridge criticality - how much removing this edge would impact connectivity.
+Higher values indicate more critical bridges.
+"""
+function bridge_criticality(mapf, edge)
+    graph = mapf.graph
+    n_vertices = nv(graph)
+
+    # Original connectivity measure
+    original_connected_pairs = count_connected_pairs(graph)
+
+    # Create a copy of the graph without this edge
+    temp_graph = deepcopy(graph)
+    rem_edge!(temp_graph, edge)
+
+    # New connectivity measure
+    new_connected_pairs = count_connected_pairs(temp_graph)
+
+    # Return the relative impact (0 to 1, where 1 means removing edge disconnects everything)
+    return if original_connected_pairs > 0
+        (original_connected_pairs - new_connected_pairs) / original_connected_pairs
+    else
+        0.0
+    end
+end
+
+"""
+Helper function to count connected pairs in a graph.
+"""
+function count_connected_pairs(graph)
+    n_vertices = nv(graph)
+    connected_pairs = 0
+
+    for s in 1:n_vertices
+        distances = dijkstra_shortest_paths(graph, s)
+        for t in (s + 1):n_vertices
+            if distances.dists[t] < Inf
+                connected_pairs += 1
+            end
+        end
+    end
+
+    return connected_pairs
+end
+
+"""
+Compute path length impact - average increase in path length for all agents if this edge is removed.
+"""
+function path_length_impact_gdalle(mapf, edge, original_paths)
+    total_impact = 0.0
+    n_agents = length(mapf.agents)
+
+    # Create graph without this edge
+    temp_graph = deepcopy(mapf.graph)
+    rem_edge!(temp_graph, edge)
+    temp_mapf = MAPF(mapf.agents, temp_graph)
+
+    for agent_idx in 1:n_agents
+        agent = mapf.agents[agent_idx]
+
+        # Original path length
+        original_length = length(original_paths[agent_idx]) - 1  # -1 because path includes start
+
+        # New path length without this edge
+        try
+            new_path = dijkstra_shortest_path(temp_graph, agent.start, agent.goal)
+            new_length = length(new_path) - 1
+
+            # Impact is the relative increase
+            if original_length > 0
+                impact = (new_length - original_length) / original_length
+                total_impact += max(0, impact)  # Only count increases
+            end
+        catch
+            # If no path exists, this edge is critical for this agent
+            total_impact += 1.0  # Maximum impact
+        end
+    end
+
+    return n_agents > 0 ? total_impact / n_agents : 0.0
+end
+
+"""
+Compute path diversity score - how many different agent paths could potentially use this edge.
+Considers both current paths and reasonable alternatives.
+"""
+function path_diversity_score_gdalle(mapf, edge, original_paths)
+    n_agents = length(mapf.agents)
+    agents_could_use = 0
+
+    src_vertex = src(edge)
+    dst_vertex = dst(edge)
+
+    for agent_idx in 1:n_agents
+        agent = mapf.agents[agent_idx]
+
+        # Check if this edge could be on a reasonable path for this agent
+        # Distance from agent start to edge source
+        dist_start_to_edge = dijkstra_shortest_paths(mapf.graph, agent.start).dists[src_vertex]
+        # Distance from edge destination to agent goal  
+        dist_edge_to_goal = dijkstra_shortest_paths(mapf.graph, dst_vertex).dists[agent.goal]
+
+        # Direct distance from start to goal
+        direct_distance = dijkstra_shortest_paths(mapf.graph, agent.start).dists[agent.goal]
+
+        # Path through edge distance
+        path_through_edge = dist_start_to_edge + 1.0 + dist_edge_to_goal  # +1 for edge itself
+
+        # Consider it a viable path if it's not too much longer than direct path
+        detour_ratio = direct_distance > 0 ? path_through_edge / direct_distance : Inf
+
+        # Also check if agent currently uses this edge
+        currently_uses = edge_in_path(original_paths[agent_idx], edge)
+
+        # Count as potential if reasonable detour (< 50% longer) or currently uses
+        if detour_ratio <= 1.5 || currently_uses
+            agents_could_use += 1
+        end
+    end
+
+    # Return as fraction of total agents
+    return n_agents > 0 ? agents_could_use / n_agents : 0.0
+end
+
+"""
+Helper function to check if an edge is used in a path.
+"""
+function edge_in_path(path, target_edge)
+    if length(path) < 2
+        return false
+    end
+
+    for i in 1:(length(path) - 1)
+        if (path[i] == src(target_edge) && path[i + 1] == dst(target_edge)) ||
+            (path[i] == dst(target_edge) && path[i + 1] == src(target_edge))
+            return true
+        end
+    end
+    return false
+end
